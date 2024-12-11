@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Burger, Container, Group } from '@mantine/core';
+import { Burger, Container, Group, Button } from '@mantine/core';
+import { useFullscreen } from '@mantine/hooks';
 import { useDisclosure } from '@mantine/hooks';
 import classes from './index.module.css';
 
@@ -11,7 +12,9 @@ const links = [
 ];
 
 export function Header() {
-  const [opened, { toggle }] = useDisclosure(false);
+  const { toggle: toggleFullscreen, fullscreen } = useFullscreen();
+
+  const [opened, { toggle: toggleDisclosure }] = useDisclosure(false);
   const [active, setActive] = useState(links[0].link);
 
   const items = links.map((link) => (
@@ -35,8 +38,10 @@ export function Header() {
         <Group gap={5} visibleFrom="xs">
           {items}
         </Group>
-
-        <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
+        <Button onClick={toggleFullscreen} color={fullscreen ? 'red' : 'blue'}>
+          {fullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+        </Button>
+        <Burger opened={opened} onClick={toggleDisclosure} hiddenFrom="xs" size="sm" />
       </Container>
     </header>
   );
