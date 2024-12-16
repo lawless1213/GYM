@@ -1,0 +1,8 @@
+.navbar {
+  display: flex;
+  flex-direction: column;
+  width: 80px;
+  height: 100%;
+  padding: var(--mantine-spacing-md);
+  border-right: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+}

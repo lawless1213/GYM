@@ -1,6 +1,14 @@
-const workoutPlan = {
-  "Monday": {
-    "name": "Chest and Triceps",
+export const workoutPlan = [
+  {
+    "day": "Sunday",
+    "name": "recovery",
+    "exercises": [
+      { "exercise": "Легка розтяжка та кардіо", "sets": 1, "reps": "15 хвилин" }
+    ]
+  },
+  {
+    "day": "Monday",
+    "name": "chest and triceps",
     "exercises": [
       { "exercise": "Жим штанги лежачи на підлозі", "sets": 4, "reps": "10-12" },
       { "exercise": "Віджимання з гантелями (глибокі)", "sets": 3, "reps": "12-15" },
@@ -9,8 +17,9 @@ const workoutPlan = {
       { "exercise": "Планка з підтягуванням колін до грудей", "sets": 3, "reps": "15" }
     ]
   },
-  "Tuesday": {
-    "name": "Back and Biceps",
+  {
+    "day": "Tueday",
+    "name": "back and biceps",
     "exercises": [
       { "exercise": "Тяга штанги до поясу в нахилі", "sets": 4, "reps": "10-12" },
       { "exercise": "Тяга гантелі до пояса (по черзі)", "sets": 3, "reps": "10-12" },
@@ -19,8 +28,9 @@ const workoutPlan = {
       { "exercise": "Планка з обертами таза", "sets": 3, "reps": "15 на кожну сторону" }
     ]
   },
-  "Wednesday": {
-    "name": "Legs",
+  {
+    "day": "Wednesday",
+    "name": "legs",
     "exercises": [
       { "exercise": "Присідання з гантелями", "sets": 4, "reps": "12-15" },
       { "exercise": "Румунська тяга зі штангою", "sets": 3, "reps": "10-12" },
@@ -29,8 +39,9 @@ const workoutPlan = {
       { "exercise": "Скручування на підлозі", "sets": 3, "reps": "20" }
     ]
   },
-  "Thursday": {
-    "name": "Shoulders and Cardio",
+  {
+    "day": "Thursday",
+    "name": "shoulders and cardio",
     "exercises": [
       { "exercise": "Жим гантелей сидячи", "sets": 4, "reps": "10-12" },
       { "exercise": "Підйом гантелей через сторони", "sets": 3, "reps": "12-15" },
@@ -39,8 +50,9 @@ const workoutPlan = {
       { "exercise": "Велосипедні скручування", "sets": 3, "reps": "20" }
     ]
   },
-  "Friday": {
-    "name": "Functional Training",
+  {
+    "day": "Friday",
+    "name": "functional Training",
     "exercises": [
       { "exercise": "Берпі", "sets": 3, "reps": "12" },
       { "exercise": "Присідання з викидом штанги вгору", "sets": 3, "reps": "10" },
@@ -48,16 +60,11 @@ const workoutPlan = {
       { "exercise": "Підйоми ніг лежачи на килимку", "sets": 3, "reps": "15" }
     ]
   },
-  "Saturday": {
-    "name": "Weak Zone Review",
+  {
+    "day": "Saturday",
+    "name": "weak zone review",
     "exercises": [
       { "exercise": "Обери 3-4 вправи, які хочеш вдосконалити" }
     ]
   },
-  "Sunday": {
-    "name": "Recovery",
-    "exercises": [
-      { "exercise": "Легка розтяжка та кардіо", "sets": 1, "reps": "15 хвилин" }
-    ]
-  }
-};
+];

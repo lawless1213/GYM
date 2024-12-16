@@ -1,0 +1,11 @@
+#root {
+	display: flex;
+
+	nav {
+		min-height: 100svh;
+	}
+
+	.main {
+		flex: 1;
+	}
+}
