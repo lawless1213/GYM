@@ -1,4 +1,4 @@
-import { useMantineTheme, Title, Text, Card, Button, Group } from '@mantine/core';
+import { Title, Text, Card } from '@mantine/core';
 import { useTimer } from '../../hooks/timer.js';
 import CircleProgress from '../../components/circleProgress.jsx';
 

@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom';
+import { StoreProvider } from './providers/StoreProvider';
 import App from './App.jsx'
 
 import './assets/index.scss';
@@ -12,10 +13,12 @@ import '@mantine/core/styles.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter basename='/'>
-      <MantineProvider theme={theme}>
-        <App />
-      </MantineProvider>
-    </BrowserRouter>
+    <StoreProvider>
+      <BrowserRouter basename='/'>
+        <MantineProvider theme={theme}>
+          <App />
+        </MantineProvider>
+      </BrowserRouter>
+    </StoreProvider>
   </StrictMode>
 )

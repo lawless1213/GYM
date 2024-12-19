@@ -1,22 +1,33 @@
-import { useState, useEffect } from 'react';
-import { workoutPlan } from '../data/workoutPlan.js';
 import { useDisclosure } from '@mantine/hooks';
-import { Drawer, Button } from '@mantine/core';
+import { Drawer, Button, Text, Title } from '@mantine/core';
 import Exercise from '../sections/Exercise';
 import Rest from '../sections/Rest';
+import { observer } from 'mobx-react-lite';
+import { useStores } from '../hooks/useStores.jsx';
 
-const Workout = () => {
+const Workout = observer(() => {
 	const [opened, { open, close }] = useDisclosure(false);
-
-	const [dayOfWeek, setDayOfWeek] = useState(0);
-  useEffect(() => {
-		const today = new Date();
-		setDayOfWeek(today.getDay());
-	}, []);
-	const {day, name, exercises} = workoutPlan[dayOfWeek];
+	const { ExcerciseStore } = useStores();
 
 	return (
 		<>
+			
+			{/* <Title order={1}>Сьогоднішнє тренування на {ExcerciseStore.todayWorkout.name}</Title> */}
+			<Text size="xl">
+				День: {ExcerciseStore.dayOfWeek}
+			</Text>
+      <Title order={4}>Вправи:</Title>
+			<Text size="md">
+				<ul>
+					{ExcerciseStore.todayWorkout.exercises.map((exercise, index) => (
+						<li key={index}>
+							{exercise.title} - {exercise.sets} підходів, {exercise.reps || exercise.timeAmount} повторень
+						</li>
+					))}
+      </ul>
+			</Text>
+			<Button variant="default" onClick={open}>OPEN</Button>
+
 			<Drawer 
 				opened={opened} 
 				onClose={close}
@@ -25,16 +36,15 @@ const Workout = () => {
 				overlayProps={{ backgroundOpacity: 0.5, blur: 4 }}
 				radius='md'
 				transitionProps={{ transition: 'fade-up', duration: 150, timingFunction: 'linear' }}
-				// withCloseButton={false}
+				withCloseButton={false}
 				closeOnClickOutside={false}
 			>
-				{/* <Exercise title='TITLE'/> */}
-				<Rest/>
+				<Exercise exercise={ExcerciseStore.currentExercise}/>
+				{/* <Rest/> */}
+				<Button variant="default" onClick={close}>Exit workout</Button>
       </Drawer>
-
-			<Button variant="default" onClick={open}>OPEN</Button>
 		</>
 	)
-} 
+}) 
 
 export default Workout;
