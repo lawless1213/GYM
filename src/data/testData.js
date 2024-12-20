@@ -41,9 +41,9 @@ export const workoutPlan = [
     "name": "shoulders  and cardio",
     "exercises": [
       { "title": "Кількість", "sets": 4, "setsEnd": "0" , "reps": "12" },
-      { "title": "Час", "sets": 4, "setsEnd": "0" , "timeAmount": "6" },
+      { "title": "Час", "sets": 4, "setsEnd": "0" , "timeAmount": "20" },
       { "title": "Кількість", "sets": 4, "setsEnd": "0" , "reps": "12" },
-      { "title": "Час", "sets": 4, "setsEnd": "0" , "timeAmount": "6" },
+      { "title": "Час", "sets": 4, "setsEnd": "0" , "timeAmount": "20" },
     ]
   },
   {

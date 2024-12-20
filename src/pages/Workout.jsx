@@ -16,8 +16,8 @@ const Workout = observer(() => {
 			<Text size="xl">
 				День: {ExcerciseStore.dayOfWeek}
 			</Text>
-      <Title order={4}>Вправи:</Title>
-			<Text size="md">
+      <Title order={1}>Вправи:</Title>
+			<Title order={2}>
 				<ul>
 					{ExcerciseStore.todayWorkout.exercises.map((exercise, index) => (
 						<li key={index}>
@@ -25,7 +25,7 @@ const Workout = observer(() => {
 						</li>
 					))}
       </ul>
-			</Text>
+			</Title>
 			<Button variant="default" onClick={open}>OPEN</Button>
 
 			<Drawer 

@@ -2,13 +2,13 @@ import { makeAutoObservable } from 'mobx';
 import { workoutPlan } from '../data/testData';
 
 export class ExcerciseStore {
-	dayOfWeek = '';
+	dayOfWeek = 1;
   items = [];
 	currentExercisePointer = 0;
 
   constructor(rootStore) {
     this.rootStore = rootStore;
-		this.setDayOfWeek();
+		// this.setDayOfWeek();
 		this.loadItems();
     makeAutoObservable(this);
   }
@@ -29,17 +29,25 @@ export class ExcerciseStore {
     return this.todayWorkout.exercises[this.currentExercisePointer];
   }
 
+	get exercisesLenght() {
+		return this.items[this.dayOfWeek].exercises.lenght;
+	}
+
 	toggleNextExercise() {
-		this.currentExercisePointer += 1;
+		if(this.currentExercisePointer < this.exercisesLenght()) {
+			this.currentExercisePointer += 1;
+		}
 	}
 
 	toggleExerciseSet() {
 		const { sets, setsEnd } = this.items[this.dayOfWeek].exercises[currentExercisePointer];
+		if(!this.items[this.dayOfWeek].exercises[currentExercisePointer].setsEnd) 
+			this.items[this.dayOfWeek].exercises[currentExercisePointer].setsEnd = 0;
 
 		if(setsEnd < sets) {
 			this.items[this.dayOfWeek].exercises[currentExercisePointer].setsEnd += 1;
 		} else {
-
+			this.toggleNextExercise();
 		}
 	}
 }
