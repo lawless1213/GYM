@@ -13,6 +13,7 @@
     "@mantine/core": "^7.15.0",
     "@mantine/hooks": "^7.15.0",
     "@tabler/icons-react": "^3.26.0",
+    "firebase": "^11.1.0",
     "mobx": "^6.13.5",
     "mobx-react-lite": "^4.1.0",
     "react": "^18.3.1",

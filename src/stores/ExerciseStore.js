@@ -1,50 +1,50 @@
 import { makeAutoObservable } from 'mobx';
 import { workoutPlan } from '../data/testData';
 
-export class ExcerciseStore {
+export class ExerciseStore {
 	dayOfWeek = 1;
-  items = [];
+	items = [];
 	currentExercisePointer = 0;
 
-  constructor(rootStore) {
-    this.rootStore = rootStore;
+	constructor(rootStore) {
+		this.rootStore = rootStore;
 		// this.setDayOfWeek();
 		this.loadItems();
-    makeAutoObservable(this);
-  }
+		makeAutoObservable(this);
+	}
 
 	setDayOfWeek() {
-    this.dayOfWeek = new Date().getDay();
-  }
+		this.dayOfWeek = new Date().getDay();
+	}
 
 	loadItems() {
-    this.items = workoutPlan;
-  }
+		this.items = workoutPlan;
+	}
 
 	get todayWorkout() {
 		return this.items[this.dayOfWeek];
-  }
+	}
 
 	get currentExercise() {
-    return this.todayWorkout.exercises[this.currentExercisePointer];
-  }
+		return this.todayWorkout.exercises[this.currentExercisePointer];
+	}
 
 	get exercisesLenght() {
 		return this.items[this.dayOfWeek].exercises.lenght;
 	}
 
 	toggleNextExercise() {
-		if(this.currentExercisePointer < this.exercisesLenght()) {
+		if (this.currentExercisePointer < this.exercisesLenght()) {
 			this.currentExercisePointer += 1;
 		}
 	}
 
 	toggleExerciseSet() {
 		const { sets, setsEnd } = this.items[this.dayOfWeek].exercises[currentExercisePointer];
-		if(!this.items[this.dayOfWeek].exercises[currentExercisePointer].setsEnd) 
+		if (!this.items[this.dayOfWeek].exercises[currentExercisePointer].setsEnd)
 			this.items[this.dayOfWeek].exercises[currentExercisePointer].setsEnd = 0;
 
-		if(setsEnd < sets) {
+		if (setsEnd < sets) {
 			this.items[this.dayOfWeek].exercises[currentExercisePointer].setsEnd += 1;
 		} else {
 			this.toggleNextExercise();

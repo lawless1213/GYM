@@ -18,7 +18,7 @@ const Rest = () => {
 			</Card.Section>
 			
 			<Text ta="center" mt="md" size="md" c="dimmed">
-				Next excercise: description
+				Next exercise: description
 			</Text>
 		</Card>
   );

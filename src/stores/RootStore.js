@@ -1,8 +1,10 @@
-import { ExcerciseStore } from './ExcerciseStore';
+import { ExerciseStore } from './ExerciseStore';
+import { AllExerciseStore } from './AllExerciseStore';
 
 class RootStore {
   constructor() {
-    this.ExcerciseStore = new ExcerciseStore(this);
+    this.ExerciseStore = new ExerciseStore(this);
+    this.AllExerciseStore = new AllExerciseStore(this);
   }
 }
 

@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom';
 import { StoreProvider } from './providers/StoreProvider';
+import './firebase/firebase';
 import App from './App.jsx'
 
 import './assets/index.scss';
@@ -16,7 +17,7 @@ createRoot(document.getElementById('root')).render(
     <StoreProvider>
       <BrowserRouter basename='/'>
         <MantineProvider theme={theme}>
-          <App />
+          <App/>
         </MantineProvider>
       </BrowserRouter>
     </StoreProvider>
