@@ -16,6 +16,7 @@ const Exercises = observer(() => {
 			<ExerciseCard
 				name = {item.name}
 				preview = {item.preview}
+				video = {item.video}
 				equipment = {item.equipment}
 				bodyPart = {item.bodyPart}
 			/>
