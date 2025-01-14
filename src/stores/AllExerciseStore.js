@@ -28,18 +28,18 @@ export class AllExerciseStore {
 		}
 	};
 
-	addExercises = async () => {
-		const exercisesRef = doc(db, "exercises", "yourDocumentId"); // Вказати ID документа
-		await setDoc(exercisesRef, {
-			exercises: [
-				{
-					name: "Push-up",
-					description: "A basic push-up exercise for chest and arms.",
-					category: "Strength",
-					image: "https://example.com/images/pushup.png"
-				}
-			]
-		});
-	};
+	// addExercises = async () => {
+	// 	const exercisesRef = doc(db, "exercises", "yourDocumentId"); // Вказати ID документа
+	// 	await setDoc(exercisesRef, {
+	// 		exercises: [
+	// 			{
+	// 				name: "Push-up",
+	// 				description: "A basic push-up exercise for chest and arms.",
+	// 				category: "Strength",
+	// 				image: "https://example.com/images/pushup.png"
+	// 			}
+	// 		]
+	// 	});
+	// };
 	
 }

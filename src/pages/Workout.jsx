@@ -48,6 +48,7 @@ const Workout = observer(() => {
 				{/* <Rest/> */}
 				<Button variant="default" onClick={close}>Exit workout</Button>
       </Drawer>
+			
 		</>
 	)
 }) 

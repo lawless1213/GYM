@@ -5,7 +5,7 @@ import {
 import { Stack, Tooltip, ActionIcon } from '@mantine/core';
 import { NavLink, useLocation } from "react-router-dom";
 import { navLinks } from '../../data/navManu';
-import classes from './index.module.css';
+import s from './index.module.css';
 
 
 function NavbarLink({ label, icon: Icon, url, onClick, variant }) {
@@ -47,8 +47,8 @@ export function Navbar() {
 	});
 
   return (
-    <nav className={classes.navbar}>
-			<Stack className={classes.menu} justify="center" gap={4} mb={4}>
+    <nav className={s.navbar}>
+			<Stack className={s.menu} justify="center" gap={4} mb={4}>
 				{links}
 			</Stack>
 			<Stack justify="center" gap={4} mt="auto">

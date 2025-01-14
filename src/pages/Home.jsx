@@ -4,7 +4,7 @@ const Home = () => {
 
 	return (
 		<>
-			<Title order={1}>H</Title>
+			<Title order={1}>Home</Title>
 		</>
 	)
 } 
