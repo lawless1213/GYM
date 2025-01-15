@@ -48,12 +48,13 @@ const ExerciseCard = ({name, equipment, bodyPart, preview, video}) => {
 					mt="md"
 					mb="md"
 				>
-					{isLoadingImg && (
+					{/* {isLoadingImg && (
 						<Loader/>
-					)}
-					<video width="100%" src={video} muted loop onLoad={handleImageLoad}>
+					)} */}
+					<img src={preview}></img>
+					{/* <video width="100%" src={video} muted loop onLoad={handleImageLoad}>
 						Your browser does not support the video tag.
-					</video>
+					</video> */}
 				</Card.Section>
 				<Title ta="center" order={3}>
 					{name}

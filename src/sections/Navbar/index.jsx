@@ -1,12 +1,13 @@
 import {
+  IconLogin,
   IconLogout,
-  IconSwitchHorizontal,
 } from '@tabler/icons-react';
-import { Stack, Tooltip, ActionIcon } from '@mantine/core';
+import { Stack, Title, Tooltip, ActionIcon } from '@mantine/core';
 import { NavLink, useLocation } from "react-router-dom";
 import { navLinks } from '../../data/navManu';
+import { modals } from '@mantine/modals';
 import s from './index.module.css';
-
+import { useAuth } from '../../stores/context/AuthContext';
 
 function NavbarLink({ label, icon: Icon, url, onClick, variant }) {
   if (url) {
@@ -29,6 +30,7 @@ function NavbarLink({ label, icon: Icon, url, onClick, variant }) {
 }
 
 export function Navbar() {
+	const { currentUser, logOut } = useAuth();
   const location = useLocation();
 
   const links = navLinks.map((navItem) => {
@@ -46,14 +48,40 @@ export function Navbar() {
 		);
 	});
 
+	const handleLogout = async () => {
+    try {
+      await logOut();
+    } catch (error) {
+      console.error("Error logging out:", error.message);
+    }
+  };
+
   return (
     <nav className={s.navbar}>
 			<Stack className={s.menu} justify="center" gap={4} mb={4}>
 				{links}
 			</Stack>
 			<Stack justify="center" gap={4} mt="auto">
-				<NavbarLink icon={IconSwitchHorizontal} label="Change account" variant='default'/>
-				<NavbarLink icon={IconLogout} label="Logout" variant='default'/>
+				{currentUser ? 
+					<NavbarLink 
+						icon={IconLogout} 
+						label="Logout" 
+						variant='default' 
+						onClick={handleLogout}
+					/>
+				:
+					<NavbarLink 
+						icon={IconLogin} 
+						label="Login" 
+						variant='default'
+						onClick={() =>
+							modals.openContextModal({
+								modal: 'demonstration',
+								size: 'lg',
+							})
+						}
+					/> 
+				}
 			</Stack>
     </nav>
   );

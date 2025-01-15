@@ -18,7 +18,6 @@ export function useTimer(timerAmount = 60) {
             setIsFinished(true);
             return timerAmount;
           }
-          console.log(prevTime);
           return prevTime + 1;
         });
       }, 1000);
