@@ -7,7 +7,7 @@ import { TwitterButton } from '../../components/buttons/TwitterButton';
 import { updateProfile } from "firebase/auth";
 
 function Auth() {
-  const { currentUser, signUp, signIn } = useAuth();
+  const { signUp, signIn } = useAuth();
   const [type, toggle] = useToggle(['login', 'register']);
 
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
