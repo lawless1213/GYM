@@ -3,6 +3,7 @@ import { useAuth } from '../stores/context/AuthContext';
 
 const Profile = () => {
 	const { currentUser } = useAuth();
+	// console.log(currentUser);
 	
 	return (
 		<>

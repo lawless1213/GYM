@@ -1,39 +1,60 @@
-import { useEffect } from 'react';
-import { Title, SimpleGrid } from '@mantine/core';
+import { useState, useEffect } from 'react';
+import { Title, SimpleGrid, Button, Group, Stack } from '@mantine/core';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '../hooks/useStores.jsx';
 import ExerciseCard from '../components/ExerciseCard/index.jsx';
+import { SelectAsync } from '../components/SelectAsync.jsx';
 
 const Exercises = observer(() => {
-	const { AllExerciseStore } = useStores();
+  const { ExerciseStore } = useStores();
+  const [ isBookmarks, setIsBookmarks ] = useState(false);
 
-	useEffect(() => {
-		AllExerciseStore.loadItems();
-	}, []);
+  useEffect(() => {
+    if (isBookmarks) {
+      ExerciseStore.loadBookmarks();
+    } else {
+      ExerciseStore.loadAllExercises();
+    }
+  }, [isBookmarks, ExerciseStore]);
 
-	const cards = AllExerciseStore.items.map((item) => {
-		return (
-			<ExerciseCard
-				name = {item.name}
-				preview = {item.preview}
-				video = {item.video}
-				equipment = {item.equipment}
-				bodyPart = {item.bodyPart}
-			/>
-		);
-	});
-	
+  const cards = (isBookmarks ? ExerciseStore.bookmarks : ExerciseStore.allExercises).map((item) => (
+    <ExerciseCard
+      key={item.id}
+      name={item.name}
+      preview={item.preview}
+      video={item.video}
+      equipment={item.equipment}
+      bodyPart={item.bodyPart}
+    />
+  ));
 
-	return (
-		<>
-			<Title mb="md" order={1}>Exercise Library</Title>
-			<SimpleGrid
-				cols={{ base: 1, sm: 2, lg: 4 }}
-			>
-				{cards}
-			</SimpleGrid>
-		</>
-	)
-})
+  return (
+    <>
+      <Group position="apart" mb="md">
+				<Stack>
+					<Title order={1}>Exercise Library</Title>
+					<Group>
+						<Button
+							variant={!isBookmarks ? 'filled' : 'outline'}
+							onClick={() => setIsBookmarks(false)}
+						>
+							All
+						</Button>
+						<Button
+							variant={isBookmarks ? 'filled' : 'outline'}
+							onClick={() => setIsBookmarks(true)}
+						>
+							Favorites
+						</Button>
+						<SelectAsync/>
+					</Group>
+				</Stack>
+      </Group>
+      <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }}>
+        {cards}
+      </SimpleGrid>
+    </>
+  );
+});
 
 export default Exercises;

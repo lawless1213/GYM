@@ -1,53 +1,87 @@
 import { makeAutoObservable } from 'mobx';
-import { workoutPlan } from '../data/testData';
+import { collection, doc, DocumentReference, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase/firebase";
 
 export class ExerciseStore {
-	dayOfWeek = 1;
-	items = [];
-	currentExercisePointer = 0;
+	allExercises = [];
+	bookmarks = [];
 
-	constructor(rootStore) {
+	constructor(rootStore, currentUser) {
 		this.rootStore = rootStore;
-		// this.setDayOfWeek();
-		this.loadItems();
+		this.currentUser = currentUser;
+		this.loadAllExercises();
+		this.loadBookmarks();
 		makeAutoObservable(this);
 	}
 
-	setDayOfWeek() {
-		this.dayOfWeek = new Date().getDay();
-	}
+	loadAllExercises = async () => {
+		try {
+			const exercisesCollection = collection(db, "exercises");
+			const querySnapshot = await getDocs(exercisesCollection);
+			const exercises = [];
+	
+			querySnapshot.forEach((doc) => {
+				exercises.push({ id: doc.id, ...doc.data() });
+			});
 
-	loadItems() {
-		this.items = workoutPlan;
-	}
-
-	get todayWorkout() {
-		return this.items[this.dayOfWeek];
-	}
-
-	get currentExercise() {
-		return this.todayWorkout.exercises[this.currentExercisePointer];
-	}
-
-	get exercisesLenght() {
-		return this.items[this.dayOfWeek].exercises.lenght;
-	}
-
-	toggleNextExercise() {
-		if (this.currentExercisePointer < this.exercisesLenght()) {
-			this.currentExercisePointer += 1;
+			this.allExercises = exercises;
+		} catch (e) {
+			console.error("Error fetching exercises: ", e);
 		}
-	}
+	};
 
-	toggleExerciseSet() {
-		const { sets, setsEnd } = this.items[this.dayOfWeek].exercises[currentExercisePointer];
-		if (!this.items[this.dayOfWeek].exercises[currentExercisePointer].setsEnd)
-			this.items[this.dayOfWeek].exercises[currentExercisePointer].setsEnd = 0;
+	loadBookmarks = async () => {
+    if (!this.currentUser) return;
 
-		if (setsEnd < sets) {
-			this.items[this.dayOfWeek].exercises[currentExercisePointer].setsEnd += 1;
-		} else {
-			this.toggleNextExercise();
-		}
-	}
+    try {
+      const userRef = doc(db, 'users', this.currentUser.uid);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        const favorites = userDoc.data().bookmarks || [];
+        const bookmarks = [];
+				
+				for (const favoriteRef of favorites) {
+					if (favoriteRef instanceof DocumentReference) {
+							try {
+									const exerciseDoc = await getDoc(favoriteRef);
+			
+									if (exerciseDoc.exists()) {
+											bookmarks.push({ id: favoriteRef.id, ...exerciseDoc.data() });
+									} else {
+											console.warn(`Document not found for reference: ${favoriteRef.path}`);
+									}
+							} catch (error) {
+									console.error("Error fetching document:", error);
+							}
+					} else {
+							console.error("Unexpected data format in bookmarks:", favoriteRef);
+					}
+			}
+
+        this.bookmarks = bookmarks;
+      }
+    } catch (e) {
+      console.error("Error loading bookmarks: ", e);
+    }
+  };
+
+	
+
+
+
+	// addExercises = async () => {
+	// 	const exercisesRef = doc(db, "exercises", "yourDocumentId"); // Вказати ID документа
+	// 	await setDoc(exercisesRef, {
+	// 		exercises: [
+	// 			{
+	// 				name: "Push-up",
+	// 				description: "A basic push-up exercise for chest and arms.",
+	// 				category: "Strength",
+	// 				image: "https://example.com/images/pushup.png"
+	// 			}
+	// 		]
+	// 	});
+	// };
+	
 }

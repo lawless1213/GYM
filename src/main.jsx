@@ -15,18 +15,18 @@ import './assets/index.scss';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <StoreProvider>
-      <BrowserRouter basename='/'>
-        <MantineProvider theme={theme}>
-          <AuthProvider>
-            <ModalsProvider
-              modals={{ demonstration: Modal }}
-            >
-              <App/>
-            </ModalsProvider>
-          </AuthProvider>
-        </MantineProvider>
-      </BrowserRouter>
-    </StoreProvider>
+    <AuthProvider>
+      <StoreProvider>
+        <BrowserRouter basename='/'>
+          <MantineProvider theme={theme}>
+              <ModalsProvider
+                modals={{ demonstration: Modal }}
+              >
+                <App/>
+              </ModalsProvider>
+          </MantineProvider>
+        </BrowserRouter>
+      </StoreProvider>
+    </AuthProvider>
   </StrictMode>
 )

@@ -8,23 +8,18 @@ import { useStores } from '../hooks/useStores.jsx';
 
 const Workout = observer(() => {
 	const [opened, { open, close }] = useDisclosure(false);
-	const { ExerciseStore, AllExerciseStore } = useStores();
+	const { WorkoutStore } = useStores();
 	
-	useEffect(() => {
-		AllExerciseStore.loadItems();
-	}, []);
-	
-
 	return (
 		<>
-			{/* <Title order={1}>Сьогоднішнє тренування на {ExerciseStore.todayWorkout.name}</Title> */}
+			{/* <Title order={1}>Сьогоднішнє тренування на {WorkoutStore.todayWorkout.name}</Title> */}
 			<Text size="xl">
-				День: {ExerciseStore.dayOfWeek}
+				День: {WorkoutStore.dayOfWeek}
 			</Text>
       <Title order={1}>Вправи:</Title>
 			<Title order={2}>
 				<ul>
-					{ExerciseStore.todayWorkout.exercises.map((exercise, index) => (
+					{WorkoutStore.todayWorkout.exercises.map((exercise, index) => (
 						<li key={index}>
 							{exercise.title} - {exercise.sets} підходів, {exercise.reps || exercise.timeAmount} повторень
 						</li>
@@ -44,7 +39,7 @@ const Workout = observer(() => {
 				withCloseButton={false}
 				closeOnClickOutside={false}
 			>
-				<Exercise exercise={ExerciseStore.currentExercise}/>
+				<Exercise exercise={WorkoutStore.currentExercise}/>
 				{/* <Rest/> */}
 				<Button variant="default" onClick={close}>Exit workout</Button>
       </Drawer>
