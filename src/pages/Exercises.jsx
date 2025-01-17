@@ -7,7 +7,13 @@ import { SelectAsync } from '../components/SelectAsync.jsx';
 
 const Exercises = observer(() => {
   const { ExerciseStore } = useStores();
+  const { ExerciseFilterStore } = useStores();
   const [ isBookmarks, setIsBookmarks ] = useState(false);
+
+	const filterBodyLoad = async (filterName) => {
+    await ExerciseFilterStore.loadFilter(filterName);
+    return ExerciseFilterStore[filterName];
+  };
 
   useEffect(() => {
     if (isBookmarks) {
@@ -46,7 +52,8 @@ const Exercises = observer(() => {
 						>
 							Favorites
 						</Button>
-						<SelectAsync/>
+						<SelectAsync title='Body part' callback={() => filterBodyLoad('bodyPart')} />
+						<SelectAsync title='Equipment' callback={() => filterBodyLoad('equipment')} />
 					</Group>
 				</Stack>
       </Group>

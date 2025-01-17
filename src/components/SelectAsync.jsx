@@ -1,22 +1,7 @@
 import { useState } from 'react';
 import { Combobox, Input, InputBase, Loader, useCombobox } from '@mantine/core';
 
-const MOCKDATA = [
-  '🍎 Apples',
-  '🍌 Bananas',
-  '🥦 Broccoli',
-  '🥕 Carrots',
-  '🍫 Chocolate',
-  '🍇 Grapes',
-];
-
-function getAsyncData() {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(MOCKDATA), 2000);
-  });
-}
-
-export function SelectAsync() {
+export function SelectAsync({ title, callback }) {
   const [value, setValue] = useState(null);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
@@ -26,20 +11,31 @@ export function SelectAsync() {
     onDropdownOpen: () => {
       if (data.length === 0 && !loading) {
         setLoading(true);
-        getAsyncData().then((response) => {
-          setData(response);
-          setLoading(false);
-          combobox.resetSelectedOption();
-        });
+        callback()
+          .then((loadedData) => {
+            setData(Array.isArray(loadedData) ? loadedData : []);
+          })
+          .catch((error) => {
+            console.error("Failed to load data:", error);
+            setData([]); // У разі помилки встановлюємо порожній масив
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       }
     },
   });
 
-  const options = data.map((item) => (
-    <Combobox.Option value={item} key={item}>
-      {item}
-    </Combobox.Option>
-  ));
+  const options =
+    data.length !== 0 ? (
+      data.map((item) => (
+        <Combobox.Option value={item} key={item}>
+          {item}
+        </Combobox.Option>
+      ))
+    ) : (
+      <Combobox.Empty>No data loaded</Combobox.Empty>
+    );
 
   return (
     <Combobox
@@ -54,18 +50,17 @@ export function SelectAsync() {
         <InputBase
           component="button"
           type="button"
-          pointer
           rightSection={loading ? <Loader size={18} /> : <Combobox.Chevron />}
           onClick={() => combobox.toggleDropdown()}
           rightSectionPointerEvents="none"
         >
-          {value || <Input.Placeholder>Pick value</Input.Placeholder>}
+          {value || <Input.Placeholder>{title}</Input.Placeholder>}
         </InputBase>
       </Combobox.Target>
 
       <Combobox.Dropdown>
         <Combobox.Options>
-          {loading ? <Combobox.Empty>Loading....</Combobox.Empty> : options}
+          {loading ? <Combobox.Empty>Loading...</Combobox.Empty> : options}
         </Combobox.Options>
       </Combobox.Dropdown>
     </Combobox>
