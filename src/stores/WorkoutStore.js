@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction  } from 'mobx';
 import { workoutPlan } from '../data/testData';
 
 export class WorkoutStore {
@@ -10,7 +10,7 @@ export class WorkoutStore {
 		this.rootStore = rootStore;
 		// this.setDayOfWeek();
 		this.loadItems();
-		makeAutoObservable(this);
+		makeAutoObservable(this, {}, { autoBind: true });
 	}
 
 	setDayOfWeek() {

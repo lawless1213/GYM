@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction  } from 'mobx';
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 
@@ -8,7 +8,7 @@ export class ExerciseFilterStore {
 
   constructor(rootStore) {
 		this.rootStore = rootStore;
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   loadFilter = async (filterName) => {
@@ -21,7 +21,9 @@ export class ExerciseFilterStore {
       const docSnapshot = await getDoc(filtersDocRef);
 
       if (docSnapshot.exists()) {
-        this[filterName] = docSnapshot.data()[filterName] || [];
+        runInAction(() => {
+          this[filterName] = docSnapshot.data()[filterName] || [];
+				});
       } else {
         console.error("No such document!");
       }

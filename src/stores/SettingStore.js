@@ -1,11 +1,11 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction  } from 'mobx';
 
 export class SettingStore {
 	isVideoPreview = false;
 
 	constructor(rootStore) {
 		this.rootStore = rootStore;
-		makeAutoObservable(this);
+		makeAutoObservable(this, {}, { autoBind: true });
 	}
 
 	togglePreview() {

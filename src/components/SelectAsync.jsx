@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Combobox, Input, InputBase, Loader, useCombobox } from '@mantine/core';
 
-export function SelectAsync({ title, callback }) {
+export function SelectAsync({ title, onFirstOpen, onSelect }) {
   const [value, setValue] = useState(null);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
@@ -11,7 +11,7 @@ export function SelectAsync({ title, callback }) {
     onDropdownOpen: () => {
       if (data.length === 0 && !loading) {
         setLoading(true);
-        callback()
+        onFirstOpen()
           .then((loadedData) => {
             setData(Array.isArray(loadedData) ? loadedData : []);
           })
@@ -44,6 +44,9 @@ export function SelectAsync({ title, callback }) {
       onOptionSubmit={(val) => {
         setValue(val);
         combobox.closeDropdown();
+        if (onSelect) {
+          onSelect(val);
+        }
       }}
     >
       <Combobox.Target>
