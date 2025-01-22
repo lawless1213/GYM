@@ -38,8 +38,8 @@ const Exercises = observer(() => {
       <Group position="apart" mb="md">
         <Stack style={{ width: "100%" }}>
           <Title order={1}>Exercise Library</Title>
-          <Group justify='space-between'>
-            <Group>
+          <Group justify='space-between' gap="xs">
+            <Group gap="xs">
               <Button
                 variant={!ExerciseStore.isBookmarks ? 'filled' : 'outline'}
                 onClick={() => ExerciseStore.setIsBookmarks(false)}
@@ -54,7 +54,7 @@ const Exercises = observer(() => {
               </Button>
             </Group>
             { !ExerciseStore.isBookmarks &&
-              <Group>
+              <Group gap="xs">
                 <SelectAsync
                   title="Body part"
                   selectedValue={ExerciseStore.filters['bodyPart']}

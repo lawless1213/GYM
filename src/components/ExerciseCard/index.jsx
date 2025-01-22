@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Group, Card, Title, Badge, Loader, Image, ActionIcon, Menu, Button, Text } from '@mantine/core';
+import { Group, Card, Title, Badge, Loader, Image, ActionIcon, Menu, Button, Text, Stack } from '@mantine/core';
 import { observer } from 'mobx-react-lite';
 import {
 	IconVideo,
@@ -35,12 +35,12 @@ const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video}) 
 				padding="md"
 				className={s.Card}
 			>
-				<Group gap="sm" justify='space-between'>
-					<Group gap="sm">
+				<Group gap="xs" justify='space-between'>
+					<Stack gap="xs">
 						<Badge>{equipment}</Badge>
 						<Badge variant="light">{bodyPart}</Badge>
-					</Group>
-					<Group gap="sm">
+					</Stack>
+					<Group gap="xs">
 						<ActionIcon onClick={previewToggleHandler} variant="default" aria-label="Settings">
 							{isVideoPreview ? <IconVideoOff /> : <IconVideo />}
 						</ActionIcon>
