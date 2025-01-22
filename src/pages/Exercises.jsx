@@ -20,10 +20,11 @@ const Exercises = observer(() => {
   useEffect(() => {
     ExerciseStore.loadItems();
   }, [ExerciseStore]);
-
+  
   const cards = (ExerciseStore.isBookmarks ? ExerciseStore.bookmarks : ExerciseStore.allExercises).map((item) => (
     <ExerciseCard
       key={item.id}
+      id={item.id}
       name={item.name}
       preview={item.preview}
       video={item.video}
@@ -31,46 +32,45 @@ const Exercises = observer(() => {
       bodyPart={item.bodyPart}
     />
   ));
-
-  const filters = () => {
-    if (ExerciseStore.isBookmarks) return;
-    return <>
-      <SelectAsync
-        title="Body part"
-        onFirstOpen={() => filterBodyLoad('bodyPart')}
-        onSelect={(value) => filterSelectHandler('bodyPart', value)}
-      />
-      <SelectAsync
-        title="Equipment"
-        onFirstOpen={() => filterBodyLoad('equipment')}
-        onSelect={(value) => filterSelectHandler('equipment', value)}
-      />
-    </>
-  }
-
+  
   return (
     <>
       <Group position="apart" mb="md">
-        <Stack>
+        <Stack style={{ width: "100%" }}>
           <Title order={1}>Exercise Library</Title>
-          <Group>
-            <Button
-              variant={!ExerciseStore.isBookmarks ? 'filled' : 'outline'}
-              onClick={() => ExerciseStore.setIsBookmarks(false)}
-            >
-              All
-            </Button>
-            <Button
-              variant={ExerciseStore.isBookmarks ? 'filled' : 'outline'}
-              onClick={() => ExerciseStore.setIsBookmarks(true)}
-            >
-              Favorites
-            </Button>
-            { filters() }
+          <Group justify='space-between'>
+            <Group>
+              <Button
+                variant={!ExerciseStore.isBookmarks ? 'filled' : 'outline'}
+                onClick={() => ExerciseStore.setIsBookmarks(false)}
+              >
+                All
+              </Button>
+              <Button
+                variant={ExerciseStore.isBookmarks ? 'filled' : 'outline'}
+                onClick={() => ExerciseStore.setIsBookmarks(true)}
+              >
+                Favorites
+              </Button>
+            </Group>
+            { !ExerciseStore.isBookmarks &&
+              <Group>
+                <SelectAsync
+                  title="Body part"
+                  onFirstOpen={() => filterBodyLoad('bodyPart')}
+                  onSelect={(value) => filterSelectHandler('bodyPart', value)}
+                />
+                <SelectAsync
+                  title="Equipment"
+                  onFirstOpen={() => filterBodyLoad('equipment')}
+                  onSelect={(value) => filterSelectHandler('equipment', value)}
+                />
+              </Group> 
+            }
           </Group>
         </Stack>
       </Group>
-      <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }}>{cards}</SimpleGrid>
+      <SimpleGrid cols={{ base: 1, xs: 2, lg: 3, xl: 4 }}>{cards}</SimpleGrid>
     </>
   );
 });

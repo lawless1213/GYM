@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Group, Card, Title, Badge, Loader, Image, ActionIcon, Menu, Button, Text } from '@mantine/core';
-import { IconVideo, IconVideoOff } from '@tabler/icons-react';
 import { observer } from 'mobx-react-lite';
 import {
-  IconBookmark ,
+	IconVideo,
+	IconVideoOff,
+  IconBookmark,
+	IconBookmarkFilled,
   IconEdit,
   IconTrash,
   IconDotsVertical ,
@@ -12,9 +14,15 @@ import { useStores } from '../../hooks/useStores';
 
 import s from './index.module.scss';
 
-const ExerciseCard = observer(({name, equipment, bodyPart, preview, video}) => {
-	const { SettingStore } = useStores();
+const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video}) => {
+	const { SettingStore, ExerciseStore } = useStores();
 	const [isVideoPreview, setIsVideoPreview] = useState(SettingStore.isVideoPreview);
+
+	const bookmarkToggler = () => {
+		ExerciseStore.toggleBookmark(id);
+	} 
+
+	const isFavorite = ExerciseStore.isFavorite(id);
 
 	const previewToggleHandler = () => {
     setIsVideoPreview(!isVideoPreview);
@@ -27,38 +35,43 @@ const ExerciseCard = observer(({name, equipment, bodyPart, preview, video}) => {
 				padding="md"
 				className={s.Card}
 			>
-				<Group gap="sm">
-					<Badge>{equipment}</Badge>
-					<Badge variant="light">{bodyPart}</Badge>
-					<ActionIcon onClick={previewToggleHandler} ml="auto" variant="default" aria-label="Settings">
-						{isVideoPreview ? <IconVideoOff /> : <IconVideo />}
-					</ActionIcon>
-					<Menu position="bottom-end" shadow="md" width={200}>
-						<Menu.Target>
-							<ActionIcon variant="default" aria-label="Settings">
-								<IconDotsVertical/>
-							</ActionIcon>
-						</Menu.Target>
+				<Group gap="sm" justify='space-between'>
+					<Group gap="sm">
+						<Badge>{equipment}</Badge>
+						<Badge variant="light">{bodyPart}</Badge>
+					</Group>
+					<Group gap="sm">
+						<ActionIcon onClick={previewToggleHandler} variant="default" aria-label="Settings">
+							{isVideoPreview ? <IconVideoOff /> : <IconVideo />}
+						</ActionIcon>
+						<ActionIcon onClick={bookmarkToggler} variant="default" aria-label="Bookmark">
+							{isFavorite ? <IconBookmarkFilled /> : <IconBookmark />}
+						</ActionIcon>
+						<Menu position="bottom-end" shadow="md" width={200}>
+							<Menu.Target>
+								<ActionIcon variant="default" aria-label="Settings">
+									<IconDotsVertical/>
+								</ActionIcon>
+							</Menu.Target>
 
-						<Menu.Dropdown>
-							<Menu.Label>{name}</Menu.Label>
-							<Menu.Item leftSection={<IconBookmark size={14} />}>
-								Add to favorite
-							</Menu.Item>
-							<Menu.Item leftSection={<IconEdit  size={14} />}>
-								Edit
-							</Menu.Item>
+							<Menu.Dropdown>
+								<Menu.Label>{name}</Menu.Label>
+								<Menu.Item leftSection={<IconEdit  size={14} />}>
+									Edit
+								</Menu.Item>
 
-							<Menu.Divider />
+								<Menu.Divider />
 
-							<Menu.Item
-								color="red"
-								leftSection={<IconTrash size={14} />}
-							>
-								Delete
-							</Menu.Item>
-						</Menu.Dropdown>
-					</Menu>
+								<Menu.Item
+									color="red"
+									leftSection={<IconTrash size={14} />}
+								>
+									Delete
+								</Menu.Item>
+							</Menu.Dropdown>
+						</Menu>
+					</Group>
+					
 				</Group>
 				<Card.Section
 					className={s.Preview} 
