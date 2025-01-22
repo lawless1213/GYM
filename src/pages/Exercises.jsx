@@ -57,11 +57,13 @@ const Exercises = observer(() => {
               <Group>
                 <SelectAsync
                   title="Body part"
+                  selectedValue={ExerciseStore.filters['bodyPart']}
                   onFirstOpen={() => filterBodyLoad('bodyPart')}
                   onSelect={(value) => filterSelectHandler('bodyPart', value)}
                 />
                 <SelectAsync
                   title="Equipment"
+                  selectedValue={ExerciseStore.filters['equipment']}
                   onFirstOpen={() => filterBodyLoad('equipment')}
                   onSelect={(value) => filterSelectHandler('equipment', value)}
                 />

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { CloseButton, Combobox, Input, InputBase, Loader, useCombobox } from '@mantine/core';
 
-export function SelectAsync({ title, onFirstOpen, onSelect }) {
+export function SelectAsync({ title, selectedValue, onFirstOpen, onSelect }) {
   const [search, setSearch] = useState('');
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState(selectedValue || null);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
 
@@ -21,7 +21,7 @@ export function SelectAsync({ title, onFirstOpen, onSelect }) {
           })
           .catch((error) => {
             console.error("Failed to load data:", error);
-            setData([]); // У разі помилки встановлюємо порожній масив
+            setData([]);
           })
           .finally(() => {
             setLoading(false);
