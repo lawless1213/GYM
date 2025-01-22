@@ -32,6 +32,22 @@ const Exercises = observer(() => {
     />
   ));
 
+  const filters = () => {
+    if (ExerciseStore.isBookmarks) return;
+    return <>
+      <SelectAsync
+        title="Body part"
+        onFirstOpen={() => filterBodyLoad('bodyPart')}
+        onSelect={(value) => filterSelectHandler('bodyPart', value)}
+      />
+      <SelectAsync
+        title="Equipment"
+        onFirstOpen={() => filterBodyLoad('equipment')}
+        onSelect={(value) => filterSelectHandler('equipment', value)}
+      />
+    </>
+  }
+
   return (
     <>
       <Group position="apart" mb="md">
@@ -50,16 +66,7 @@ const Exercises = observer(() => {
             >
               Favorites
             </Button>
-            <SelectAsync
-              title="Body part"
-              onFirstOpen={() => filterBodyLoad('bodyPart')}
-              onSelect={(value) => filterSelectHandler('bodyPart', value)}
-            />
-            <SelectAsync
-              title="Equipment"
-              onFirstOpen={() => filterBodyLoad('equipment')}
-              onSelect={(value) => filterSelectHandler('equipment', value)}
-            />
+            { filters() }
           </Group>
         </Stack>
       </Group>

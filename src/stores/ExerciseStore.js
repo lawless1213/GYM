@@ -18,6 +18,7 @@ export class ExerciseStore {
 		runInAction(() => {
 			this.filters[name] = value.toLowerCase();
 		});
+
 		this.loadExercises();
 	};
 	

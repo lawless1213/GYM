@@ -1,13 +1,17 @@
 import { useState } from 'react';
-import { Combobox, Input, InputBase, Loader, useCombobox } from '@mantine/core';
+import { CloseButton, Combobox, Input, InputBase, Loader, useCombobox } from '@mantine/core';
 
 export function SelectAsync({ title, onFirstOpen, onSelect }) {
+  const [search, setSearch] = useState('');
   const [value, setValue] = useState(null);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
 
   const combobox = useCombobox({
-    onDropdownClose: () => combobox.resetSelectedOption(),
+    onDropdownClose: () => {
+      combobox.resetSelectedOption();
+      setSearch('');
+    },
     onDropdownOpen: () => {
       if (data.length === 0 && !loading) {
         setLoading(true);
@@ -28,7 +32,9 @@ export function SelectAsync({ title, onFirstOpen, onSelect }) {
 
   const options =
     data.length !== 0 ? (
-      data.map((item) => (
+      data
+      .filter((item) => item.toLowerCase().includes(search.toLowerCase().trim()))
+      .map((item) => (
         <Combobox.Option value={item} key={item}>
           {item}
         </Combobox.Option>
@@ -53,17 +59,39 @@ export function SelectAsync({ title, onFirstOpen, onSelect }) {
         <InputBase
           component="button"
           type="button"
-          rightSection={loading ? <Loader size={18} /> : <Combobox.Chevron />}
+          pointer
+          rightSection={
+            value !== null ? (
+              <CloseButton
+                size="sm"
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => {
+                  setValue(null);
+                  if (onSelect) {
+                    onSelect('');
+                  }
+                }}
+                aria-label="Clear value"
+              />
+            ) : (
+              <Combobox.Chevron />
+            )
+          }
           onClick={() => combobox.toggleDropdown()}
-          rightSectionPointerEvents="none"
+          rightSectionPointerEvents={value === null ? 'none' : 'all'}
         >
           {value || <Input.Placeholder>{title}</Input.Placeholder>}
         </InputBase>
       </Combobox.Target>
 
       <Combobox.Dropdown>
+        <Combobox.Search
+          value={search}
+          onChange={(event) => setSearch(event.currentTarget.value)}
+          placeholder="Search groceries"
+        />
         <Combobox.Options>
-          {loading ? <Combobox.Empty>Loading...</Combobox.Empty> : options}
+          {loading ? <Combobox.Empty>Loading...</Combobox.Empty> : options.length > 0 ? options : <Combobox.Empty>Nothing found</Combobox.Empty>}
         </Combobox.Options>
       </Combobox.Dropdown>
     </Combobox>

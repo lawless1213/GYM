@@ -12,12 +12,8 @@ export class ExerciseFilterStore {
   }
 
   loadFilter = async (filterName) => {
-		console.log(filterName);
-		
     try {
       const filtersDocRef = doc(db, "exercisesParams", "filters");
-			console.log(filtersDocRef);
-			
       const docSnapshot = await getDoc(filtersDocRef);
 
       if (docSnapshot.exists()) {
