@@ -4,8 +4,8 @@ import Workout from './Workout';
 import Exercises from './Exercises';
 import Settings from './Settings';
 import Profile from './Profile';
+import CreateExerciseButton from '../components/buttons/CreateExerciseButton';
 import { Container } from '@mantine/core';
-
 
 const PageLayout = () => {
 	
@@ -18,6 +18,7 @@ const PageLayout = () => {
 				<Route path='/profile' element={<Profile/>}></Route>
 				<Route path='/settings' element={<Settings/>}></Route>
 			</Routes>
+			<CreateExerciseButton/>
 		</Container>
 	)
 }

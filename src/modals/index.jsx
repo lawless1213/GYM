@@ -1,10 +1,13 @@
-import { Button, Text } from '@mantine/core';
-import { ModalsProvider } from '@mantine/modals';
-import Rest from '../sections/Rest';
-import { Auth } from './blocks';
+import { Auth, CreateExercise } from './blocks';
 
-export const Modal = ({ context, id, innerProps }) => (
+export const AuthModal = ({ context, id, innerProps }) => (
   <>
     <Auth/>
+  </>
+);
+
+export const CreateExerciseModal = ({ context, id, innerProps }) => (
+  <>
+    <CreateExercise/>
   </>
 );

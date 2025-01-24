@@ -5,6 +5,7 @@ import { useStores } from '../hooks/useStores.jsx';
 import ExerciseCard from '../components/ExerciseCard/index.jsx';
 import { SelectAsync } from '../components/SelectAsync.jsx';
 
+
 const Exercises = observer(() => {
   const { ExerciseStore, ExerciseFilterStore } = useStores();
 
@@ -35,6 +36,7 @@ const Exercises = observer(() => {
   
   return (
     <>
+      
       <Group position="apart" mb="md">
         <Stack style={{ width: "100%" }}>
           <Title order={1}>Exercise Library</Title>
@@ -51,6 +53,12 @@ const Exercises = observer(() => {
                 onClick={() => ExerciseStore.setIsBookmarks(true)}
               >
                 Favorites
+              </Button>
+              <Button
+                variant={ExerciseStore.isBookmarks ? 'filled' : 'outline'}
+                // onClick={() => ExerciseStore.setIsBookmarks(true)}
+              >
+                My
               </Button>
             </Group>
             { !ExerciseStore.isBookmarks &&

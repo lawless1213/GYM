@@ -76,7 +76,7 @@ export function Navbar() {
 						variant='default'
 						onClick={() =>
 							modals.openContextModal({
-								modal: 'demonstration',
+								modal: 'auth',
 								size: 'lg',
 							})
 						}
