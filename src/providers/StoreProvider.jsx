@@ -8,10 +8,8 @@ export const StoreProvider = ({ children }) => {
   const [store, setStore] = useState(null);
 
   useEffect(() => {
-    if (currentUser) {
-      const storeInstance = rootStore(currentUser);
-      setStore(storeInstance);
-    }
+    const storeInstance = rootStore(currentUser);
+    setStore(storeInstance);
   }, [currentUser]);
 
   if (!store) {

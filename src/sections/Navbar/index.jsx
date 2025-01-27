@@ -8,6 +8,7 @@ import { navLinks } from '../../data/navManu';
 import { modals } from '@mantine/modals';
 import s from './index.module.css';
 import { useAuth } from '../../stores/context/AuthContext';
+import ProtectedRoute from '../../systemComponents/ProtectedRoute';
 
 function NavbarLink({ label, icon: Icon, url, onClick, variant }) {
   if (url) {
@@ -33,20 +34,29 @@ export function Navbar() {
 	const { currentUser, logOut } = useAuth();
   const location = useLocation();
 
-  const links = navLinks.map((navItem) => {
+  const links = navLinks
+	.filter((navItem) => {
+    return !navItem.loginRequired || currentUser;
+  })
+	.map((navItem) => {
 		const isActive = location.pathname === navItem.link;
 
-		return (
+    const linkElement = (
 			<NavbarLink
 				{...navItem}
 				label={navItem.label}
 				key={navItem.label}
 				url={navItem.link}
 				variant={isActive ? "filled" : "default"}
-				onClick={() => {}}
 			/>
 		);
-	});
+
+		return navItem.loginRequired ? (
+			<ProtectedRoute key={navItem.label}>{linkElement}</ProtectedRoute>
+		) : (
+			linkElement
+		);
+  });
 
 	const handleLogout = async () => {
     try {

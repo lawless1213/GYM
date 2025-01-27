@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { useStores } from '../hooks/useStores.jsx';
 import ExerciseCard from '../components/ExerciseCard/index.jsx';
 import { SelectAsync } from '../components/SelectAsync.jsx';
+import ProtectedRoute from '../systemComponents/ProtectedRoute.jsx';
 
 
 const Exercises = observer(() => {
@@ -48,18 +49,23 @@ const Exercises = observer(() => {
               >
                 All
               </Button>
-              <Button
-                variant={ExerciseStore.isBookmarks ? 'filled' : 'outline'}
-                onClick={() => ExerciseStore.setIsBookmarks(true)}
-              >
-                Favorites
-              </Button>
-              <Button
-                variant={ExerciseStore.isBookmarks ? 'filled' : 'outline'}
-                // onClick={() => ExerciseStore.setIsBookmarks(true)}
-              >
-                My
-              </Button>
+              <ProtectedRoute key={navItem.label}>
+                <Button
+                  variant={ExerciseStore.isBookmarks ? 'filled' : 'outline'}
+                  onClick={() => ExerciseStore.setIsBookmarks(true)}
+                >
+                  Favorites
+                </Button>
+              </ProtectedRoute>
+              
+              <ProtectedRoute key={navItem.label}>
+                <Button
+                  variant={ExerciseStore.isBookmarks ? 'filled' : 'outline'}
+                  onClick={() => ExerciseStore.setIsBookmarks(true)}
+                >
+                  My
+                </Button>
+              </ProtectedRoute>
             </Group>
             { !ExerciseStore.isBookmarks &&
               <Group gap="xs">

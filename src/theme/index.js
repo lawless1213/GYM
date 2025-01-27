@@ -1,4 +1,4 @@
-import { Button, createTheme } from '@mantine/core';
+import { createTheme } from '@mantine/core';
 
 const myColor = [
   '#fdfce4', //1
