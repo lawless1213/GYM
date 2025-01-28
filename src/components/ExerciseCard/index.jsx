@@ -11,10 +11,13 @@ import {
   IconDotsVertical ,
 } from '@tabler/icons-react';
 import { useStores } from '../../hooks/useStores';
+import { useAuth } from '../../stores/context/AuthContext';
+
 
 import s from './index.module.scss';
 
-const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video, authorName}) => {
+const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video, authorName, author}) => {
+	const { currentUser } = useAuth();
 	const { SettingStore, ExerciseStore } = useStores();
 	const [isVideoPreview, setIsVideoPreview] = useState(SettingStore.isVideoPreview);
 
@@ -44,32 +47,40 @@ const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video, a
 						<ActionIcon onClick={previewToggleHandler} variant="default" aria-label="Settings">
 							{isVideoPreview ? <IconVideoOff /> : <IconVideo />}
 						</ActionIcon>
-						<ActionIcon onClick={bookmarkToggler} variant="default" aria-label="Bookmark">
-							{isFavorite ? <IconBookmarkFilled /> : <IconBookmark />}
-						</ActionIcon>
-						<Menu position="bottom-end" shadow="md" width={200}>
-							<Menu.Target>
-								<ActionIcon variant="default" aria-label="Settings">
-									<IconDotsVertical/>
-								</ActionIcon>
-							</Menu.Target>
 
-							<Menu.Dropdown>
-								<Menu.Label>{name}</Menu.Label>
-								<Menu.Item leftSection={<IconEdit  size={14} />}>
-									Edit
-								</Menu.Item>
+						{
+							!!currentUser &&  
+							<ActionIcon onClick={bookmarkToggler} variant="default" aria-label="Bookmark">
+								{isFavorite ? <IconBookmarkFilled /> : <IconBookmark />}
+							</ActionIcon>
+						}
+						
+						{
+							!!currentUser && author === currentUser.uid &&
+							<Menu position="bottom-end" shadow="md" width={200}>
+								<Menu.Target>
+									<ActionIcon variant="default" aria-label="Settings">
+										<IconDotsVertical/>
+									</ActionIcon>
+								</Menu.Target>
 
-								<Menu.Divider />
+								<Menu.Dropdown>
+									<Menu.Item leftSection={<IconEdit  size={14} />}>
+										Edit
+									</Menu.Item>
 
-								<Menu.Item
-									color="red"
-									leftSection={<IconTrash size={14} />}
-								>
-									Delete
-								</Menu.Item>
-							</Menu.Dropdown>
-						</Menu>
+									<Menu.Divider />
+
+									<Menu.Item
+										color="red"
+										leftSection={<IconTrash size={14} />}
+									>
+										Delete
+									</Menu.Item>
+								</Menu.Dropdown>
+							</Menu>
+						}
+						
 					</Group>
 					
 				</Group>
