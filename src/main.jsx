@@ -18,7 +18,7 @@ createRoot(document.getElementById('root')).render(
     <AuthProvider>
       <StoreProvider>
         <BrowserRouter basename='/'>
-          <MantineProvider theme={theme}>
+          <MantineProvider theme={theme} defaultColorScheme="dark">
               <ModalsProvider
                 modals={{ auth: AuthModal, create: CreateExerciseModal }}
               >

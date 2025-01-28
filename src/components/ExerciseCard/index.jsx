@@ -44,10 +44,6 @@ const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video, a
 						<Badge variant="light">{bodyPart}</Badge>
 					</Stack>
 					<Group gap="xs">
-						<ActionIcon onClick={previewToggleHandler} variant="default" aria-label="Settings">
-							{isVideoPreview ? <IconVideoOff /> : <IconVideo />}
-						</ActionIcon>
-
 						{
 							!!currentUser &&  
 							<ActionIcon onClick={bookmarkToggler} variant="default" aria-label="Bookmark">
@@ -88,6 +84,7 @@ const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video, a
 					className={s.Preview} 
 					mt="md"
 					mb="md"
+					style={{position: "relative"}}
 				>
 					{
 						isVideoPreview ? 
@@ -101,6 +98,16 @@ const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video, a
 								src={preview}
 							/>
 					}
+					<ActionIcon 
+						onClick={previewToggleHandler} 
+						variant="default" 
+						aria-label="Settings"
+						mb="xs" 
+						mr="xs" 
+						style={{position: "absolute", bottom: "0", right: "0", zIndex: "1"}}
+					>
+						{isVideoPreview ? <IconVideoOff /> : <IconVideo />}
+					</ActionIcon>
 				</Card.Section>
 				<Title ta="center" order={3}>
 					{name}
