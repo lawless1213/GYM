@@ -14,7 +14,7 @@ import { useStores } from '../../hooks/useStores';
 
 import s from './index.module.scss';
 
-const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video}) => {
+const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video, authorName}) => {
 	const { SettingStore, ExerciseStore } = useStores();
 	const [isVideoPreview, setIsVideoPreview] = useState(SettingStore.isVideoPreview);
 
@@ -93,6 +93,9 @@ const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video}) 
 				</Card.Section>
 				<Title ta="center" order={3}>
 					{name}
+				</Title>
+				<Title ta="center" order={6}>
+					{authorName}
 				</Title>
 			</Card>
 		</>

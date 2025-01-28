@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { useStores } from '../hooks/useStores.jsx';
 import ExerciseCard from '../components/ExerciseCard/index.jsx';
 import { SelectAsync } from '../components/SelectAsync.jsx';
-import ProtectedRoute from '../systemComponents/ProtectedRoute.jsx';
+import { groupNames } from '../stores/ExerciseStore.js';
 
 
 const Exercises = observer(() => {
@@ -21,9 +21,9 @@ const Exercises = observer(() => {
 
   useEffect(() => {
     ExerciseStore.loadItems();
-  }, [ExerciseStore]);
+  }, [ExerciseStore.groupExercise]);
   
-  const cards = (ExerciseStore.isBookmarks ? ExerciseStore.bookmarks : ExerciseStore.allExercises).map((item) => (
+  const cards = (ExerciseStore.allExercises[ExerciseStore.groupExercise]).map((item) => (
     <ExerciseCard
       key={item.id}
       id={item.id}
@@ -32,6 +32,7 @@ const Exercises = observer(() => {
       video={item.video}
       equipment={item.equipment}
       bodyPart={item.bodyPart}
+      authorName={item.authorName}
     />
   ));
   
@@ -44,30 +45,26 @@ const Exercises = observer(() => {
           <Group justify='space-between' gap="xs">
             <Group gap="xs">
               <Button
-                variant={!ExerciseStore.isBookmarks ? 'filled' : 'outline'}
-                onClick={() => ExerciseStore.setIsBookmarks(false)}
+                variant={ExerciseStore.groupExercise === groupNames.ALL ? 'filled' : 'outline'}
+                onClick={() => ExerciseStore.setGroupExercise(groupNames.ALL)}
               >
                 All
               </Button>
-              <ProtectedRoute key={navItem.label}>
-                <Button
-                  variant={ExerciseStore.isBookmarks ? 'filled' : 'outline'}
-                  onClick={() => ExerciseStore.setIsBookmarks(true)}
-                >
-                  Favorites
-                </Button>
-              </ProtectedRoute>
-              
-              <ProtectedRoute key={navItem.label}>
-                <Button
-                  variant={ExerciseStore.isBookmarks ? 'filled' : 'outline'}
-                  onClick={() => ExerciseStore.setIsBookmarks(true)}
-                >
-                  My
-                </Button>
-              </ProtectedRoute>
+              <Button
+                variant={ExerciseStore.groupExercise === groupNames.BOOKMARKS ? 'filled' : 'outline'}
+                onClick={() => ExerciseStore.setGroupExercise(groupNames.BOOKMARKS)}
+              >
+                Favorites
+              </Button>
+              <Button
+                variant={ExerciseStore.groupExercise === groupNames.PERSONAL ? 'filled' : 'outline'}
+                onClick={() => ExerciseStore.setGroupExercise(groupNames.PERSONAL)}
+              >
+                Self created
+              </Button>
+
             </Group>
-            { !ExerciseStore.isBookmarks &&
+            {ExerciseStore.groupExercise === groupNames.ALL && 
               <Group gap="xs">
                 <SelectAsync
                   title="Body part"
