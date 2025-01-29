@@ -11,7 +11,7 @@ function CreateExerciseButton() {
 			modals.openContextModal({
 				modal: 'create',
 				title: 'Create your exercise',
-				size: 'lg',
+				size: 'xl',
 			})
 		} else {
 			modals.openContextModal({
