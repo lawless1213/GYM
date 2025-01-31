@@ -5,11 +5,13 @@ import MyDropzone from '../../components/Dropzone';
 import { useStores } from '../../hooks/useStores';
 import { SelectAsync } from '../../components/SelectAsync';
 
-function CreateExercise({ closeModal }) {
+function CreateExercise({ closeModal, type}) {
   const { ExerciseFilterStore, ExerciseStore } = useStores();
   const [image, setImage] = useState(null);
   const [video, setVideo] = useState(null);
 
+  const isEdit = !!type;
+  
 	const form = useForm({
 		initialValues: {
 			name: '',

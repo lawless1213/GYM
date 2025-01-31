@@ -25,6 +25,10 @@ const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video, a
 		ExerciseStore.toggleBookmark(id);
 	} 
 
+	const deleteHandler = () => {
+		ExerciseStore.deleteExercise({id, author, video, preview});
+	}
+
 	const isFavorite = ExerciseStore.isFavorite(id);
 
 	const previewToggleHandler = () => {
@@ -70,6 +74,7 @@ const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video, a
 									<Menu.Item
 										color="red"
 										leftSection={<IconTrash size={14} />}
+										onClick={deleteHandler}
 									>
 										Delete
 									</Menu.Item>

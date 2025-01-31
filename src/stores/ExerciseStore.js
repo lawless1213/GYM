@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { collection, doc, query, where, DocumentReference, getDoc, getDocs, setDoc, updateDoc, arrayUnion, arrayRemove, addDoc } from "firebase/firestore";
-import { db } from "../firebase/firebase";
-import { uploadFile } from '../firebase/functions';
+import { collection, doc, query, where, DocumentReference, getDoc, getDocs, setDoc, updateDoc, arrayUnion, arrayRemove, addDoc, deleteDoc } from "firebase/firestore";
+import { auth, db } from "../firebase/firebase";
+import { uploadFile, deleteFile } from '../firebase/functions';
 
 export const groupNames = {
 	ALL: 'all',
@@ -156,6 +156,34 @@ export class ExerciseStore {
 			return false;
 		}
 	}
+
+	editExercise = async({ id, author, preview = null, video = null }, imageFile = null, videoFile = null) => {
+    if (!this.currentUser || this.currentUser.uid !== author) return;
+
+		try {
+			const exercisePath = `exercises/${id}`;
+			const exerciseRef = doc(db, exercisePath);
+			
+
+		} catch (error) {
+			console.error("Помилка при редагуванні вправи:", error);
+		}
+	}
+
+	deleteExercise = async ({ id, author, preview = null, video = null }) => {
+    if (!this.currentUser || this.currentUser.uid !== author) return;
+
+    try {
+        await deleteDoc(doc(db, "exercises", id));
+        await Promise.all([deleteFile(preview), deleteFile(video)]);
+        this.loadItems();
+
+        return true;
+    } catch (error) {
+        console.error("Помилка при видаленні вправи:", error);
+        return false;
+    }
+};
 
   toggleBookmark = async (id) => {
     if (!this.currentUser) return;
