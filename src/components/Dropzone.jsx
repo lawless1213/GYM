@@ -5,8 +5,8 @@ import { IconX } from '@tabler/icons-react';
 
 const VIDEO_MIME_TYPE = ["video/mp4", "video/webm", "video/ogg"];
 
-function MyDropzone({isVideo = false}) {
-  const [file, setFile] = useState(null);
+function MyDropzone({isVideo = false, setFile }) {
+  const [file, setFileState] = useState(null);
   const [preview, setPreview] = useState(null);
 
   useEffect(() => {
@@ -19,8 +19,9 @@ function MyDropzone({isVideo = false}) {
   }, [file]);
 
   const removeFile = () => {
-    setFile(null);
+    setFileState(null);
     setPreview(null);
+    setFile(null);
   };
 
   return (
@@ -28,9 +29,13 @@ function MyDropzone({isVideo = false}) {
 			{!preview && 
 				<Dropzone
 					accept={ isVideo ? VIDEO_MIME_TYPE : IMAGE_MIME_TYPE }
-					onDrop={(files) => setFile(files[0])}
+					onDrop={(files) => {
+            const selectedFile = files[0];
+            setFileState(selectedFile);
+            setFile(selectedFile);
+          }}
 					maxFiles={1}
-					style={{ cursor: "pointer", padding: 20, border: "1px dashed #ddd", height: "160px" }}
+					style={{ cursor: "pointer", padding: 20, border: "1px dashed #ddd", height: "160px", display: "flex", alignItems: "center", justifyContent: "center" }}
 				>
 					<Text ta="center">Drop a single { isVideo ? 'video' : 'image' } here</Text>
 				</Dropzone>

@@ -98,6 +98,7 @@ const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video, a
 								src={preview}
 							/>
 					}
+					{!!video && 
 					<ActionIcon 
 						onClick={previewToggleHandler} 
 						variant="default" 
@@ -108,6 +109,7 @@ const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video, a
 					>
 						{isVideoPreview ? <IconVideoOff /> : <IconVideo />}
 					</ActionIcon>
+					}
 				</Card.Section>
 				<Title ta="center" order={3}>
 					{name}

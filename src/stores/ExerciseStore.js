@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { collection, doc, query, where, DocumentReference, getDoc, getDocs, setDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { collection, doc, query, where, DocumentReference, getDoc, getDocs, setDoc, updateDoc, arrayUnion, arrayRemove, addDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
+import { uploadFile } from '../firebase/functions';
 
 export const groupNames = {
 	ALL: 'all',
@@ -76,7 +77,6 @@ export class ExerciseStore {
 		}
 	};
 	
-
 	loadPersonal = async () => {
 		if (!this.currentUser) return;
 
@@ -129,6 +129,33 @@ export class ExerciseStore {
 			console.error("Error loading bookmarks: ", e);
 		}
 	};
+
+	createExercise = async (exercise, imageFile = null, videoFile = null) => {
+		if (!this.currentUser) return;
+
+		const newExercise = {
+			author: this.currentUser.uid,
+			authorName: this.currentUser.displayName,
+			...exercise
+		};
+		
+		try {
+			 const [imageUrl, videoUrl] = await Promise.all([
+				imageFile ? uploadFile(imageFile, "preview") : Promise.resolve(null),
+				videoFile ? uploadFile(videoFile, "video") : Promise.resolve(null),
+			]);
+	
+			if (imageUrl) newExercise.preview = imageUrl;
+			if (videoUrl) newExercise.video = videoUrl;
+
+      await addDoc(collection(db, "exercises"), newExercise);
+			this.loadItems();
+			return true;
+		} catch (error) {
+			console.error("Error creating exercise:", error);
+			return false;
+		}
+	}
 
   toggleBookmark = async (id) => {
     if (!this.currentUser) return;

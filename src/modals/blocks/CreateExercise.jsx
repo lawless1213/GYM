@@ -1,65 +1,78 @@
 import { useForm } from '@mantine/form';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Button, Group, Paper, SimpleGrid, Text, Textarea, TextInput,  useMantineTheme, Stack } from '@mantine/core';
 import MyDropzone from '../../components/Dropzone';
 import { useStores } from '../../hooks/useStores';
 import { SelectAsync } from '../../components/SelectAsync';
 
-function CreateExercise() {
-  const { ExerciseFilterStore } = useStores();
-
-	const theme = useMantineTheme();
-  const openRef = useRef(null);
+function CreateExercise({ closeModal }) {
+  const { ExerciseFilterStore, ExerciseStore } = useStores();
+  const [image, setImage] = useState(null);
+  const [video, setVideo] = useState(null);
 
 	const form = useForm({
 		initialValues: {
-			email: '',
 			name: '',
-			password: '',
+			description: '',
+      bodyPart: null,
+      equipment: null,
 		},
 
 		validate: {
-			email: (val) => (emailRegex.test(val) ? null : 'Invalid email'),
-			password: (val) => (val.length < 6 ? 'Password should include at least 6 characters' : null),
+			name: (val) => (val.trim().length < 3 ? 'Name must be at least 3 characters long' : null),
+			description: (val) => (val.trim().length < 10 ? 'Description should be at least 10 characters' : null),
+      bodyPart: (val) => (!val ? 'Body part is required' : null),
+      equipment: (val) => (!val ? 'Equipment is required' : null),
 		},
 	});
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!form.validate().hasErrors) {
+      const success = await ExerciseStore.createExercise(form.values, image, video);
+      if (success) closeModal();
+    }
+  };
 
   const filterBodyLoad = async (filterName) => {
     await ExerciseFilterStore.loadFilter(filterName);
     return ExerciseFilterStore[filterName];
   };
 
-
 	return (
       <>
-      <form onSubmit={(event) => event.preventDefault()}>
+        <form onSubmit={handleSubmit}>
           <Stack gap="md">
-            <TextInput placeholder="Exercise" />
+            <TextInput
+              placeholder="Exercise"
+              {...form.getInputProps('name')}
+             />
 
             <SimpleGrid cols={{ base: 1, sm: 2 }}>
               <SelectAsync
                 title="Body part"
                 onFirstOpen={() => filterBodyLoad('bodyPart')}
-                // onSelect={(value) => filterSelectHandler('bodyPart', value)}
+                onSelect={(value) => form.setFieldValue('bodyPart', value)}
               />
               <SelectAsync
                 title="Equipment"
                 onFirstOpen={() => filterBodyLoad('equipment')}
-                // onSelect={(value) => filterSelectHandler('equipment', value)}
+                onSelect={(value) => form.setFieldValue('equipment', value)}
               />
             </SimpleGrid>
 
             <Textarea
               placeholder="Description"
-              minRows={3}
+              minRows={5}
+              {...form.getInputProps('description')}
             />
 
             <SimpleGrid cols={{ base: 1, sm: 2 }}>
               <Paper radius="md" p="md" withBorder style={{ flex: 1 }}>
-                <MyDropzone />
+                <MyDropzone setFile={setImage} />
               </Paper>
               <Paper radius="md" p="md" withBorder style={{ flex: 1 }}>
-                <MyDropzone isVideo={true}/>
+                <MyDropzone isVideo={true} setFile={setVideo}/>
               </Paper>
             </SimpleGrid>
 
