@@ -33,7 +33,7 @@ function CreateExerciseButton() {
 		>
 			<IconPlus />
 		</ActionIcon>
-	);
+	);ц
 }
 
 export default CreateExerciseButton;

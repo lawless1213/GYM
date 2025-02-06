@@ -22,7 +22,7 @@ const Exercises = observer(() => {
   };
 
   useEffect(() => {
-    ExerciseStore.loadItems();
+    ExerciseStore.loadExercises();
   }, [ExerciseStore.groupExercise]);
   
   const cards = (ExerciseStore.allExercises[ExerciseStore.groupExercise]).map((item) => (
