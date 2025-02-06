@@ -5,12 +5,12 @@ import MyDropzone from '../../components/Dropzone';
 import { useStores } from '../../hooks/useStores';
 import { SelectAsync } from '../../components/SelectAsync';
 
-function CreateExercise({ closeModal, type}) {
+function CreateExercise({ closeModal, edit}) {
   const { ExerciseFilterStore, ExerciseStore } = useStores();
   const [image, setImage] = useState(null);
   const [video, setVideo] = useState(null);
 
-  const isEdit = !!type;
+  const isEdit = type === "edit";
   
 	const form = useForm({
 		initialValues: {
@@ -31,7 +31,7 @@ function CreateExercise({ closeModal, type}) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!form.validate().hasErrors) {
-      const success = await ExerciseStore.createExercise(form.values, image, video);
+      const success = isEdit ? await ExerciseStore.updateExercise(form.values, image, video) : await ExerciseStore.createExercise(form.values, image, video);
       if (success) closeModal();
     }
   };

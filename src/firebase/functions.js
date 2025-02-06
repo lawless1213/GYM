@@ -22,6 +22,34 @@ export const FirebaseService = {
     }
   },
 
+  async updateExercise(exerciseId, updatedData, imageFile = null, videoFile = null) {
+    const exerciseRef = doc(db, "exercises", exerciseId);
+    const exerciseDoc = await getDoc(exerciseRef);
+    
+    if (!exerciseDoc.exists()) throw new Error("Exercise not found");
+  
+    const existingData = exerciseDoc.data();
+    const updatedExercise = { ...existingData, ...updatedData };
+  
+    try {
+      if (imageFile) {
+        if (existingData.preview) await this.deleteFile(existingData.preview);
+        updatedExercise.preview = await this.uploadFile(imageFile, "preview");
+      }
+  
+      if (videoFile) {
+        if (existingData.video) await this.deleteFile(existingData.video);
+        updatedExercise.video = await this.uploadFile(videoFile, "video");
+      }
+  
+      await updateDoc(exerciseRef, updatedExercise);
+      return updatedExercise;
+    } catch (error) {
+      console.error("Error updating exercise:", error);
+      throw error;
+    }
+  },
+
   async getExercisesByGroup(group, userId, filters = {}) {
     if (!userId && group !== 'all') return [];
 
@@ -53,7 +81,6 @@ export const FirebaseService = {
     return docs.filter(doc => doc.exists()).map(doc => ({ id: doc.id, ...doc.data() }));
   }
   ,
-  
 
   async getAllExercises(filters) {
     const conditions = Object.entries(filters)

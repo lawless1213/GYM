@@ -35,6 +35,14 @@ const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video, a
     setIsVideoPreview(!isVideoPreview);
   };
 
+	const editHandler = () => {
+		modals.openContextModal({
+			modal: 'create',
+			title: <Title order={2}>Update your exercise</Title>,
+			size: 'xl',
+		})		
+	}
+
 	return (
 		<>
 			<Card
@@ -65,7 +73,10 @@ const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video, a
 								</Menu.Target>
 
 								<Menu.Dropdown>
-									<Menu.Item leftSection={<IconEdit  size={14} />}>
+									<Menu.Item 
+										leftSection={<IconEdit size={14} />}
+										onClick={editHandler}
+									>
 										Edit
 									</Menu.Item>
 

@@ -42,6 +42,25 @@ export class ExerciseStore {
 		}
 	}
 
+	async updateExercise(id, updatedData, imageFile = null, videoFile = null) {
+		if (!this.currentUser) return false;
+	
+		try {
+			const updatedExercise = await FirebaseService.updateExercise(id, updatedData, imageFile, videoFile);
+	
+			runInAction(() => {
+				this.allExercises[this.groupExercise] = this.allExercises[this.groupExercise].map(ex => 
+					ex.id === id ? updatedExercise : ex
+				);
+			});
+	
+			return true;
+		} catch (error) {
+			console.error("Error updating exercise:", error);
+			return false;
+		}
+	}
+
   async createExercise(exercise, imageFile = null, videoFile = null) {
     if (!this.currentUser) return;
 
