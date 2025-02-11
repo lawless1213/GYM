@@ -5,7 +5,7 @@ import MyDropzone from '../../components/Dropzone';
 import { useStores } from '../../hooks/useStores';
 import { SelectAsync } from '../../components/SelectAsync';
 
-function CreateExercise({ closeModal, edit}) {
+function CreateExercise({ closeModal, type = "create"}) {
   const { ExerciseFilterStore, ExerciseStore } = useStores();
   const [image, setImage] = useState(null);
   const [video, setVideo] = useState(null);
