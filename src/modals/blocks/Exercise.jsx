@@ -5,19 +5,19 @@ import MyDropzone from '../../components/Dropzone';
 import { useStores } from '../../hooks/useStores';
 import { SelectAsync } from '../../components/SelectAsync';
 
-function CreateExercise({ closeModal, type = "create"}) {
+function Exercise({ closeModal, exercise = null}) {
   const { ExerciseFilterStore, ExerciseStore } = useStores();
+  const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
   const [video, setVideo] = useState(null);
 
-  const isEdit = type === "edit";
-  
 	const form = useForm({
 		initialValues: {
-			name: '',
-			description: '',
-      bodyPart: null,
-      equipment: null,
+			name: exercise ? exercise.name : '',
+			description: exercise ? exercise.description : '',
+      bodyPart: exercise ? exercise.bodyPart : null,
+      equipment: exercise ? exercise.equipment : null,
+      id: exercise ? exercise.id : ''
 		},
 
 		validate: {
@@ -31,8 +31,15 @@ function CreateExercise({ closeModal, type = "create"}) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!form.validate().hasErrors) {
-      const success = isEdit ? await ExerciseStore.updateExercise(form.values, image, video) : await ExerciseStore.createExercise(form.values, image, video);
-      if (success) closeModal();
+      setLoading(true);
+      const success = exercise 
+        ? await ExerciseStore.updateExercise(exercise.id, form.values, image, video)
+        : await ExerciseStore.createExercise(form.values, image, video);
+  
+      if (success) {
+        closeModal();
+      }
+      setLoading(false);
     }
   };
 
@@ -52,11 +59,13 @@ function CreateExercise({ closeModal, type = "create"}) {
 
             <SimpleGrid cols={{ base: 1, sm: 2 }}>
               <SelectAsync
+                selectedValue = { exercise ? exercise.bodyPart : null }
                 title="Body part"
                 onFirstOpen={() => filterBodyLoad('bodyPart')}
                 onSelect={(value) => form.setFieldValue('bodyPart', value)}
               />
               <SelectAsync
+                selectedValue = { exercise ? exercise.equipment : null }
                 title="Equipment"
                 onFirstOpen={() => filterBodyLoad('equipment')}
                 onSelect={(value) => form.setFieldValue('equipment', value)}
@@ -71,16 +80,20 @@ function CreateExercise({ closeModal, type = "create"}) {
 
             <SimpleGrid cols={{ base: 1, sm: 2 }}>
               <Paper radius="md" p="md" withBorder style={{ flex: 1 }}>
-                <MyDropzone setFile={setImage} />
+                <MyDropzone setFile={setImage} urlSelectedFile={exercise ? exercise.preview : null}/>
               </Paper>
               <Paper radius="md" p="md" withBorder style={{ flex: 1 }}>
-                <MyDropzone isVideo={true} setFile={setVideo}/>
+                <MyDropzone isVideo={true} setFile={setVideo} urlSelectedFile={exercise ? exercise.video : null}/>
               </Paper>
             </SimpleGrid>
 
             <Group justify="flex-end">
               <Button fullWidth size='m' type="submit" radius="xl">
-                Create exercise
+                {
+                  loading ?
+                  "Loading.." :
+                  exercise ? "Update exercise" : "Create exercise"
+                } 
               </Button>
             </Group>
           </Stack>
@@ -89,4 +102,4 @@ function CreateExercise({ closeModal, type = "create"}) {
 	);
 }
 
-export default CreateExercise;
+export default Exercise;

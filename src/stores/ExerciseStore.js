@@ -49,8 +49,8 @@ export class ExerciseStore {
 			const updatedExercise = await FirebaseService.updateExercise(id, updatedData, imageFile, videoFile);
 	
 			runInAction(() => {
-				this.allExercises[this.groupExercise] = this.allExercises[this.groupExercise].map(ex => 
-					ex.id === id ? updatedExercise : ex
+				this.allExercises[this.groupExercise] = this.allExercises[this.groupExercise].map(exercise => 
+					exercise.id === id ? updatedExercise : exercise
 				);
 			});
 	

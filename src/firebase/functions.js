@@ -1,14 +1,21 @@
 import { ref, uploadBytes, getDownloadURL, deleteObject  } from "firebase/storage";
 import { db, storage } from "./firebase";
 import { v4 as uuidv4 } from 'uuid';
-import { collection, doc, query, where, getDoc, getDocs } from "firebase/firestore";
+import { collection, doc, query, where, getDoc, getDocs, updateDoc } from "firebase/firestore";
 
 export const FirebaseService = {
   async uploadFile(file, folder) {
     if (!file) return null;
+    
     const uniqueName = `${uuidv4()}_${file.name}`;
     const storageRef = ref(storage, `${folder}/${uniqueName}`);
-    await uploadBytes(storageRef, file);
+    
+    const metadata = {
+      cacheControl: "public, max-age=31536000, immutable", 
+      contentType: file.type,
+    };
+  
+    await uploadBytes(storageRef, file, metadata);
     return await getDownloadURL(storageRef);
   },
 
@@ -29,19 +36,18 @@ export const FirebaseService = {
     if (!exerciseDoc.exists()) throw new Error("Exercise not found");
   
     const existingData = exerciseDoc.data();
+
     const updatedExercise = { ...existingData, ...updatedData };
   
     try {
-      if (imageFile) {
-        if (existingData.preview) await this.deleteFile(existingData.preview);
-        updatedExercise.preview = await this.uploadFile(imageFile, "preview");
-      }
-  
-      if (videoFile) {
-        if (existingData.video) await this.deleteFile(existingData.video);
-        updatedExercise.video = await this.uploadFile(videoFile, "video");
-      }
-  
+      if (existingData.preview) await this.deleteFile(existingData.preview);
+      updatedExercise.preview = null;
+      if (imageFile) updatedExercise.preview = await this.uploadFile(imageFile, "preview");
+      
+      if (existingData.video) await this.deleteFile(existingData.video);
+      updatedExercise.video = null;
+      if (videoFile) updatedExercise.video = await this.uploadFile(videoFile, "video");
+      
       await updateDoc(exerciseRef, updatedExercise);
       return updatedExercise;
     } catch (error) {

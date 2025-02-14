@@ -12,11 +12,12 @@ import {
 } from '@tabler/icons-react';
 import { useStores } from '../../hooks/useStores';
 import { useAuth } from '../../stores/context/AuthContext';
+import { modals } from '@mantine/modals';
 
 
 import s from './index.module.scss';
 
-const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video, authorName, author}) => {
+const ExerciseCard = observer(({id, name, description, equipment, bodyPart, preview, video, authorName, author}) => {
 	const { currentUser } = useAuth();
 	const { SettingStore, ExerciseStore } = useStores();
 	const [isVideoPreview, setIsVideoPreview] = useState(SettingStore.isVideoPreview);
@@ -40,6 +41,9 @@ const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video, a
 			modal: 'create',
 			title: <Title order={2}>Update your exercise</Title>,
 			size: 'xl',
+			innerProps: {
+				exercise: {id, name, description, equipment, bodyPart, preview, video}
+			}
 		})		
 	}
 
@@ -104,15 +108,15 @@ const ExerciseCard = observer(({id, name, equipment, bodyPart, preview, video, a
 				>
 					{
 						isVideoPreview ? 
-							<video width="100%" src={video} autoPlay muted loop>
+							(!!video && <video width="100%" src={video} autoPlay muted loop>
 								Your browser does not support the video tag.
-							</video>
+							</video>)
 						:
-							<Image
+							(!!preview && <Image
 								h={160}
 								fit="contain"
 								src={preview}
-							/>
+							/>)
 					}
 					{!!video && 
 					<ActionIcon 

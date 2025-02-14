@@ -5,9 +5,9 @@ import { IconX } from '@tabler/icons-react';
 
 const VIDEO_MIME_TYPE = ["video/mp4", "video/webm", "video/ogg"];
 
-function MyDropzone({isVideo = false, setFile }) {
+function MyDropzone({isVideo = false, setFile, urlSelectedFile }) {
   const [file, setFileState] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const [preview, setPreview] = useState(urlSelectedFile);
 
   useEffect(() => {
     if (file) {
