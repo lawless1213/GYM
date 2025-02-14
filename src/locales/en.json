@@ -1,0 +1,67 @@
+{
+	"home": {
+		"pageTitle": "Home"
+	},
+  "exercises": {
+		"pageTitle": "Exercise Library",
+		"all": "All", 
+		"favorites": "Favorites", 
+		"selfCreated": "Self created", 
+		"bodyParts": "Body parts", 
+		"equipment": "Equipment"
+	},
+	"filters": {
+		"bodyPart": {
+			"thighs": "Thighs",
+			"chest": "Chest",
+			"hips": "Hips",
+			"back": "Back",
+			"upperArms": "Upper arms",
+			"shoulders": "Shoulders",
+			"forearms": "Forearms",
+			"calves": "Calves",
+			"neck": "Neck",
+			"cardio": "Cardio",
+			"fullBody": "Full body",
+			"waist": "Waist",
+			"plyometrics": "Plyometrics",
+			"weightlifting": "Weightlifting",
+			"yoga": "Yoga",
+			"stretching": "Stretching",
+			"biceps": "Biceps",
+			"triceps": "Triceps",
+			"quadriceps": "Quadriceps",
+			"hamstrings": "Hamstrings"
+		},
+		"equipment": {
+			"barbell": "Barbell",
+			"bodyWeight": "Body weight",
+			"cable": "Cable",
+			"dumbbell": "Dumbbell",
+			"ezBarbell": "EZ barbell",
+			"leverageMachine": "Leverage machine",
+			"sledMachine": "Sled machine",
+			"smithMachine": "Smith machine",
+			"weighted": "Weighted",
+			"assisted": "Assisted",
+			"band": "Band",
+			"battlingRope": "Battling rope",
+			"bosuBall": "BOSU ball",
+			"hammer": "Hammer",
+			"kettlebell": "Kettlebell",
+			"medicineBall": "Medicine ball",
+			"olympicBarbell": "Olympic barbell",
+			"powerSled": "Power sled",
+			"resistanceBand": "Resistance band",
+			"roll": "Roll",
+			"rollball": "Rollball",
+			"rope": "Rope",
+			"stabilityBall": "Stability ball",
+			"stick": "Stick",
+			"suspension": "Suspension",
+			"trapBar": "Trap bar",
+			"vibratePlate": "Vibrate plate",
+			"wheelRoller": "Wheel roller"
+		}
+	}
+}

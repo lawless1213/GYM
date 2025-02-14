@@ -13,11 +13,13 @@ import {
 import { useStores } from '../../hooks/useStores';
 import { useAuth } from '../../stores/context/AuthContext';
 import { modals } from '@mantine/modals';
+import { useTranslation } from 'react-i18next';
 
 
 import s from './index.module.scss';
 
 const ExerciseCard = observer(({id, name, description, equipment, bodyPart, preview, video, authorName, author}) => {
+  const { t } = useTranslation();
 	const { currentUser } = useAuth();
 	const { SettingStore, ExerciseStore } = useStores();
 	const [isVideoPreview, setIsVideoPreview] = useState(SettingStore.isVideoPreview);
@@ -56,8 +58,8 @@ const ExerciseCard = observer(({id, name, description, equipment, bodyPart, prev
 			>
 				<Group gap="xs" justify='space-between'>
 					<Stack gap="xs">
-						<Badge>{equipment}</Badge>
-						<Badge variant="light">{bodyPart}</Badge>
+						<Badge>{t(`filters.equipment.${equipment}`)}</Badge>
+						<Badge variant="light">{t(`filters.bodyPart.${bodyPart}`)}</Badge>
 					</Stack>
 					<Group gap="xs">
 						{
@@ -81,7 +83,7 @@ const ExerciseCard = observer(({id, name, description, equipment, bodyPart, prev
 										leftSection={<IconEdit size={14} />}
 										onClick={editHandler}
 									>
-										Edit
+										{t(`exercise.edit`)}
 									</Menu.Item>
 
 									<Menu.Divider />
@@ -91,7 +93,7 @@ const ExerciseCard = observer(({id, name, description, equipment, bodyPart, prev
 										leftSection={<IconTrash size={14} />}
 										onClick={deleteHandler}
 									>
-										Delete
+										{t(`exercise.delete`)}
 									</Menu.Item>
 								</Menu.Dropdown>
 							</Menu>

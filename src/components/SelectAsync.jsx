@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { CloseButton, Combobox, Input, InputBase, Loader, useCombobox } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 
-export function SelectAsync({ title, selectedValue, onFirstOpen, onSelect }) {
+export function SelectAsync({ title, translateKey = '', selectedValue, onFirstOpen, onSelect }) {
+  const { t } = useTranslation();
+
   const [search, setSearch] = useState('');
   const [value, setValue] = useState(selectedValue || null);
   const [loading, setLoading] = useState(false);
@@ -33,10 +36,13 @@ export function SelectAsync({ title, selectedValue, onFirstOpen, onSelect }) {
   const options =
     data.length !== 0 ? (
       data
-      .filter((item) => item.toLowerCase().includes(search.toLowerCase().trim()))
+      .filter((item) => {
+        const translatedLabel = t(`${translateKey}${item}`).toLowerCase();
+        return translatedLabel.includes(search.toLowerCase().trim());
+      })
       .map((item) => (
         <Combobox.Option value={item} key={item}>
-          {item}
+          {t(`${translateKey}${item}`)}
         </Combobox.Option>
       ))
     ) : (
@@ -80,7 +86,7 @@ export function SelectAsync({ title, selectedValue, onFirstOpen, onSelect }) {
           onClick={() => combobox.toggleDropdown()}
           rightSectionPointerEvents={value === null ? 'none' : 'all'}
         >
-          {value || <Input.Placeholder>{title}</Input.Placeholder>}
+          {value ? t(`${translateKey}${value}`) : <Input.Placeholder>{title}</Input.Placeholder>}
         </InputBase>
       </Combobox.Target>
 

@@ -6,9 +6,11 @@ import ExerciseCard from '../components/ExerciseCard/index.jsx';
 import { SelectAsync } from '../components/SelectAsync.jsx';
 import { groupNames } from '../stores/ExerciseStore.js';
 import { useAuth } from '../stores/context/AuthContext.jsx';
+import { useTranslation } from 'react-i18next';
 
 
 const Exercises = observer(() => {
+  const { t } = useTranslation();
 	const { currentUser } = useAuth();
   const { ExerciseStore, ExerciseFilterStore } = useStores();
 
@@ -23,7 +25,7 @@ const Exercises = observer(() => {
 
   useEffect(() => {
     ExerciseStore.loadExercises();
-  }, [ExerciseStore.groupExercise]);
+  }, [ExerciseStore.allExercises]);
   
   const cards = (ExerciseStore.allExercises[ExerciseStore.groupExercise]).map((item) => (
     <ExerciseCard
@@ -45,7 +47,7 @@ const Exercises = observer(() => {
       
       <Group position="apart" mb="md">
         <Stack style={{ width: "100%" }}>
-          <Title order={1}>Exercise Library</Title>
+          <Title order={1}>{t('exercises.pageTitle')}</Title>
           {
             !!currentUser &&
             <Group justify='space-between' gap="xs">
@@ -54,35 +56,37 @@ const Exercises = observer(() => {
                   variant={ExerciseStore.groupExercise === groupNames.ALL ? 'filled' : 'outline'}
                   onClick={() => ExerciseStore.setGroupExercise(groupNames.ALL)}
                 >
-                  All
+                  {t('exercises.all')}
                 </Button>
                 <Button
                   variant={ExerciseStore.groupExercise === groupNames.BOOKMARKS ? 'filled' : 'outline'}
                   onClick={() => ExerciseStore.setGroupExercise(groupNames.BOOKMARKS)}
                 >
-                  Favorites
+                  {t('exercises.favorites')}
                 </Button>
                 <Button
                   variant={ExerciseStore.groupExercise === groupNames.PERSONAL ? 'filled' : 'outline'}
                   onClick={() => ExerciseStore.setGroupExercise(groupNames.PERSONAL)}
                 >
-                  Self created
+                  {t('exercises.selfCreated')}
                 </Button>
 
               </Group>
               {ExerciseStore.groupExercise === groupNames.ALL && 
                 <Group gap="xs">
                   <SelectAsync
-                    title="Body part"
-                    selectedValue={ExerciseStore.filters['bodyPart']}
-                    onFirstOpen={() => filterBodyLoad('bodyPart')}
-                    onSelect={(value) => filterSelectHandler('bodyPart', value)}
-                  />
-                  <SelectAsync
-                    title="Equipment"
+                    title={t('exercises.equipment')}
+                    translateKey="filters.equipment."
                     selectedValue={ExerciseStore.filters['equipment']}
                     onFirstOpen={() => filterBodyLoad('equipment')}
                     onSelect={(value) => filterSelectHandler('equipment', value)}
+                  />
+                  <SelectAsync
+                    title={t('exercises.bodyParts')}
+                    translateKey="filters.bodyPart."
+                    selectedValue={ExerciseStore.filters['bodyPart']}
+                    onFirstOpen={() => filterBodyLoad('bodyPart')}
+                    onSelect={(value) => filterSelectHandler('bodyPart', value)}
                   />
                 </Group> 
               }

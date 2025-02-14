@@ -1,6 +1,7 @@
 import {
   IconLogin,
   IconLogout,
+	IconLanguage,
 } from '@tabler/icons-react';
 import { Stack, Title, Tooltip, ActionIcon } from '@mantine/core';
 import { NavLink, useLocation } from "react-router-dom";
@@ -9,6 +10,7 @@ import { modals } from '@mantine/modals';
 import s from './index.module.css';
 import { useAuth } from '../../stores/context/AuthContext';
 import ProtectedRoute from '../../systemComponents/ProtectedRoute';
+import { useStores } from '../../hooks/useStores';
 
 function NavbarLink({ label, icon: Icon, url, onClick, variant }) {
   if (url) {
@@ -32,6 +34,8 @@ function NavbarLink({ label, icon: Icon, url, onClick, variant }) {
 
 export function Navbar() {
 	const { currentUser, logOut } = useAuth();
+		const { SettingStore } = useStores();
+	
   const location = useLocation();
 
   const links = navLinks
@@ -66,12 +70,22 @@ export function Navbar() {
     }
   };
 
+	const handleLanguage = async () => {
+    SettingStore.changeLanguage();
+  };
+
   return (
     <nav className={s.navbar}>
 			<Stack className={s.menu} justify="center" gap={4} mb={4}>
 				{links}
 			</Stack>
 			<Stack justify="center" gap={4} mt="auto">
+				<NavbarLink 
+					icon={IconLanguage} 
+					label="Мова" 
+					variant='default' 
+					onClick={handleLanguage}
+				/>
 				{currentUser ? 
 					<NavbarLink 
 						icon={IconLogout} 

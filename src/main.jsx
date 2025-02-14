@@ -9,6 +9,7 @@ import { AuthModal, ExerciseModal } from './modals';
 import { AuthProvider } from './stores/context/AuthContext.jsx';
 import { MantineProvider } from '@mantine/core';
 import { theme } from './theme';
+import './locales/i18n.js';
 
 import '@mantine/core/styles.css';
 import './assets/index.scss';

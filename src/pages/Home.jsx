@@ -1,10 +1,12 @@
 import { Title } from '@mantine/core';
-import { useAuth } from '../stores/context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 const Home = () => {
+  const { t } = useTranslation();
+
 	return (
 		<>
-			<Title order={1}>Home</Title>
+			<Title order={1}>{t('home.pageTitle')}</Title>
 		</>
 	)
 } 
