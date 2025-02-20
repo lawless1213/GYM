@@ -3,7 +3,7 @@ import { Title, SimpleGrid, Button, Group, Stack } from '@mantine/core';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '../hooks/useStores.jsx';
 import ExerciseCard from '../components/ExerciseCard/index.jsx';
-import { SelectAsync } from '../components/SelectAsync.jsx';
+import { MultiSelectAsync } from '../components/MultiSelectAsync.jsx';
 import { groupNames } from '../stores/ExerciseStore.js';
 import { useAuth } from '../stores/context/AuthContext.jsx';
 import { useTranslation } from 'react-i18next';
@@ -19,8 +19,8 @@ const Exercises = observer(() => {
     return ExerciseFilterStore[filterName];
   };
 
-  const filterSelectHandler = (name, value) => {
-    ExerciseStore.setFilters(name, value);
+  const filterSelectHandler = (name, values) => {
+    ExerciseStore.setFilters(name, values);
   };
 
   useEffect(() => {
@@ -74,19 +74,21 @@ const Exercises = observer(() => {
               </Group>
               {ExerciseStore.groupExercise === groupNames.ALL && 
                 <Group gap="xs">
-                  <SelectAsync
+                  <MultiSelectAsync
                     title={t('exercises.equipment')}
                     translateKey="filters.equipment."
                     selectedValue={ExerciseStore.filters['equipment']}
                     onFirstOpen={() => filterBodyLoad('equipment')}
                     onSelect={(value) => filterSelectHandler('equipment', value)}
+                    disabled={!!ExerciseStore.filters.values && ExerciseStore.filters.name != 'equipment'}
                   />
-                  <SelectAsync
+                  <MultiSelectAsync
                     title={t('exercises.bodyParts')}
                     translateKey="filters.bodyPart."
                     selectedValue={ExerciseStore.filters['bodyPart']}
                     onFirstOpen={() => filterBodyLoad('bodyPart')}
                     onSelect={(value) => filterSelectHandler('bodyPart', value)}
+                    disabled={!!ExerciseStore.filters.values && ExerciseStore.filters.name != 'bodyPart'}
                   />
                 </Group> 
               }

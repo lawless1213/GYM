@@ -89,12 +89,25 @@ export const FirebaseService = {
   ,
 
   async getAllExercises(filters) {
-    const conditions = Object.entries(filters)
-      .filter(([_, value]) => value)
-      .map(([key, value]) => where(key, "==", value));
+    if (!filters.name || !Array.isArray(filters.values) || filters.values.length === 0) {
+        console.log("Фільтр не задано або він порожній, отримуємо всі вправи...");
+        const snapshot = await getDocs(collection(db, "exercises"));
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    }
 
-    const q = conditions.length > 0 ? query(collection(db, "exercises"), ...conditions) : collection(db, "exercises");
+    console.log("Filter key:", filters.name);
+    console.log("Filter values:", JSON.stringify(filters.values, null, 2));
+
+    // Використовуємо "array-contains" або "array-contains-any"
+    const condition = filters.values.length === 1
+        ? where(filters.name, "array-contains", filters.values[0])
+        : where(filters.name, "array-contains-any", filters.values);
+
+    const q = query(collection(db, "exercises"), condition);
+
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  }
+}
+
+
 };

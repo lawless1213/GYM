@@ -58,8 +58,27 @@ const ExerciseCard = observer(({id, name, description, equipment, bodyPart, prev
 			>
 				<Group gap="xs" justify='space-between'>
 					<Stack gap="xs">
-						<Badge>{t(`filters.equipment.${equipment}`)}</Badge>
-						<Badge variant="light">{t(`filters.bodyPart.${bodyPart}`)}</Badge>
+						{
+							Array.isArray(equipment) && 
+							<Group gap="xs">
+								{
+									equipment.map( el => (
+										<Badge>{t(`filters.equipment.${el}`)}</Badge>
+									))
+								}
+							</Group>
+						}
+
+						{
+							Array.isArray(bodyPart) && 
+							<Group gap="xs">
+								{
+									bodyPart.map( el => (
+										<Badge variant="light">{t(`filters.bodyPart.${el}`)}</Badge>
+									))
+								}
+							</Group>
+						}
 					</Stack>
 					<Group gap="xs">
 						{

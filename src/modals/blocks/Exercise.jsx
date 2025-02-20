@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { Button, Group, Paper, SimpleGrid, Text, Textarea, TextInput,  useMantineTheme, Stack } from '@mantine/core';
 import MyDropzone from '../../components/Dropzone';
 import { useStores } from '../../hooks/useStores';
-import { SelectAsync } from '../../components/SelectAsync';
+import { MultiSelectAsync } from '../../components/MultiSelectAsync';
 
 function Exercise({ closeModal, exercise = null}) {
   const { ExerciseFilterStore, ExerciseStore } = useStores();
@@ -57,20 +57,18 @@ function Exercise({ closeModal, exercise = null}) {
               {...form.getInputProps('name')}
              />
 
-            <SimpleGrid cols={{ base: 1, sm: 2 }}>
-              <SelectAsync
-                selectedValue = { exercise ? exercise.bodyPart : null }
+              <MultiSelectAsync
+                selectedValue = { exercise ? exercise.bodyPart : [] }
                 title="Body part"
                 onFirstOpen={() => filterBodyLoad('bodyPart')}
                 onSelect={(value) => form.setFieldValue('bodyPart', value)}
               />
-              <SelectAsync
-                selectedValue = { exercise ? exercise.equipment : null }
+              <MultiSelectAsync
+                selectedValue = { exercise ? exercise.equipment : [] }
                 title="Equipment"
                 onFirstOpen={() => filterBodyLoad('equipment')}
                 onSelect={(value) => form.setFieldValue('equipment', value)}
               />
-            </SimpleGrid>
 
             <Textarea
               placeholder="Description"

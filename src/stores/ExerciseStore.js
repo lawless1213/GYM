@@ -19,10 +19,18 @@ export class ExerciseStore {
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
-  setFilters(name, value) {
-    runInAction(() => {
-      this.filters[name] = value.toLowerCase();
-    });
+  setFilters(name, values) {
+    if (!values) {
+      this.filters.name = null;
+      this.filters.values = [];
+    } else {
+      runInAction(() => {
+        this.filters.name = name;
+        this.filters.values = values;
+      });
+    }
+    console.log(this.filters);
+    
     this.loadExercises();
   }
 
@@ -36,6 +44,8 @@ export class ExerciseStore {
   async loadExercises(group = 'all') {
 		try {
 			const exercises = await FirebaseService.getExercisesByGroup(group, this.currentUser?.uid, this.filters);
+      console.log(exercises);
+      
 			runInAction(() => (this.allExercises[group] = exercises));
 		} catch (error) {
 			console.error("Error loading exercises:", error);
