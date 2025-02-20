@@ -11,6 +11,7 @@
     "firebase": "vite build && firebase deploy"
   },
   "dependencies": {
+    "@apollo/client": "^3.13.1",
     "@hookform/resolvers": "^3.10.0",
     "@mantine/core": "^7.16.2",
     "@mantine/dropzone": "^7.16.2",
@@ -19,6 +20,7 @@
     "@mantine/modals": "^7.16.2",
     "@tabler/icons-react": "^3.26.0",
     "firebase": "^11.2.0",
+    "graphql": "^16.10.0",
     "i18next": "^24.2.2",
     "mobx": "^6.13.5",
     "mobx-react-lite": "^4.1.0",

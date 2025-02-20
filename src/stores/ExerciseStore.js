@@ -2,6 +2,11 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import { collection, doc, query, where, getDoc, getDocs, setDoc, updateDoc, arrayUnion, arrayRemove, addDoc, deleteDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/firebase";
 import { FirebaseService } from '../firebase/functions';
+import { GET_EXERCISES } from '../queries/exercises';
+import client from '../providers/apolloClient';
+
+
+
 export const groupNames = {
   ALL: 'all',
   BOOKMARKS: 'bookmarks',
@@ -43,10 +48,9 @@ export class ExerciseStore {
 
   async loadExercises(group = 'all') {
 		try {
-			const exercises = await FirebaseService.getExercisesByGroup(group, this.currentUser?.uid, this.filters);
-      console.log(exercises);
+			const {data} = await client.query({ query: GET_EXERCISES });
       
-			runInAction(() => (this.allExercises[group] = exercises));
+			runInAction(() => (this.allExercises[group] = data.getExercises));
 		} catch (error) {
 			console.error("Error loading exercises:", error);
 		}

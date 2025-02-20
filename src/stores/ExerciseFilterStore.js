@@ -2,6 +2,8 @@ import { makeAutoObservable, runInAction  } from 'mobx';
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { equipment, bodyParts } from '../data/filters';
+import { GET_FILTER } from '../queries/filters';
+import client from '../providers/apolloClient';
 
 
 export class ExerciseFilterStore {
@@ -55,16 +57,12 @@ export class ExerciseFilterStore {
 
   loadFilter = async (filterName) => {
     try {
-      const filtersDocRef = doc(db, "exercisesParams", "filters");
-      const docSnapshot = await getDoc(filtersDocRef);
+      const { data } = await client.query({
+        query: GET_FILTER,
+        variables: { filterName },
+      });
 
-      if (docSnapshot.exists()) {
-        runInAction(() => {
-          this[filterName] = docSnapshot.data()[filterName] || [];
-				});
-      } else {
-        console.error("No such document!");
-      }
+      runInAction(() => this[filterName] = data.getFilters|| []);
 			
     } catch (e) {
       console.error(`Error fetching ${filterName}:`, e);
