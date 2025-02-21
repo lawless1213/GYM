@@ -2,6 +2,21 @@ import { ref, uploadBytes, getDownloadURL, deleteObject  } from "firebase/storag
 import { db, storage } from "./firebase";
 import { v4 as uuidv4 } from 'uuid';
 import { collection, doc, query, where, getDoc, getDocs, updateDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+
+
+export const getToken = async () => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  if (!user) {
+    console.error("❌ Користувач неавторизований!");
+    return null;
+  }
+
+  const token = await user.getIdToken();
+  return token;
+};
 
 export const FirebaseService = {
   async uploadFile(file, folder) {

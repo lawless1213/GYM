@@ -45,8 +45,7 @@ export function MultiSelectAsync({ title, translateKey = '', selectedValue = [],
       onSearchChange={setSearch}
       searchValue={search}
       placeholder={title}
-      nothingFound={loading ? "Loading..." : "Nothing found"}
-			nothingFoundMessage="Nothing found..."
+      nothingFoundMessage={loading ? <Loader size="xs"/> : "Nothing found"}
       onDropdownOpen={handleOpen}
 			clearable
 			max={10}

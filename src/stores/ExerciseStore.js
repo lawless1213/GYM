@@ -4,8 +4,7 @@ import { auth, db } from "../firebase/firebase";
 import { FirebaseService } from '../firebase/functions';
 import { GET_EXERCISES } from '../queries/exercises';
 import client from '../providers/apolloClient';
-
-
+import { GET_USER } from '../queries/user';
 
 export const groupNames = {
   ALL: 'all',
@@ -46,11 +45,28 @@ export class ExerciseStore {
     this.loadExercises(value);
   }
 
-  async loadExercises(group = 'all') {
+  async loadExercises(group) {
+    let response;
+    let data = [];
+
 		try {
-			const {data} = await client.query({ query: GET_EXERCISES });
+      switch (group) {
+        case groupNames.BOOKMARKS:
+          console.log('BOOKMARKS');
+          response = await client.query({ query: GET_USER });
+          data = response.data.getUserData.bookmarks;
+          break;
+        case groupNames.PERSONAL:
+          console.log('PERSONAL');
+          
+          break;      
+        default:
+          response = await client.query({ query: GET_EXERCISES });
+          data = response.data.getExercises;
+          break;
+      }
       
-			runInAction(() => (this.allExercises[group] = data.getExercises));
+			runInAction(() => (this.allExercises[group] = data));
 		} catch (error) {
 			console.error("Error loading exercises:", error);
 		}

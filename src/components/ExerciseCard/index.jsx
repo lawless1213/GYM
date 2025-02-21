@@ -63,7 +63,7 @@ const ExerciseCard = observer(({id, name, description, equipment, bodyPart, prev
 							<Group gap="xs">
 								{
 									equipment.map( el => (
-										<Badge>{t(`filters.equipment.${el}`)}</Badge>
+										<Badge key={el}>{t(`filters.equipment.${el}`)}</Badge>
 									))
 								}
 							</Group>
@@ -74,7 +74,7 @@ const ExerciseCard = observer(({id, name, description, equipment, bodyPart, prev
 							<Group gap="xs">
 								{
 									bodyPart.map( el => (
-										<Badge variant="light">{t(`filters.bodyPart.${el}`)}</Badge>
+										<Badge variant="light" key={el}>{t(`filters.bodyPart.${el}`)}</Badge>
 									))
 								}
 							</Group>

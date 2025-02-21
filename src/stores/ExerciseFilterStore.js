@@ -1,9 +1,7 @@
 import { makeAutoObservable, runInAction  } from 'mobx';
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { db } from "../firebase/firebase";
-import { equipment, bodyParts } from '../data/filters';
-import { GET_FILTER } from '../queries/filters';
 import client from '../providers/apolloClient';
+import { GET_FILTERS } from '../queries/filters';
+import { equipment, bodyParts } from '../data/filters';
 
 
 export class ExerciseFilterStore {
@@ -16,6 +14,20 @@ export class ExerciseFilterStore {
     
     makeAutoObservable(this, {}, { autoBind: true });
   }
+
+  loadFilter = async (filterName) => {
+    try {
+      const { data } = await client.query({
+        query: GET_FILTERS,
+        variables: { name: filterName },
+      });
+
+      runInAction(() => this[filterName] = data.getFilters.values || []);
+			
+    } catch (e) {
+      console.error(`Error fetching ${filterName}:`, e);
+    }
+  };
 
   // async addFilters(equipmentArray, bodyPartsArray, merge = true) {
   //   try {
@@ -54,18 +66,4 @@ export class ExerciseFilterStore {
   //     console.error("Помилка при оновленні filters:", error);
   //   }
   // }
-
-  loadFilter = async (filterName) => {
-    try {
-      const { data } = await client.query({
-        query: GET_FILTER,
-        variables: { filterName },
-      });
-
-      runInAction(() => this[filterName] = data.getFilters|| []);
-			
-    } catch (e) {
-      console.error(`Error fetching ${filterName}:`, e);
-    }
-  };
 }

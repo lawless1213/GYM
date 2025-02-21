@@ -3,15 +3,13 @@ import { gql } from "apollo-server-express";
 export const typeDefs = gql`
   type Query {
     message: String
-    getUsers: [User]
+    getUserData: User
     getExercises: [Exercise]
 		getFilters(name: String!): Filter
   }
 
   type User {
-    id: ID!
-    name: String!
-    email: String!
+    bookmarks: [Exercise]
   }
 
   type Exercise {
