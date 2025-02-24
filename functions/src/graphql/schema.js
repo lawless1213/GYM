@@ -9,7 +9,7 @@ export const typeDefs = gql`
   }
 
   type User {
-    bookmarks: [Exercise]
+    bookmarks: [Exercise]!
   }
 
   type Exercise {
