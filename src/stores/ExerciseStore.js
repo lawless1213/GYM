@@ -58,7 +58,10 @@ export class ExerciseStore {
           break;
         case groupNames.PERSONAL:
           console.log('PERSONAL');
-          response = await client.query({ query: GET_PERSONAL_EXERCISES });
+          response = await client.query({
+            query: GET_PERSONAL_EXERCISES,
+            variables: { uid: this.currentUser.uid },
+          });
           data = response.data.getPersonalExercises;
           break;     
         default:

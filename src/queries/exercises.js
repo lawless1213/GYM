@@ -17,8 +17,8 @@ export const GET_EXERCISES = gql`
 `;
 
 export const GET_PERSONAL_EXERCISES = gql`
-  query GetPersonalExercises {
-    getPersonalExercises {
+  query GetPersonalExercises($uid: String!) {
+    getPersonalExercises(uid: $uid) {
       id
       name
       author

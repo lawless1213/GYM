@@ -1,11 +1,16 @@
 import { db } from "../firebase.js";
 
-export const getPersonalExercises = async () => {
+export const getPersonalExercises = async (_, { uid }) => {
 	try {
-		const snapshot = await db.collection("exercises").get();
-		return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-	} catch (error) {
-		console.error("Error fetching exercises:", error);
-		throw new Error("Failed to fetch exercises");
-	}
+    const exercisesRef = db.collection("exercises"); // Отримуємо посилання на колекцію
+    const querySnapshot = await exercisesRef.where("author", "==", uid).get(); // Фільтруємо по автору
+
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  } catch (error) {
+    console.error("❌ Помилка отримання вправ користувача:", error);
+    throw new Error("Не вдалося отримати вправи");
+  }
 };
