@@ -1,1 +1,1 @@
-# React + Vite + MobX
+# React + Vite + MobX + GraphQL + Firebase
