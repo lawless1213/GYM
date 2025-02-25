@@ -1,6 +1,7 @@
 import { getUserData } from "../services/userService.js";
 import { getExercises } from "../services/exercisesService.js";
 import { getFilters } from "../services/filterService.js";
+import { getPersonalExercises } from "../services/exercisePersonalService.js";
 
 export const resolvers = {
   Query: {
@@ -15,6 +16,7 @@ export const resolvers = {
       return getUserData(context.user);  // Передаємо користувача в сервіс
     },
     getExercises,
+    getPersonalExercises,
 		getFilters,
   },
 };

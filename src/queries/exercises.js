@@ -15,3 +15,19 @@ export const GET_EXERCISES = gql`
     }
   }
 `;
+
+export const GET_PERSONAL_EXERCISES = gql`
+  query GetPersonalExercises {
+    getPersonalExercises {
+      id
+      name
+      author
+      authorName
+      bodyPart
+      description
+      equipment
+			preview
+			video
+    }
+  }
+`;

@@ -5,6 +5,7 @@ export const typeDefs = gql`
     message: String
     getUserData: User
     getExercises: [Exercise]
+    getPersonalExercises: [Exercise]
 		getFilters(name: String!): Filter
   }
 

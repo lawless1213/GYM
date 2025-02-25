@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import { collection, doc, query, where, getDoc, getDocs, setDoc, updateDoc, arrayUnion, arrayRemove, addDoc, deleteDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/firebase";
 import { FirebaseService } from '../firebase/functions';
-import { GET_EXERCISES } from '../queries/exercises';
+import { GET_EXERCISES, GET_PERSONAL_EXERCISES } from '../queries/exercises';
 import client from '../providers/apolloClient';
 import { GET_USER } from '../queries/user';
 
@@ -58,8 +58,9 @@ export class ExerciseStore {
           break;
         case groupNames.PERSONAL:
           console.log('PERSONAL');
-          
-          break;      
+          response = await client.query({ query: GET_PERSONAL_EXERCISES });
+          data = response.data.getPersonalExercises;
+          break;     
         default:
           response = await client.query({ query: GET_EXERCISES });
           data = response.data.getExercises;
@@ -149,6 +150,11 @@ export class ExerciseStore {
     try {
       const userRef = doc(db, "users", this.currentUser.uid);
       const userDoc = await getDoc(userRef);
+
+      if (!userDoc.exists()) {
+        await setDoc(userRef, {});
+      }
+
       const userData = userDoc.data();
       const bookmarks = Array.isArray(userData?.bookmarks) ? userData.bookmarks : [];
       const exerciseRef = doc(db, "exercises", id); // Замість рядка створюємо DocumentReference

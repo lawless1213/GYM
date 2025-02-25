@@ -1,13 +1,21 @@
 import { db } from "../firebase.js";
 
 export const getUserData = async (user) => {
+  if (!user || !user.uid) {
+    console.error("❌ Недійсний користувач:", user);
+    throw new Error("Invalid user object");
+  }
+
   console.log("📌 getUserData викликано! User:", user);
 
   try {
-    const userDoc = await db.collection("users").doc(user.uid).get();
+    // 🔥 Адмінський SDK використовує `db.collection().doc()`
+    const userRef = db.collection("users").doc(user.uid);
+    const userDoc = await userRef.get(); // Firestore Admin SDK використовує `.get()`, а не `getDoc()`
+
     if (!userDoc.exists) {
       console.error("❌ Документ користувача не знайдено в Firestore");
-      throw new Error("User document not found");
+      return { bookmarks: [] }; // Повертаємо порожній масив, щоб уникнути помилок
     }
 
     const userData = userDoc.data();
@@ -15,22 +23,34 @@ export const getUserData = async (user) => {
 
     const bookmarksRefs = userData?.bookmarks ?? [];
 
-    // Отримуємо всі вправи за посиланнями
     const bookmarks = await Promise.all(
-      bookmarksRefs.map(async (ref) => {
-        const exerciseDoc = await db.doc(ref).get();
-        if (!exerciseDoc.exists) {
-          console.warn(`⚠️ Вправа не знайдена: ${ref}`);
+      bookmarksRefs.map(async (exerciseRef) => {
+        const exercisePath = exerciseRef?.path; // Отримуємо шлях
+        if (!exercisePath) {
+          console.warn(`⚠️ Некоректний референс:`, exerciseRef);
           return null;
         }
-        return { id: exerciseDoc.id, ...exerciseDoc.data() };
+
+        try {
+          const exerciseRef = db.doc(exercisePath); // Використовуємо повний шлях
+          const exerciseDoc = await exerciseRef.get();
+
+          if (!exerciseDoc.exists) {
+            console.warn(`⚠️ Вправа не знайдена: ${exercisePath}`);
+            return null;
+          }
+
+          return { id: exerciseDoc.id, ...exerciseDoc.data() };
+        } catch (error) {
+          console.error(`❌ Помилка отримання документа для ${exercisePath}:`, error);
+          return null;
+        }
       })
     );
 
-    // Фільтруємо `null` значення
     return { bookmarks: bookmarks.filter((b) => b !== null) };
   } catch (error) {
-    console.error("❌ Помилка отримання користувача:", error);
-    throw new Error("Failed to fetch user");
+    console.error("❌ Помилка отримання даних користувача:", error);
+    return { bookmarks: [] };
   }
 };
