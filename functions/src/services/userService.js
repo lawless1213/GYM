@@ -4,11 +4,6 @@ export const getUserData = async (user) => {
   console.log("📌 getUserData викликано! User:", user);
 
   try {
-    if (!user) {
-      console.error("❌ Немає користувача");
-      throw new Error("Unauthorized");
-    }
-
     const userDoc = await db.collection("users").doc(user.uid).get();
     if (!userDoc.exists) {
       console.error("❌ Документ користувача не знайдено в Firestore");

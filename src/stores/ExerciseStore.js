@@ -93,23 +93,26 @@ export class ExerciseStore {
 
   async createExercise(exercise, imageFile = null, videoFile = null) {
     if (!this.currentUser) return;
-
+    
+    const exerciseId = crypto.randomUUID();
     const newExercise = {
       author: this.currentUser.uid,
       authorName: this.currentUser.displayName,
       ...exercise
     };
 
+    newExercise.id = exerciseId;
+  
     try {
       const [preview, video] = await Promise.all([
         imageFile && FirebaseService.uploadFile(imageFile, "preview"),
         videoFile && FirebaseService.uploadFile(videoFile, "video"),
       ]);
-
-      if (preview) newExercise.preview = preview;
-      if (video) newExercise.video = video;
-
-      await addDoc(collection(db, "exercises"), newExercise);
+  
+      newExercise.preview = preview ?? '';
+      newExercise.video = video ?? '';
+  
+      await setDoc(doc(db, "exercises", exerciseId), newExercise); // Задаємо ID вручну
       this.loadExercises(this.groupExercise);
       return true;
     } catch (error) {
@@ -140,34 +143,38 @@ export class ExerciseStore {
   }
 
   async toggleBookmark(id) {
-		if (!this.currentUser) return;
-	
-		try {
-			const userRef = doc(db, "users", this.currentUser.uid);
-			const userDoc = await getDoc(userRef);
-			const userData = userDoc.data();
-			const bookmarks = Array.isArray(userData?.bookmarks) ? userData.bookmarks : [];
-			const isFav = bookmarks.includes(`exercises/${id}`);
-	
-			await updateDoc(userRef, {
-				bookmarks: isFav ? arrayRemove(`exercises/${id}`) : arrayUnion(`exercises/${id}`),
-			});
-	
-			runInAction(() => {
-				if (isFav) {
-					this.allExercises[groupNames.BOOKMARKS] = this.allExercises[groupNames.BOOKMARKS].filter(e => e.id !== id);
-				} else {
-					getDoc(doc(db, "exercises", id)).then(doc => {
-						if (doc.exists()) {
-							runInAction(() => this.allExercises[groupNames.BOOKMARKS].push({ id: doc.id, ...doc.data() }));
-						}
-					});
-				}
-			});
-		} catch (error) {
-			console.error("Error updating bookmarks:", error);
-		}
-	}
+    if (!this.currentUser) return;
+    console.log(id);
+    
+    try {
+      const userRef = doc(db, "users", this.currentUser.uid);
+      const userDoc = await getDoc(userRef);
+      const userData = userDoc.data();
+      const bookmarks = Array.isArray(userData?.bookmarks) ? userData.bookmarks : [];
+      const exerciseRef = doc(db, "exercises", id); // Замість рядка створюємо DocumentReference
+  
+      // Перевіряємо, чи є об'єкт у списку (порівнюємо по path)
+      const isFav = bookmarks.some(ref => ref.path === exerciseRef.path);
+  
+      await updateDoc(userRef, {
+        bookmarks: isFav ? arrayRemove(exerciseRef) : arrayUnion(exerciseRef), // Тепер це Reference
+      });
+  
+      runInAction(() => {
+        if (isFav) {
+          this.allExercises[groupNames.BOOKMARKS] = this.allExercises[groupNames.BOOKMARKS].filter(e => e.id !== id);
+        } else {
+          getDoc(exerciseRef).then(doc => {
+            if (doc.exists()) {
+              runInAction(() => this.allExercises[groupNames.BOOKMARKS].push({ id: doc.id, ...doc.data() }));
+            }
+          });
+        }
+      });
+    } catch (error) {
+      console.error("Error updating bookmarks:", error);
+    }
+  }
 	
 
   isFavorite(id) {
