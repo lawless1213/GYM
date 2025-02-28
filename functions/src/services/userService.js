@@ -6,8 +6,6 @@ export const getUserData = async (user) => {
     throw new Error("Invalid user object");
   }
 
-  console.log("📌 getUserData викликано! User:", user);
-
   try {
     // 🔥 Адмінський SDK використовує `db.collection().doc()`
     const userRef = db.collection("users").doc(user.uid);
@@ -19,7 +17,7 @@ export const getUserData = async (user) => {
     }
 
     const userData = userDoc.data();
-    console.log("✅ Дані користувача:", userData);
+    // console.log("✅ Дані користувача:", userData);
 
     const bookmarksRefs = userData?.bookmarks ?? [];
 

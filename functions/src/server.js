@@ -13,7 +13,7 @@ const server = new ApolloServer({
   resolvers,
   cache: "bounded",
   context: async ({ req }) => {
-    console.log("📥 Запит у `context`, заголовки:", req.headers);
+    // console.log("📥 Запит у `context`, заголовки:", req.headers);
 
     // Перевірка токена і отримання користувача
     const user = await verifyToken(req);
@@ -28,7 +28,7 @@ const server = new ApolloServer({
         // додайте інші необхідні поля
       };
       
-      console.log("🟢 Отриманий користувач у `context`:", userContext); // Лог користувача з важливими даними
+      // console.log("🟢 Отриманий користувач у `context`:", userContext); // Лог користувача з важливими даними
       return { user: userContext };
     } else {
       console.error("❌ Не вдалося верифікувати токен.");

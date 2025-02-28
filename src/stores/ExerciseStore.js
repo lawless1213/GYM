@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { collection, doc, query, where, getDoc, getDocs, setDoc, updateDoc, arrayUnion, arrayRemove, addDoc, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, deleteDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/firebase";
 import { FirebaseService } from '../firebase/functions';
 import { GET_EXERCISES, GET_PERSONAL_EXERCISES } from '../queries/exercises';
@@ -10,6 +10,11 @@ export const groupNames = {
   ALL: 'all',
   BOOKMARKS: 'bookmarks',
   PERSONAL: 'personal',
+};
+
+export const filterNames = {
+  BODYPART: 'bodyPart',
+  EQUIPMENT: 'equipment'
 };
 
 export class ExerciseStore {
@@ -24,16 +29,15 @@ export class ExerciseStore {
   }
 
   setFilters(name, values) {
-    if (!values) {
-      this.filters.name = null;
-      this.filters.values = [];
+    if (!values.length) {
+      runInAction(() => {
+      delete this.filters[name];
+      });
     } else {
       runInAction(() => {
-        this.filters.name = name;
-        this.filters.values = values;
+        this.filters[name] = values;
       });
     }
-    console.log(this.filters);
     
     this.loadExercises();
   }
@@ -42,10 +46,10 @@ export class ExerciseStore {
     runInAction(() => {
       this.groupExercise = value;
     });
-    this.loadExercises(value);
+    this.loadExercises();
   }
 
-  async loadExercises(group) {
+  async loadExercises(group = this.groupExercise) {
     let response;
     let data = [];
 
@@ -65,7 +69,10 @@ export class ExerciseStore {
           data = response.data.getPersonalExercises;
           break;     
         default:
-          response = await client.query({ query: GET_EXERCISES });
+          response = await client.query({
+            query: GET_EXERCISES,
+            variables: { filters: this.filters } 
+          });
           data = response.data.getExercises;
           break;
       }

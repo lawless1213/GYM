@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_EXERCISES = gql`
-  query GetExercises {
-    getExercises {
+  query GetExercises($filters: ExerciseFilter) {
+    getExercises(filters: $filters) {
       id
       name
       author
@@ -10,8 +10,8 @@ export const GET_EXERCISES = gql`
       bodyPart
       description
       equipment
-			preview
-			video
+      preview
+      video
     }
   }
 `;

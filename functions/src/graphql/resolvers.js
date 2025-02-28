@@ -12,7 +12,7 @@ export const resolvers = {
         throw new Error("Unauthorized"); // Якщо user відсутній у контексті
       }
 
-      console.log("👤 Користувач у контексті:", context.user);  // Лог користувача
+      // console.log("👤 Користувач у контексті:", context.user);  // Лог користувача
       return getUserData(context.user);  // Передаємо користувача в сервіс
     },
     getExercises,

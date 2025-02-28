@@ -4,9 +4,14 @@ export const typeDefs = gql`
   type Query {
     message: String
     getUserData: User
-    getExercises: [Exercise]
+    getExercises(filters: ExerciseFilter): [Exercise]
     getPersonalExercises(uid: String!): [Exercise]
 		getFilters(name: String!): Filter
+  }
+
+  input ExerciseFilter {
+    bodyPart: [String]
+    equipment: [String]
   }
 
   type User {

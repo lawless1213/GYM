@@ -22,7 +22,7 @@ export const verifyToken = async (req) => {
 
   const token = req.headers.authorization.split("Bearer ")[1];
 
-  console.log("🔑 Отриманий токен:", token);
+  // console.log("🔑 Отриманий токен:", token);
 
   if (!token) {
     console.error("❌ Немає токена!");
@@ -31,7 +31,7 @@ export const verifyToken = async (req) => {
 
   try {
     const decodedToken = await auth.verifyIdToken(token);
-    console.log("✅ Декодований токен:", decodedToken);
+    // console.log("✅ Декодований токен:", decodedToken);
     return decodedToken;
   } catch (error) {
     console.error("❌ Помилка перевірки токена:", error);
