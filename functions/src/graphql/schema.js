@@ -1,12 +1,22 @@
 import { gql } from "apollo-server-express";
 
 export const typeDefs = gql`
+  type Mutation {
+    addToBookmarks(exerciseId: ID!): MutationResponse!
+    removeFromBookmarks(exerciseId: ID!): MutationResponse!
+  }
+
   type Query {
     message: String
     getUserData: User
     getExercises(filters: ExerciseFilter): [Exercise]
     getPersonalExercises(uid: String!): [Exercise]
 		getFilters(name: String!): Filter
+  }
+
+  type MutationResponse {
+    success: Boolean!
+    message: String!
   }
 
   input ExerciseFilter {

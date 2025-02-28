@@ -1,10 +1,11 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, deleteDoc } from "firebase/firestore";
-import { auth, db } from "../firebase/firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../firebase/firebase";
 import { FirebaseService } from '../firebase/functions';
 import { GET_EXERCISES, GET_PERSONAL_EXERCISES } from '../queries/exercises';
-import client from '../providers/apolloClient';
 import { GET_USER } from '../queries/user';
+import client from '../providers/apolloClient';
+import { ADD_TO_BOOKMARKS, REMOVE_FROM_BOOKMARKS } from '../mutations/bookmarks';
 
 export const groupNames = {
   ALL: 'all',
@@ -25,6 +26,7 @@ export class ExerciseStore {
   constructor(rootStore, currentUser) {
     this.rootStore = rootStore;
     this.currentUser = currentUser;
+    this.loadExercises(groupNames.BOOKMARKS);
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
@@ -155,38 +157,43 @@ export class ExerciseStore {
 
   async toggleBookmark(id) {
     if (!this.currentUser) return;
-    console.log(id);
     
     try {
-      const userRef = doc(db, "users", this.currentUser.uid);
-      const userDoc = await getDoc(userRef);
-
-      if (!userDoc.exists()) {
-        await setDoc(userRef, {});
-      }
-
-      const userData = userDoc.data();
-      const bookmarks = Array.isArray(userData?.bookmarks) ? userData.bookmarks : [];
-      const exerciseRef = doc(db, "exercises", id); // Замість рядка створюємо DocumentReference
+      const exerciseRef = doc(db, "exercises", id);
+      const isFav = this.allExercises.bookmarks.some(exercise => exercise.id === id);
+      let mutationResult;
   
-      // Перевіряємо, чи є об'єкт у списку (порівнюємо по path)
-      const isFav = bookmarks.some(ref => ref.path === exerciseRef.path);
+      if (isFav) {
+        mutationResult = await client.mutate({
+          mutation: REMOVE_FROM_BOOKMARKS,
+          variables: { exerciseId: id },
+        });
   
-      await updateDoc(userRef, {
-        bookmarks: isFav ? arrayRemove(exerciseRef) : arrayUnion(exerciseRef), // Тепер це Reference
-      });
-  
-      runInAction(() => {
-        if (isFav) {
-          this.allExercises[groupNames.BOOKMARKS] = this.allExercises[groupNames.BOOKMARKS].filter(e => e.id !== id);
+        if (mutationResult.data) {
+          runInAction(() => {
+            this.allExercises[groupNames.BOOKMARKS] = this.allExercises[groupNames.BOOKMARKS].filter(e => e.id !== id);
+          });
         } else {
+          throw new Error("Не вдалося видалити вправу з обраних");
+        }
+      } else {
+        mutationResult = await client.mutate({
+          mutation: ADD_TO_BOOKMARKS,
+          variables: { exerciseId: id },
+        });
+  
+        if (mutationResult.data) {
           getDoc(exerciseRef).then(doc => {
             if (doc.exists()) {
-              runInAction(() => this.allExercises[groupNames.BOOKMARKS].push({ id: doc.id, ...doc.data() }));
+              runInAction(() => {
+                this.allExercises[groupNames.BOOKMARKS].push({ id: doc.id, ...doc.data() });
+              });
             }
           });
+        } else {
+          throw new Error("Не вдалося додати вправу в обрані");
         }
-      });
+      }
     } catch (error) {
       console.error("Error updating bookmarks:", error);
     }
