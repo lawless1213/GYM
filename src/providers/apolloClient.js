@@ -4,7 +4,7 @@ import { getToken } from "../firebase/functions";
 
 const authLink = setContext(async (_, { headers }) => {
   const token = await getToken();
-
+  
   return {
     headers: {
       ...headers,

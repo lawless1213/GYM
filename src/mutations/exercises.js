@@ -17,3 +17,12 @@ export const REMOVE_FROM_BOOKMARKS = gql`
     }
   }
 `;
+
+export const DELETE_EXERCISE = gql`
+  mutation DeleteExercise($input: ExerciseInput!) {
+    deleteExercise(input: $input) {
+      success
+      message
+    }
+  }
+`;

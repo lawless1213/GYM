@@ -4,6 +4,7 @@ export const typeDefs = gql`
   type Mutation {
     addToBookmarks(exerciseId: ID!): MutationResponse!
     removeFromBookmarks(exerciseId: ID!): MutationResponse!
+    deleteExercise(input: ExerciseInput!): MutationResponse!
   }
 
   type Query {
@@ -17,6 +18,13 @@ export const typeDefs = gql`
   type MutationResponse {
     success: Boolean!
     message: String!
+  }
+
+  input ExerciseInput {
+    id: ID!
+    author: String!
+    preview: String
+    video: String
   }
 
   input ExerciseFilter {

@@ -2,8 +2,9 @@ import { getUserData } from "../services/userService.js";
 import { getExercises } from "../services/exercisesService.js";
 import { getFilters } from "../services/filterService.js";
 import { getPersonalExercises } from "../services/exercisePersonalService.js";
-import { removeFromBookmarks } from "../mutations/bookmarks/removeFromBookmarks.js";
-import { addToBookmarks } from "../mutations/bookmarks/addToBookmarks.js";
+import { removeFromBookmarks } from "../mutations/exercises/removeFromBookmarks.js";
+import { addToBookmarks } from "../mutations/exercises/addToBookmarks.js";
+import { deleteExercise } from "../mutations/exercises/deleteExercise.js";
 
 export const resolvers = {
   Query: {
@@ -24,5 +25,6 @@ export const resolvers = {
   Mutation: {
     addToBookmarks,
     removeFromBookmarks,
+    deleteExercise,
   },
 };

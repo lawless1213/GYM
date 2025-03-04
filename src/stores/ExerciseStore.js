@@ -5,7 +5,7 @@ import { FirebaseService } from '../firebase/functions';
 import { GET_EXERCISES, GET_PERSONAL_EXERCISES } from '../queries/exercises';
 import { GET_USER } from '../queries/user';
 import client from '../providers/apolloClient';
-import { ADD_TO_BOOKMARKS, REMOVE_FROM_BOOKMARKS } from '../mutations/bookmarks';
+import { ADD_TO_BOOKMARKS, REMOVE_FROM_BOOKMARKS, DELETE_EXERCISE } from '../mutations/exercises';
 
 export const groupNames = {
   ALL: 'all',
@@ -138,17 +138,18 @@ export class ExerciseStore {
     if (!this.currentUser || this.currentUser.uid !== author) return;
 
     try {
-      await Promise.all([
-        deleteDoc(doc(db, "exercises", id)),
-        preview && FirebaseService.deleteFile(preview),
-        video && FirebaseService.deleteFile(video)
-      ]);
-
-      runInAction(() => {
-        this.allExercises[this.groupExercise] = this.allExercises[this.groupExercise].filter(ex => ex.id !== id);
+      mutationResult = await client.mutate({
+        mutation: DELETE_EXERCISE,
+        variables: { input: { id, author, preview, video } }
       });
 
-      return true;
+      if (mutationResult.data) {
+        runInAction(() => {
+          this.allExercises[this.groupExercise] = this.allExercises[this.groupExercise].filter(ex => ex.id !== id);
+        });
+      } else {
+        throw new Error("Не вдалося видалити вправу");
+      }
     } catch (error) {
       console.error("Error deleting exercise:", error);
       return false;
