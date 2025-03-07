@@ -1,14 +1,21 @@
 import { db } from "../../firebase.js";
 import { GraphQLError } from "graphql";
-import { deleteDoc, doc, getDoc } from "firebase/firestore";
-import { getStorage, ref, deleteObject } from "firebase/storage";
+import {  doc, getDoc } from "firebase/firestore";
+// import { deleteDoc, doc, getDoc } from "firebase/firestore";
+// import { getStorage, ref, deleteObject } from "firebase/storage";
 
 export const deleteExercise = async (_, { input }, context) => {
+	console.log("User:", context.user);
+	console.log("Is user null or undefined?", !context.user);
+
   if (!context.user) {
     throw new GraphQLError("Unauthorized");
   }
+	
+  const { id } = input;
+  // const { id, author, preview, video } = input;
 
-  const { id, author, preview, video } = input;
+	console.log(input);
 
 	const exerciseRef = doc(db, "exercises", id);
 	const exerciseDoc = await getDoc(exerciseRef);
@@ -16,41 +23,35 @@ export const deleteExercise = async (_, { input }, context) => {
 		console.log("Document not found!");
 	}
 
-	console.log("Firestore Instance:", db);
-	console.log("Document Path:", `exercises/${id}`);
+	// console.log("Firestore Instance:", db);
+	// console.log("Document Path:", `exercises/${id}`);
 
-	const docRef = doc(db, "exercises", id);
-	console.log("Document Reference:", docRef);
+  // if (context.user.uid !== author) {
+  //   throw new GraphQLError("Permission denied");
+  // }
 
-	await deleteDoc(docRef);
+  // try {
+	// 	await deleteDoc(doc(db, "exercises", id));
 	
-
-  if (context.user.uid !== author) {
-    throw new GraphQLError("Permission denied");
-  }
-
-  try {
-		await deleteDoc(doc(db, "exercises", id));
+	// 	const storage = getStorage();
 	
-		const storage = getStorage();
+	// 	if (preview) {
+	// 		const previewRef = ref(storage, new URL(preview).pathname);
+	// 		await deleteObject(previewRef);
+	// 	}
 	
-		if (preview) {
-			const previewRef = ref(storage, new URL(preview).pathname);
-			await deleteObject(previewRef);
-		}
+	// 	if (video) {
+	// 		const videoRef = ref(storage, new URL(video).pathname);
+	// 		await deleteObject(videoRef);
+	// 	}
 	
-		if (video) {
-			const videoRef = ref(storage, new URL(video).pathname);
-			await deleteObject(videoRef);
-		}
-	
-		return { success: true, message: "Вправа видалена" };
-	} catch (error) {
-		console.error("Error deleting exercise:", error);
-		if (error instanceof Error) {
-			throw new GraphQLError(error.message);  // Викидає конкретну помилку
-		} else {
-			throw new GraphQLError("Помилка при видаленні вправи");
-		}
-	}
+	// 	return { success: true, message: "Вправа видалена" };
+	// } catch (error) {
+	// 	console.error("Error deleting exercise:", error);
+	// 	if (error instanceof Error) {
+	// 		throw new GraphQLError(error.message);  // Викидає конкретну помилку
+	// 	} else {
+	// 		throw new GraphQLError("Помилка при видаленні вправи");
+	// 	}
+	// }
 };

@@ -136,7 +136,8 @@ export class ExerciseStore {
 
   async deleteExercise({ id, author, preview, video }) {
     if (!this.currentUser || this.currentUser.uid !== author) return;
-
+    console.log("Executing mutation...")
+    
     try {
       mutationResult = await client.mutate({
         mutation: DELETE_EXERCISE,
