@@ -7,6 +7,7 @@ if (!admin.apps.length) {
 }
 
 export const db = getFirestore();
+export const storage = admin.storage();
 export const auth = admin.auth();
 
 /**

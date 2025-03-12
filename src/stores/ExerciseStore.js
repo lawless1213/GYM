@@ -139,7 +139,7 @@ export class ExerciseStore {
     console.log("Executing mutation...")
     
     try {
-      mutationResult = await client.mutate({
+      const mutationResult = await client.mutate({
         mutation: DELETE_EXERCISE,
         variables: { input: { id, author, preview, video } }
       });
