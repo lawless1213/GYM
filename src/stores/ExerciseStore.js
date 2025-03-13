@@ -107,13 +107,18 @@ export class ExerciseStore {
   async createExercise(exercise, imageFile = null, videoFile = null) {
     if (!this.currentUser) return;
     
-    const newExercise = {
-      // preview: imageFile,
-      // video: videoFile,
-      ...exercise
-    };
-  
     try {
+      const [preview, video] = await Promise.all([
+        imageFile ? FirebaseService.uploadFile(imageFile, "preview") : '',
+        videoFile ? FirebaseService.uploadFile(videoFile, "video") : '',
+      ]);
+
+      const newExercise = {
+        ...exercise,
+        preview,
+        video,
+      };
+
       const mutationResult = await client.mutate({
         mutation: CREATE_EXERCISE,
         variables: { input: newExercise }
