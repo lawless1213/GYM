@@ -5,6 +5,7 @@ import { getPersonalExercises } from "../services/exercisePersonalService.js";
 import { removeFromBookmarks } from "../mutations/exercises/removeFromBookmarks.js";
 import { addToBookmarks } from "../mutations/exercises/addToBookmarks.js";
 import { deleteExercise } from "../mutations/exercises/deleteExercise.js";
+import { createExercise } from "../mutations/exercises/createExercise.js";
 
 export const resolvers = {
   Query: {
@@ -23,8 +24,9 @@ export const resolvers = {
 		getFilters,
   },
   Mutation: {
+    createExercise,
+    deleteExercise,
     addToBookmarks,
     removeFromBookmarks,
-    deleteExercise,
   },
 };

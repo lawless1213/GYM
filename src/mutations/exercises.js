@@ -19,8 +19,17 @@ export const REMOVE_FROM_BOOKMARKS = gql`
 `;
 
 export const DELETE_EXERCISE = gql`
-  mutation DeleteExercise($input: ExerciseInput!) {
+  mutation DeleteExercise($input: DeleteExerciseInput!) {
     deleteExercise(input: $input) {
+      success
+      message
+    }
+  }
+`;
+
+export const CREATE_EXERCISE = gql`
+  mutation CreateExercise($input: CreateExerciseInput!) {
+    createExercise(input: $input) {
       success
       message
     }

@@ -1,10 +1,14 @@
 import { gql } from "apollo-server-express";
 
 export const typeDefs = gql`
+  scalar Upload
+
   type Mutation {
     addToBookmarks(exerciseId: ID!): MutationResponse!
     removeFromBookmarks(exerciseId: ID!): MutationResponse!
-    deleteExercise(input: ExerciseInput!): MutationResponse!
+    deleteExercise(input: DeleteExerciseInput!): MutationResponse!
+    createExercise(input: CreateExerciseInput!): MutationResponse!
+    uploadFile(file: Upload!, folder: String!): String!
   }
 
   type Query {
@@ -20,11 +24,20 @@ export const typeDefs = gql`
     message: String!
   }
 
-  input ExerciseInput {
+  input DeleteExerciseInput {
     id: ID!
     author: String!
     preview: String
     video: String
+  }
+
+  input CreateExerciseInput {
+    name: String!
+    bodyPart: [String!]!
+    description: String!
+    equipment: [String!]!
+    preview: Upload
+    video: Upload
   }
 
   input ExerciseFilter {

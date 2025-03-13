@@ -5,7 +5,7 @@ import { FirebaseService } from '../firebase/functions';
 import { GET_EXERCISES, GET_PERSONAL_EXERCISES } from '../queries/exercises';
 import { GET_USER } from '../queries/user';
 import client from '../providers/apolloClient';
-import { ADD_TO_BOOKMARKS, REMOVE_FROM_BOOKMARKS, DELETE_EXERCISE } from '../mutations/exercises';
+import { ADD_TO_BOOKMARKS, REMOVE_FROM_BOOKMARKS, DELETE_EXERCISE, CREATE_EXERCISE } from '../mutations/exercises';
 
 export const groupNames = {
   ALL: 'all',
@@ -107,27 +107,28 @@ export class ExerciseStore {
   async createExercise(exercise, imageFile = null, videoFile = null) {
     if (!this.currentUser) return;
     
-    const exerciseId = crypto.randomUUID();
     const newExercise = {
-      author: this.currentUser.uid,
-      authorName: this.currentUser.displayName,
+      preview: imageFile,
+      video: videoFile,
       ...exercise
     };
 
-    newExercise.id = exerciseId;
+    console.log(newExercise);
+    
   
     try {
-      const [preview, video] = await Promise.all([
-        imageFile && FirebaseService.uploadFile(imageFile, "preview"),
-        videoFile && FirebaseService.uploadFile(videoFile, "video"),
-      ]);
-  
-      newExercise.preview = preview ?? '';
-      newExercise.video = video ?? '';
-  
-      await setDoc(doc(db, "exercises", exerciseId), newExercise); // Задаємо ID вручну
-      this.loadExercises(this.groupExercise);
-      return true;
+      const mutationResult = await client.mutate({
+        mutation: CREATE_EXERCISE,
+        variables: { input: newExercise }
+      });
+
+      if (mutationResult.data) {
+        runInAction(() => {
+          this.loadExercises();
+        });
+      } else {
+        throw new Error("Не вдалося створити вправу");
+      }
     } catch (error) {
       console.error("Error creating exercise:", error);
       return false;
