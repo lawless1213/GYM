@@ -6,6 +6,7 @@ import { removeFromBookmarks } from "../mutations/exercises/removeFromBookmarks.
 import { addToBookmarks } from "../mutations/exercises/addToBookmarks.js";
 import { deleteExercise } from "../mutations/exercises/deleteExercise.js";
 import { createExercise } from "../mutations/exercises/createExercise.js";
+import { updateExercise } from "../mutations/exercises/updateExercise.js";
 
 export const resolvers = {
   Query: {
@@ -25,6 +26,7 @@ export const resolvers = {
   },
   Mutation: {
     createExercise,
+    updateExercise,
     deleteExercise,
     addToBookmarks,
     removeFromBookmarks,

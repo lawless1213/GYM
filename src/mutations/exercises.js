@@ -35,3 +35,12 @@ export const CREATE_EXERCISE = gql`
     }
   }
 `;
+
+export const UPDATE_EXERCISE = gql`
+  mutation UpdateExercise($input: UpdateExerciseInput!) {
+    updateExercise(input: $input) {
+      success
+      message
+    }
+  }
+`;

@@ -5,7 +5,8 @@ import { FirebaseService } from '../firebase/functions';
 import { GET_EXERCISES, GET_PERSONAL_EXERCISES } from '../queries/exercises';
 import { GET_USER } from '../queries/user';
 import client from '../providers/apolloClient';
-import { ADD_TO_BOOKMARKS, REMOVE_FROM_BOOKMARKS, DELETE_EXERCISE, CREATE_EXERCISE } from '../mutations/exercises';
+import { ADD_TO_BOOKMARKS, REMOVE_FROM_BOOKMARKS, DELETE_EXERCISE, CREATE_EXERCISE, UPDATE_EXERCISE } from '../mutations/exercises';
+import { string } from 'yup';
 
 export const groupNames = {
   ALL: 'all',
@@ -85,17 +86,38 @@ export class ExerciseStore {
 		}
 	}
 
-	async updateExercise(id, updatedData, imageFile = null, videoFile = null) {
+	async updateExercise(updatedData, image = '', video = '') {
 		if (!this.currentUser) return false;
-	
+
 		try {
-			const updatedExercise = await FirebaseService.updateExercise(id, updatedData, imageFile, videoFile);
-	
-			runInAction(() => {
-				this.allExercises[this.groupExercise] = this.allExercises[this.groupExercise].map(exercise => 
-					exercise.id === id ? updatedExercise : exercise
-				);
-			});
+      const uploadIfNeeded = async (file, folder) => 
+        file && typeof file !== 'string' ? await FirebaseService.uploadFile(file, folder) : file;
+    
+      const [imageUrl, videoUrl] = await Promise.all([
+        uploadIfNeeded(image, "preview"),
+        uploadIfNeeded(video, "videos")
+      ]);
+  
+      const updatedExercise = {
+        ...updatedData,
+        preview: imageUrl,
+        video: videoUrl,
+      };
+
+			const mutationResult = await client.mutate({
+        mutation: UPDATE_EXERCISE,
+        variables: { input: updatedExercise }
+      });
+
+      if (mutationResult.data) {
+        runInAction(() => {
+          this.allExercises[this.groupExercise] = this.allExercises[this.groupExercise].map(exercise => 
+            exercise.id === id ? updatedExercise : exercise
+          );
+        });
+      } else {
+        throw new Error("Не вдалося створити вправу");
+      }
 	
 			return true;
 		} catch (error) {

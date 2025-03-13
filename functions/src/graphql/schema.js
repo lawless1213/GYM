@@ -14,6 +14,7 @@ export const typeDefs = gql`
     removeFromBookmarks(exerciseId: ID!): MutationResponse!
     deleteExercise(input: DeleteExerciseInput!): MutationResponse!
     createExercise(input: CreateExerciseInput!): MutationResponse!
+    updateExercise(input: UpdateExerciseInput!): MutationResponse!
   }
 
   type MutationResponse {
@@ -23,6 +24,16 @@ export const typeDefs = gql`
 
   input CreateExerciseInput {
     id: String
+    name: String!
+    bodyPart: [String!]!
+    description: String!
+    equipment: [String!]!
+    preview: String
+    video: String
+  }
+
+  input UpdateExerciseInput {
+    id: String!
     name: String!
     bodyPart: [String!]!
     description: String!

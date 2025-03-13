@@ -5,18 +5,18 @@ import MyDropzone from '../../components/Dropzone';
 import { useStores } from '../../hooks/useStores';
 import { MultiSelectAsync } from '../../components/MultiSelectAsync';
 
-function Exercise({ closeModal, exercise = null}) {
+function Exercise({ closeModal, exercise = null}) {  
   const { ExerciseFilterStore, ExerciseStore } = useStores();
   const [loading, setLoading] = useState(false);
-  const [image, setImage] = useState(null);
-  const [video, setVideo] = useState(null);
+  const [image, setImage] = useState(exercise.preview ? exercise.preview : '');
+  const [video, setVideo] = useState(exercise.video ? exercise.video : '');
 
 	const form = useForm({
 		initialValues: {
 			name: exercise ? exercise.name : '',
 			description: exercise ? exercise.description : '',
-      bodyPart: exercise ? exercise.bodyPart : null,
-      equipment: exercise ? exercise.equipment : null,
+      bodyPart: Array.isArray(exercise.bodyPart) ? [...exercise.bodyPart] : [],
+      equipment: Array.isArray(exercise.equipment) ? [...exercise.equipment] : [],
       id: exercise ? exercise.id : ''
 		},
 
@@ -33,7 +33,7 @@ function Exercise({ closeModal, exercise = null}) {
     if (!form.validate().hasErrors) {
       setLoading(true);
       const success = exercise 
-        ? await ExerciseStore.updateExercise(exercise.id, form.values, image, video)
+        ? await ExerciseStore.updateExercise(form.values, image, video)
         : await ExerciseStore.createExercise(form.values, image, video);
   
       if (success) {
