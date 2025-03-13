@@ -32,12 +32,12 @@ export const typeDefs = gql`
   }
 
   input CreateExerciseInput {
+    id: String
     name: String!
     bodyPart: [String!]!
     description: String!
     equipment: [String!]!
-    preview: Upload
-    video: Upload
+    
   }
 
   input ExerciseFilter {

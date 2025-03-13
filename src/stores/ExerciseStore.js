@@ -108,13 +108,10 @@ export class ExerciseStore {
     if (!this.currentUser) return;
     
     const newExercise = {
-      preview: imageFile,
-      video: videoFile,
+      // preview: imageFile,
+      // video: videoFile,
       ...exercise
     };
-
-    console.log(newExercise);
-    
   
     try {
       const mutationResult = await client.mutate({

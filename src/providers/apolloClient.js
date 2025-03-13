@@ -1,7 +1,6 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { getToken } from "../firebase/functions";
-import { createUploadLink } from 'graphql-upload';
 
 const authLink = setContext(async (_, { headers }) => {
   const token = await getToken();
@@ -14,13 +13,12 @@ const authLink = setContext(async (_, { headers }) => {
   };
 });
 
-const uploadLink = createUploadLink({
+const httpLink = new HttpLink({
   uri: import.meta.env.VITE_FIREBASE_GRAPH_URL,
 });
 
-// Налаштування Apollo Client
 const client = new ApolloClient({
-  link: authLink.concat(uploadLink), // Додаємо автентифікаційний лінк до лінка для завантаження файлів
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 

@@ -24,8 +24,7 @@ const server = new ApolloServer({
       const userContext = {
         uid: user.uid,
         email: user.email,
-        name: user.name,  // Якщо name зберігається в токені
-        // додайте інші необхідні поля
+        name: user.name,
       };
       
       // console.log("🟢 Отриманий користувач у `context`:", userContext); // Лог користувача з важливими даними
