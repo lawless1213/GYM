@@ -100,9 +100,10 @@ export class ExerciseStore {
   
       const updatedExercise = {
         ...updatedData,
-        preview: imageUrl,
-        video: videoUrl,
+        preview: imageUrl || '',
+        video: videoUrl || '',
       };
+      
 
 			const mutationResult = await client.mutate({
         mutation: UPDATE_EXERCISE,
