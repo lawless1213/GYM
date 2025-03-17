@@ -1,34 +1,48 @@
-import { useState } from 'react';
-import { MultiSelect, Loader, CloseButton } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
+import { useState, useEffect } from "react";
+import { MultiSelect, Loader } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 
-export function MultiSelectAsync({ title, translateKey = '', selectedValue = [], onFirstOpen, onSelect, disabled }) {
+export function MultiSelectAsync({
+  title,
+  translateKey = "",
+  selectedValue = [],
+  onSelect,
+  disabled,
+  data = [],
+  loading = false,
+  onFirstOpen, // Залишаємо для можливого завантаження, але не обов'язково використовувати
+}) {
   const { t } = useTranslation();
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [value, setValue] = useState(selectedValue);
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState([]);
   const [opened, setOpened] = useState(false);
+  const [internalData, setInternalData] = useState(data);
 
-  const handleOpen = () => {
-    if (!opened && data.length === 0 && !loading) {
-      setLoading(true);
-      onFirstOpen()
-        .then((loadedData) => {
-          setData(Array.isArray(loadedData) ? loadedData : []);
-        })
-        .catch((error) => {
-          console.error("Failed to load data:", error);
-          setData([]);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+  useEffect(() => {
+    setValue(selectedValue);
+  }, [selectedValue]);
+
+  useEffect(() => {
+    setInternalData(data);
+  }, [data]);
+
+  const handleOpen = async () => {
+    if (!opened && internalData.length === 0 && !loading && onFirstOpen) {
+      try {
+        const loadedData = await onFirstOpen();
+        setInternalData(Array.isArray(loadedData) ? loadedData : []);
+      } catch (error) {
+        console.error("Failed to load data:", error);
+        setInternalData([]);
+      }
     }
     setOpened(true);
   };
 
-  const options = data.map((item) => ({ value: item, label: t(`${translateKey}${item}`) }));
+  const options = internalData.map((item) => ({
+    value: item,
+    label: t(`${translateKey}${item}`),
+  }));
 
   return (
     <MultiSelect
@@ -36,20 +50,18 @@ export function MultiSelectAsync({ title, translateKey = '', selectedValue = [],
       value={value}
       onChange={(val) => {
         setValue(val);
-        if (onSelect) {
-          onSelect(val);
-        }
+        onSelect?.(val);
       }}
-			checkIconPosition="right"
+      checkIconPosition="right"
       searchable
       onSearchChange={setSearch}
       searchValue={search}
       placeholder={title}
-      nothingFoundMessage={loading ? <Loader size="xs"/> : "Nothing found"}
+      nothingFoundMessage={loading ? <Loader size="xs" /> : "Nothing found"}
       onDropdownOpen={handleOpen}
-			clearable
-			max={10}
-			disabled={disabled ? true : undefined}
+      clearable
+      max={10}
+      disabled={disabled || undefined}
     />
   );
 }

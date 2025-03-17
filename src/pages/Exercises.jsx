@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Title, SimpleGrid, Button, Group, Stack, Loader, Box, Flex } from '@mantine/core';
+import { Title, SimpleGrid, Button, Group, Stack, Loader, Flex } from '@mantine/core';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '../hooks/useStores.jsx';
 import ExerciseCard from '../components/ExerciseCard/index.jsx';
@@ -9,18 +9,19 @@ import { useAuth } from '../stores/context/AuthContext.jsx';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from "@apollo/client";
 import { useExercises } from '../hooks/useExercises.js';
+import { GET_FILTERS } from '../queries/filters.js';
 
 const Exercises = observer(() => {
   const { t } = useTranslation();
-	const { currentUser } = useAuth();
-  const { ExerciseStore, ExerciseFilterStore } = useStores();
+  const { currentUser } = useAuth();
+  const { ExerciseStore } = useStores();
   const [groupExercise, setGroupExercise] = useState(groupNames.ALL);
   const [filters, setFilters] = useState({});
 
-  const filterBodyLoad = async (filterName) => {
-    await ExerciseFilterStore.loadFilter(filterName);
-    return ExerciseFilterStore[filterName];
-  };
+  const { data: filterBodyPartsData, loading: loadingBodyParts } = useQuery(GET_FILTERS, { variables: { name: "bodyPart" } });
+  const { data: filterEquipmentData, loading: loadingEquipment } = useQuery(GET_FILTERS, { variables: { name: "equipment" } });
+
+  const { exercises, loading, error, refetch } = useExercises(groupExercise, filters, currentUser);
 
   const handleFilterChange = (name, values) => {
     setFilters((prevFilters) => {
@@ -32,14 +33,12 @@ const Exercises = observer(() => {
         updatedFilters[name] = values;
       }
 
-      refetch({ filters: updatedFilters }); // Перезавантажуємо дані
+      refetch({ filters: updatedFilters });
       return updatedFilters;
     });
   };
 
-  const { exercises, loading, error, refetch } = useExercises(groupExercise, filters, currentUser);
-  
-  const cards = (exercises).map((item) => (
+  const cards = exercises.map((item) => (
     <ExerciseCard
       key={item.id}
       id={item.id}
@@ -53,15 +52,13 @@ const Exercises = observer(() => {
       author={item.author}
     />
   ));
-  
+
   return (
     <>
-      
       <Group position="apart" mb="md">
         <Stack style={{ width: "100%" }}>
           <Title order={1}>{t('exercises.pageTitle')}</Title>
-          {
-            !!currentUser &&
+          {currentUser && (
             <Group justify='space-between' gap="xs">
               <Group gap="xs">
                 <Button
@@ -82,38 +79,46 @@ const Exercises = observer(() => {
                 >
                   {t('exercises.selfCreated')}
                 </Button>
-
               </Group>
-              {ExerciseStore.groupExercise === groupNames.ALL && 
+              {groupExercise === groupNames.ALL && (
                 <Group gap="xs">
                   <MultiSelectAsync
                     title={t('exercises.equipment')}
                     translateKey="filters.equipment."
-                    selectedValue={ExerciseStore.filters[filterNames.EQUIPMENT]}
-                    onFirstOpen={() => filterBodyLoad(filterNames.EQUIPMENT)}
+                    selectedValue={filters[filterNames.EQUIPMENT]}
+                    data={filterEquipmentData?.getFilters.values || []}
+                    loading={loadingEquipment}
                     onSelect={(value) => handleFilterChange(filterNames.EQUIPMENT, value)}
-                    // disabled={!!ExerciseStore.filters.values && ExerciseStore.filters.name != filterNames.EQUIPMENT}
                   />
                   <MultiSelectAsync
                     title={t('exercises.bodyParts')}
                     translateKey="filters.bodyPart."
-                    selectedValue={ExerciseStore.filters[filterNames.BODYPART]}
-                    onFirstOpen={() => filterBodyLoad(filterNames.BODYPART)}
+                    selectedValue={filters[filterNames.BODYPART]}
+                    data={filterBodyPartsData?.getFilters.values || []}
+                    loading={loadingBodyParts}
                     onSelect={(value) => handleFilterChange(filterNames.BODYPART, value)}
-                    // disabled={!!ExerciseStore.filters.values && ExerciseStore.filters.name != filterNames.BODYPART}
                   />
-                </Group> 
-              }
+                </Group>
+              )}
             </Group>
-          }
+          )}
         </Stack>
       </Group>
-      {  
-        loading ? 
-        <Flex flex={1} justify='center' align='center'><Loader/></Flex> : 
-        <SimpleGrid cols={{ base: 1, xs: 2, lg: 3, xl: 4 }}>{cards}</SimpleGrid>
+      {
+        loading && 
+        <Flex flex={1} justify='center' align='center'>
+          <Loader />
+        </Flex>
       }
-      
+      {
+        !loading && !cards.length ? (
+          <Flex flex={1} justify='center' align='center'>
+            <Title order={3}>Nothing found..</Title>
+          </Flex>
+        ) : (
+          <SimpleGrid cols={{ base: 1, xs: 2, lg: 3, xl: 4 }}>{cards}</SimpleGrid>
+        )
+      }
     </>
   );
 });

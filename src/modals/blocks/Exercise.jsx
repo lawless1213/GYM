@@ -4,6 +4,8 @@ import { Button, Group, Paper, SimpleGrid, Text, Textarea, TextInput,  useMantin
 import MyDropzone from '../../components/Dropzone';
 import { useStores } from '../../hooks/useStores';
 import { MultiSelectAsync } from '../../components/MultiSelectAsync';
+import { GET_FILTERS } from '../../queries/filters';
+import { useQuery } from '@apollo/client';
 
 function Exercise({ closeModal, exercise = null}) {  
   const { ExerciseFilterStore, ExerciseStore } = useStores();
@@ -43,10 +45,8 @@ function Exercise({ closeModal, exercise = null}) {
     }
   };
 
-  const filterBodyLoad = async (filterName) => {
-    await ExerciseFilterStore.loadFilter(filterName);
-    return ExerciseFilterStore[filterName];
-  };
+  const { data: filterBodyPartsData, loading: loadingBodyParts } = useQuery(GET_FILTERS, { variables: { name: "bodyPart" } });
+  const { data: filterEquipmentData, loading: loadingEquipment } = useQuery(GET_FILTERS, { variables: { name: "equipment" } });
 
 	return (
       <>
@@ -60,13 +60,15 @@ function Exercise({ closeModal, exercise = null}) {
               <MultiSelectAsync
                 selectedValue = { exercise ? exercise.bodyPart : [] }
                 title="Body part"
-                onFirstOpen={() => filterBodyLoad('bodyPart')}
+                data={filterEquipmentData?.getFilters.values || []}
+                loading={loadingEquipment}
                 onSelect={(value) => form.setFieldValue('bodyPart', value)}
               />
               <MultiSelectAsync
                 selectedValue = { exercise ? exercise.equipment : [] }
                 title="Equipment"
-                onFirstOpen={() => filterBodyLoad('equipment')}
+                data={filterBodyPartsData?.getFilters.values || []}
+                loading={loadingBodyParts}
                 onSelect={(value) => form.setFieldValue('equipment', value)}
               />
 
