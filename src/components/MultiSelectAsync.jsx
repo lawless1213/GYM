@@ -10,17 +10,13 @@ export function MultiSelectAsync({
   disabled,
   data = [],
   loading = false,
-  onFirstOpen, // Залишаємо для можливого завантаження, але не обов'язково використовувати
+  onFirstOpen,
 }) {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [value, setValue] = useState(selectedValue);
   const [opened, setOpened] = useState(false);
   const [internalData, setInternalData] = useState(data);
-
-  useEffect(() => {
-    setValue(selectedValue);
-  }, [selectedValue]);
 
   useEffect(() => {
     setInternalData(data);
