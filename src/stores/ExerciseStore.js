@@ -31,26 +31,6 @@ export class ExerciseStore {
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
-  setFilters(name, values) {
-    if (!values.length) {
-      runInAction(() => {
-      delete this.filters[name];
-      });
-    } else {
-      runInAction(() => {
-        this.filters[name] = values;
-      });
-    }
-    
-    this.loadExercises();
-  }
-
-  setGroupExercise(value) {
-    runInAction(() => {
-      this.groupExercise = value;
-    });
-    this.loadExercises();
-  }
 
   async loadExercises(group = this.groupExercise) {
     let response;
