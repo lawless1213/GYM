@@ -20,7 +20,7 @@ export const useExercises = (group, filters, currentUser) => {
       variables = { filters };
   }
 
-  const { data, loading, error, refetch } = useQuery(query, { variables });
+  const { data, loading, error } = useQuery(query, { variables });
 
   return {
     exercises:
@@ -30,7 +30,6 @@ export const useExercises = (group, filters, currentUser) => {
         ? data?.getPersonalExercises || []
         : data?.getExercises || [],
     loading,
-    error,
-    refetch,
+    error
   };
 };

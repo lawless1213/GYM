@@ -21,7 +21,7 @@ const Exercises = observer(() => {
   const { data: filterBodyPartsData, loading: loadingBodyParts } = useQuery(GET_FILTERS, { variables: { name: "bodyPart" } });
   const { data: filterEquipmentData, loading: loadingEquipment } = useQuery(GET_FILTERS, { variables: { name: "equipment" } });
 
-  const { exercises, loading, error, refetch } = useExercises(groupExercise, filters, currentUser);
+  const { exercises, loading, error } = useExercises(groupExercise, filters, currentUser);
 
   const handleFilterChange = (name, values) => {
     setFilters((prevFilters) => {
@@ -33,7 +33,6 @@ const Exercises = observer(() => {
         updatedFilters[name] = values;
       }
 
-      refetch({ filters: updatedFilters });
       return updatedFilters;
     });
   };
