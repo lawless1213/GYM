@@ -37,7 +37,6 @@ function Exercise({ closeModal, exercise = null}) {
     event.preventDefault();
     if (!form.validate().hasErrors) {
       setLoading(true);
-      console.log(image, video);
       
       const success = exercise 
         ? await exerciseService.updateExercise(form.values, image, video)

@@ -30,7 +30,6 @@ export class ExerciseStore {
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
-
   async loadExercises(group = this.groupExercise) {
     let response;
     let data = [];
@@ -62,47 +61,6 @@ export class ExerciseStore {
 			runInAction(() => (this.allExercises[group] = data));
 		} catch (error) {
 			console.error("Error loading exercises:", error);
-		}
-	}
-
-	async updateExercise(updatedData, image = '', video = '') {
-		if (!this.currentUser) return false;
-
-		try {
-      const uploadIfNeeded = async (file, folder) => 
-        file && typeof file !== 'string' ? await FirebaseService.uploadFile(file, folder) : file;
-    
-      const [imageUrl, videoUrl] = await Promise.all([
-        uploadIfNeeded(image, "preview"),
-        uploadIfNeeded(video, "videos")
-      ]);
-  
-      const updatedExercise = {
-        ...updatedData,
-        preview: imageUrl || '',
-        video: videoUrl || '',
-      };
-      
-
-			const mutationResult = await client.mutate({
-        mutation: UPDATE_EXERCISE,
-        variables: { input: updatedExercise }
-      });
-
-      if (mutationResult.data) {
-        runInAction(() => {
-          this.allExercises[this.groupExercise] = this.allExercises[this.groupExercise].map(exercise => 
-            exercise.id === id ? updatedExercise : exercise
-          );
-        });
-      } else {
-        throw new Error("Не вдалося створити вправу");
-      }
-	
-			return true;
-		} catch (error) {
-			console.error("Error updating exercise:", error);
-			return false;
 		}
 	}
 
