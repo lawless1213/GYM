@@ -49,6 +49,7 @@ const Exercises = observer(() => {
       bodyPart={item.bodyPart}
       authorName={item.authorName}
       author={item.author}
+      isBookmarked={item.isBookmarked}
     />
   ));
 

@@ -1,31 +1,34 @@
 import { db } from "../../firebase.js";
-import { GraphQLError } from "graphql";
-
 
 export const addToBookmarks = async (_, { exerciseId }, context) => {
-  if (!context.user) {
-    console.error("❌ Користувач відсутній у контексті");
-    throw new GraphQLError("Unauthorized"); 
+  if (!context.user) throw new Error("Unauthorized");
+  
+  try {
+    const userRef = db.collection("users").doc(context.user.uid);
+    const exerciseRef = db.collection("exercises").doc(exerciseId);
+    
+    // Отримуємо дані вправи
+    const exerciseDoc = await exerciseRef.get();
+    if (!exerciseDoc.exists) {
+      throw new Error("Вправа не знайдена");
+    }
+    const exercise = { id: exerciseDoc.id, ...exerciseDoc.data() };
+
+    // Додаємо вправу до улюблених
+    await userRef.update({
+      bookmarks: db.FieldValue.arrayUnion(exercise)
+    });
+
+    return { 
+      success: true, 
+      message: "Вправу додано до улюблених",
+      exercise: {
+        ...exercise,
+        isBookmarked: true
+      }
+    };
+  } catch (error) {
+    console.error("❌ Помилка додавання до улюблених:", error);
+    throw new Error("Не вдалося додати до улюблених");
   }
-
-  const userRef = db.collection("users").doc(context.user.uid);
-  const exerciseRef = db.collection("exercises").doc(exerciseId);
-
-  const userDoc = await userRef.get();
-  if (!userDoc.exists) {
-    throw new GraphQLError("Користувач не знайдений");
-  }
-
-  const userData = userDoc.data();
-  const currentBookmarks = userData.bookmarks || [];
-
-  if (currentBookmarks.some(ref => ref.id === exerciseId)) {
-    throw new GraphQLError("Ця вправа вже в обраному");
-  }
-
-  await userRef.update({
-    bookmarks: [...currentBookmarks, exerciseRef],
-  });
-
-  return { success: true, message: "Вправа додана в обране" };
 };

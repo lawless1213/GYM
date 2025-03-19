@@ -10,8 +10,8 @@ export const typeDefs = gql`
   }
 
   type Mutation {
-    addToBookmarks(exerciseId: ID!): MutationResponse!
-    removeFromBookmarks(exerciseId: ID!): MutationResponse!
+    addToBookmarks(exerciseId: ID!): UpdateExerciseResponse!
+    removeFromBookmarks(exerciseId: ID!): UpdateExerciseResponse!
     deleteExercise(input: DeleteExerciseInput!): MutationResponse!
     createExercise(input: CreateExerciseInput!): UpdateExerciseResponse!
     updateExercise(input: UpdateExerciseInput!): UpdateExerciseResponse!
@@ -74,6 +74,7 @@ export const typeDefs = gql`
     equipment: [String!]!
     preview: String!
     video: String!
+    isBookmarked: Boolean!
   }
 
 	type Filter {

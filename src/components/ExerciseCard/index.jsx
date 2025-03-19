@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 import s from './index.module.scss';
 import exerciseService from '../../services/exerciseService';
 
-const ExerciseCard = observer(({id, name, description, equipment, bodyPart, preview, video, authorName, author}) => {
+const ExerciseCard = observer(({id, name, description, equipment, bodyPart, preview, video, authorName, author, isBookmarked}) => {
   const { t } = useTranslation();
 	const { currentUser } = useAuth();
 	const { SettingStore, ExerciseStore } = useStores();
@@ -33,8 +33,6 @@ const ExerciseCard = observer(({id, name, description, equipment, bodyPart, prev
 		const result = await exerciseService.deleteExercise({id, author, video, preview});
 		console.log("Mutation result:", result);
 	};
-
-	const isFavorite = ExerciseStore.isFavorite(id);
 
 	const previewToggleHandler = () => {
     setIsVideoPreview(!isVideoPreview);
@@ -86,7 +84,7 @@ const ExerciseCard = observer(({id, name, description, equipment, bodyPart, prev
 						{
 							!!currentUser &&  
 							<ActionIcon onClick={bookmarkToggler} variant="default" aria-label="Bookmark">
-								{isFavorite ? <IconBookmarkFilled /> : <IconBookmark />}
+								{isBookmarked ? <IconBookmarkFilled /> : <IconBookmark />}
 							</ActionIcon>
 						}
 						

@@ -12,6 +12,7 @@ export const GET_EXERCISES = gql`
       equipment
       preview
       video
+      isBookmarked
     }
   }
 `;
@@ -28,6 +29,7 @@ export const GET_PERSONAL_EXERCISES = gql`
       equipment
 			preview
 			video
+      isBookmarked
     }
   }
 `;

@@ -26,43 +26,8 @@ export class ExerciseStore {
   constructor(rootStore, currentUser) {
     this.rootStore = rootStore;
     this.currentUser = currentUser;
-    this.loadExercises(groupNames.BOOKMARKS);
     makeAutoObservable(this, {}, { autoBind: true });
   }
-
-  async loadExercises(group = this.groupExercise) {
-    let response;
-    let data = [];
-
-		try {
-      switch (group) {
-        case groupNames.BOOKMARKS:
-          console.log('BOOKMARKS');
-          response = await client.query({ query: GET_USER });
-          data = response.data.getUserData.bookmarks;
-          break;
-        case groupNames.PERSONAL:
-          console.log('PERSONAL');
-          response = await client.query({
-            query: GET_PERSONAL_EXERCISES,
-            variables: { uid: this.currentUser.uid },
-          });
-          data = response.data.getPersonalExercises;
-          break;     
-        default:
-          response = await client.query({
-            query: GET_EXERCISES,
-            variables: { filters: this.filters } 
-          });
-          data = response.data.getExercises;
-          break;
-      }
-      
-			runInAction(() => (this.allExercises[group] = data));
-		} catch (error) {
-			console.error("Error loading exercises:", error);
-		}
-	}
 
   async toggleBookmark(id) {
     if (!this.currentUser) return;
@@ -106,10 +71,5 @@ export class ExerciseStore {
     } catch (error) {
       console.error("Error updating bookmarks:", error);
     }
-  }
-	
-
-  isFavorite(id) {
-    return this.allExercises[groupNames.BOOKMARKS].some(bookmark => bookmark.id === id);
   }
 }

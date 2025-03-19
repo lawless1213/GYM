@@ -5,6 +5,20 @@ export const ADD_TO_BOOKMARKS = gql`
     addToBookmarks(exerciseId: $exerciseId) {
       success
       message
+      exercise {
+        id
+        name
+        author
+        authorName
+        bodyPart
+        description
+        equipment
+        preview
+        video
+        isBookmarked
+        __typename
+      }
+      __typename
     }
   }
 `;
@@ -14,6 +28,20 @@ export const REMOVE_FROM_BOOKMARKS = gql`
     removeFromBookmarks(exerciseId: $exerciseId) {
       success
       message
+      exercise {
+        id
+        name
+        author
+        authorName
+        bodyPart
+        description
+        equipment
+        preview
+        video
+        isBookmarked
+        __typename
+      }
+      __typename
     }
   }
 `;
@@ -42,6 +70,7 @@ export const CREATE_EXERCISE = gql`
         equipment
         preview
         video
+        isBookmarked
         __typename
       }
       __typename
@@ -64,6 +93,7 @@ export const UPDATE_EXERCISE = gql`
         equipment
         preview
         video
+        isBookmarked
         __typename
       }
       __typename
