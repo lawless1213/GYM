@@ -32,6 +32,19 @@ export const CREATE_EXERCISE = gql`
     createExercise(input: $input) {
       success
       message
+      exercise {
+        id
+        name
+        author
+        authorName
+        bodyPart
+        description
+        equipment
+        preview
+        video
+        __typename
+      }
+      __typename
     }
   }
 `;
@@ -41,6 +54,19 @@ export const UPDATE_EXERCISE = gql`
     updateExercise(input: $input) {
       success
       message
+      exercise {
+        id
+        name
+        author
+        authorName
+        bodyPart
+        description
+        equipment
+        preview
+        video
+        __typename
+      }
+      __typename
     }
   }
 `;

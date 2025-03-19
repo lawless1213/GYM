@@ -62,7 +62,7 @@ export const updateExercise = async (_, { input }, context) => {
 		console.log(newExercise);
 		await exerciseRef.set(newExercise, { merge: true });
 
-		return { success: true, message: "Вправа відредагована" };
+		return { success: true, message: "Вправа відредагована", exercise: newExercise };
 	} catch (error) {
 		console.error("❌ Помилка редагування вправи:", error);
 		throw new Error("Не вдалося відредагувати вправу");

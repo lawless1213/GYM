@@ -22,7 +22,7 @@ export const createExercise = async (_, { input }, context) => {
     console.log(newExercise);
     
     await db.collection("exercises").doc(exerciseId).set(newExercise);
-    return { success: true, message: "Вправа створена" };
+    return { success: true, message: "Вправа створена", exercise: newExercise };
   } catch (error) {
     console.error("❌ Помилка створення вправи:", error);
     throw new Error("Не вдалося створити вправу");

@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 
 
 import s from './index.module.scss';
+import exerciseService from '../../services/exerciseService';
 
 const ExerciseCard = observer(({id, name, description, equipment, bodyPart, preview, video, authorName, author}) => {
   const { t } = useTranslation();
@@ -28,9 +29,10 @@ const ExerciseCard = observer(({id, name, description, equipment, bodyPart, prev
 		ExerciseStore.toggleBookmark(id);
 	} 
 
-	const deleteHandler = () => {
-		ExerciseStore.deleteExercise({id, author, video, preview});
-	}
+	const handleDeleteExercise  = async () => {
+		const result = await exerciseService.deleteExercise({id, author, video, preview});
+		console.log("Mutation result:", result);
+	};
 
 	const isFavorite = ExerciseStore.isFavorite(id);
 
@@ -110,7 +112,7 @@ const ExerciseCard = observer(({id, name, description, equipment, bodyPart, prev
 									<Menu.Item
 										color="red"
 										leftSection={<IconTrash size={14} />}
-										onClick={deleteHandler}
+										onClick={handleDeleteExercise}
 									>
 										{t(`exercise.delete`)}
 									</Menu.Item>

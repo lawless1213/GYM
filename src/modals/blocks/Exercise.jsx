@@ -7,10 +7,11 @@ import { MultiSelectAsync } from '../../components/MultiSelectAsync';
 import { GET_FILTERS } from '../../queries/filters';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
+import exerciseService from '../../services/exerciseService';
 
 function Exercise({ closeModal, exercise = null}) {  
   const { t } = useTranslation();
-  const { ExerciseFilterStore, ExerciseStore } = useStores();
+  const { ExerciseStore } = useStores();
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(exercise && exercise.preview ? exercise.preview : '');
   const [video, setVideo] = useState(exercise && exercise.video ? exercise.video : '');
@@ -38,7 +39,7 @@ function Exercise({ closeModal, exercise = null}) {
       setLoading(true);
       const success = exercise 
         ? await ExerciseStore.updateExercise(form.values, image, video)
-        : await ExerciseStore.createExercise(form.values, image, video);
+        : await exerciseService.createExercise(form.values, image, video);
   
       if (success) {
         closeModal();

@@ -13,13 +13,19 @@ export const typeDefs = gql`
     addToBookmarks(exerciseId: ID!): MutationResponse!
     removeFromBookmarks(exerciseId: ID!): MutationResponse!
     deleteExercise(input: DeleteExerciseInput!): MutationResponse!
-    createExercise(input: CreateExerciseInput!): MutationResponse!
-    updateExercise(input: UpdateExerciseInput!): MutationResponse!
+    createExercise(input: CreateExerciseInput!): UpdateExerciseResponse!
+    updateExercise(input: UpdateExerciseInput!): UpdateExerciseResponse!
   }
 
   type MutationResponse {
     success: Boolean!
     message: String!
+  }
+
+  type UpdateExerciseResponse {
+    success: Boolean!
+    message: String!
+    exercise: Exercise!
   }
 
   input CreateExerciseInput {

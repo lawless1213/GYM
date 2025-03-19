@@ -1,12 +1,11 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { FirebaseService } from '../firebase/functions';
 import { GET_EXERCISES, GET_PERSONAL_EXERCISES } from '../queries/exercises';
 import { GET_USER } from '../queries/user';
 import client from '../providers/apolloClient';
-import { ADD_TO_BOOKMARKS, REMOVE_FROM_BOOKMARKS, DELETE_EXERCISE, CREATE_EXERCISE, UPDATE_EXERCISE } from '../mutations/exercises';
-import { string } from 'yup';
+import { ADD_TO_BOOKMARKS, REMOVE_FROM_BOOKMARKS, CREATE_EXERCISE, UPDATE_EXERCISE } from '../mutations/exercises';
 
 export const groupNames = {
   ALL: 'all',
@@ -107,61 +106,38 @@ export class ExerciseStore {
 		}
 	}
 
-  async createExercise(exercise, imageFile = null, videoFile = null) {
-    if (!this.currentUser) return;
+  // async createExercise(exercise, imageFile = null, videoFile = null) {
+  //   if (!this.currentUser) return;
     
-    try {
-      const [preview, video] = await Promise.all([
-        imageFile ? FirebaseService.uploadFile(imageFile, "preview") : '',
-        videoFile ? FirebaseService.uploadFile(videoFile, "video") : '',
-      ]);
+  //   try {
+  //     const [preview, video] = await Promise.all([
+  //       imageFile ? FirebaseService.uploadFile(imageFile, "preview") : '',
+  //       videoFile ? FirebaseService.uploadFile(videoFile, "video") : '',
+  //     ]);
 
-      const newExercise = {
-        ...exercise,
-        preview,
-        video,
-      };
+  //     const newExercise = {
+  //       ...exercise,
+  //       preview,
+  //       video,
+  //     };
 
-      const mutationResult = await client.mutate({
-        mutation: CREATE_EXERCISE,
-        variables: { input: newExercise }
-      });
+  //     const mutationResult = await client.mutate({
+  //       mutation: CREATE_EXERCISE,
+  //       variables: { input: newExercise }
+  //     });
 
-      if (mutationResult.data) {
-        runInAction(() => {
-          this.loadExercises();
-        });
-      } else {
-        throw new Error("Не вдалося створити вправу");
-      }
-    } catch (error) {
-      console.error("Error creating exercise:", error);
-      return false;
-    }
-  }
-
-  async deleteExercise({ id, author, preview, video }) {
-    if (!this.currentUser || this.currentUser.uid !== author) return;
-    console.log("Executing mutation...")
-    
-    try {
-      const mutationResult = await client.mutate({
-        mutation: DELETE_EXERCISE,
-        variables: { input: { id, author, preview, video } }
-      });
-
-      if (mutationResult.data) {
-        runInAction(() => {
-          this.allExercises[this.groupExercise] = this.allExercises[this.groupExercise].filter(ex => ex.id !== id);
-        });
-      } else {
-        throw new Error("Не вдалося видалити вправу");
-      }
-    } catch (error) {
-      console.error("Error deleting exercise:", error);
-      return false;
-    }
-  }
+  //     if (mutationResult.data) {
+  //       runInAction(() => {
+  //         this.loadExercises();
+  //       });
+  //     } else {
+  //       throw new Error("Не вдалося створити вправу");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error creating exercise:", error);
+  //     return false;
+  //   }
+  // }
 
   async toggleBookmark(id) {
     if (!this.currentUser) return;

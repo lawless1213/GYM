@@ -40,9 +40,6 @@ export function MultiSelectAsync({
     label: t(`${translateKey}${item}`),
   }));
 
-  console.log(options);
-  
-
   return (
     <MultiSelect
       data={options}
