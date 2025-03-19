@@ -8,25 +8,39 @@ import {
 	IconBookmarkFilled,
   IconEdit,
   IconTrash,
-  IconDotsVertical ,
+  IconDotsVertical,
+  IconHeart,
+  IconHeartFilled,
+  IconPencil,
 } from '@tabler/icons-react';
 import { useStores } from '../../hooks/useStores';
 import { useAuth } from '../../stores/context/AuthContext';
 import { modals } from '@mantine/modals';
 import { useTranslation } from 'react-i18next';
-
-
-import s from './index.module.scss';
+import { useNavigate } from 'react-router-dom';
 import exerciseService from '../../services/exerciseService';
 
+import s from './index.module.scss';
+
 const ExerciseCard = observer(({id, name, description, equipment, bodyPart, preview, video, authorName, author, isBookmarked}) => {
-  const { t } = useTranslation();
+	const { t } = useTranslation();
 	const { currentUser } = useAuth();
 	const { SettingStore, ExerciseStore } = useStores();
 	const [isVideoPreview, setIsVideoPreview] = useState(SettingStore.isVideoPreview);
+	const navigate = useNavigate();
+	const [loading, setLoading] = useState(false);
 
-	const bookmarkToggler = () => {
-		ExerciseStore.toggleBookmark(id);
+	const bookmarkToggler = async () => {
+		if (!currentUser) return;
+		
+		setLoading(true);
+		try {
+			await exerciseService.toggleBookmark(id);
+		} catch (error) {
+			console.error('Error toggling bookmark:', error);
+		} finally {
+			setLoading(false);
+		}
 	} 
 
 	const handleDeleteExercise  = async () => {
@@ -83,8 +97,8 @@ const ExerciseCard = observer(({id, name, description, equipment, bodyPart, prev
 					<Group gap="xs">
 						{
 							!!currentUser &&  
-							<ActionIcon onClick={bookmarkToggler} variant="default" aria-label="Bookmark">
-								{isBookmarked ? <IconBookmarkFilled /> : <IconBookmark />}
+							<ActionIcon onClick={bookmarkToggler} variant="default" aria-label="Bookmark" loading={loading} disabled={loading}>
+								{isBookmarked ? <IconHeartFilled /> : <IconHeart />}
 							</ActionIcon>
 						}
 						

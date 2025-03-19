@@ -7,46 +7,41 @@ export const getUserData = async (user) => {
   }
 
   try {
-    // 🔥 Адмінський SDK використовує `db.collection().doc()`
     const userRef = db.collection("users").doc(user.uid);
-    const userDoc = await userRef.get(); // Firestore Admin SDK використовує `.get()`, а не `getDoc()`
+    const userDoc = await userRef.get();
 
     if (!userDoc.exists) {
       console.error("❌ Документ користувача не знайдено в Firestore");
-      return { bookmarks: [] }; // Повертаємо порожній масив, щоб уникнути помилок
+      return { bookmarks: [] };
     }
 
     const userData = userDoc.data();
-    // console.log("✅ Дані користувача:", userData);
+    const bookmarkIds = userData?.bookmarks || [];
 
-    const bookmarksRefs = userData?.bookmarks ?? [];
-
+    // Отримуємо дані вправ за їх ID
     const bookmarks = await Promise.all(
-      bookmarksRefs.map(async (exerciseRef) => {
-        const exercisePath = exerciseRef?.path; // Отримуємо шлях
-        if (!exercisePath) {
-          console.warn(`⚠️ Некоректний референс:`, exerciseRef);
-          return null;
-        }
-
+      bookmarkIds.map(async (exerciseId) => {
         try {
-          const exerciseRef = db.doc(exercisePath); // Використовуємо повний шлях
-          const exerciseDoc = await exerciseRef.get();
-
+          const exerciseDoc = await db.collection("exercises").doc(exerciseId).get();
+          
           if (!exerciseDoc.exists) {
-            console.warn(`⚠️ Вправа не знайдена: ${exercisePath}`);
+            console.warn(`⚠️ Вправа не знайдена: ${exerciseId}`);
             return null;
           }
 
-          return { id: exerciseDoc.id, ...exerciseDoc.data() };
+          return {
+            id: exerciseDoc.id,
+            ...exerciseDoc.data(),
+            isBookmarked: true
+          };
         } catch (error) {
-          console.error(`❌ Помилка отримання документа для ${exercisePath}:`, error);
+          console.error(`❌ Помилка отримання документа для ${exerciseId}:`, error);
           return null;
         }
       })
     );
 
-    return { bookmarks: bookmarks.filter((b) => b !== null) };
+    return { bookmarks: bookmarks.filter(b => b !== null) };
   } catch (error) {
     console.error("❌ Помилка отримання даних користувача:", error);
     return { bookmarks: [] };

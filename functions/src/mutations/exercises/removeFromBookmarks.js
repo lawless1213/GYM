@@ -1,4 +1,5 @@
 import { db } from "../../firebase.js";
+import { FieldValue } from 'firebase-admin/firestore';
 
 export const removeFromBookmarks = async (_, { exerciseId }, context) => {
   if (!context.user) throw new Error("Unauthorized");
@@ -16,7 +17,18 @@ export const removeFromBookmarks = async (_, { exerciseId }, context) => {
 
     // Видаляємо вправу з улюблених
     await userRef.update({
-      bookmarks: db.FieldValue.arrayRemove(exercise)
+      bookmarks: FieldValue.arrayRemove(exerciseId)
+    });
+
+    // Отримуємо оновлений список закладок
+    const userDoc = await userRef.get();
+    const userData = userDoc.data();
+    const bookmarks = userData?.bookmarks || [];
+
+    // Перетворюємо референси в ID
+    const bookmarkIds = bookmarks.map(bookmark => {
+      if (typeof bookmark === 'string') return bookmark;
+      return bookmark.id || bookmark;
     });
 
     return { 
@@ -25,7 +37,8 @@ export const removeFromBookmarks = async (_, { exerciseId }, context) => {
       exercise: {
         ...exercise,
         isBookmarked: false
-      }
+      },
+      bookmarks: bookmarkIds
     };
   } catch (error) {
     console.error("❌ Помилка видалення з улюблених:", error);

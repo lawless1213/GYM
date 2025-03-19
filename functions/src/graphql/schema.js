@@ -26,6 +26,7 @@ export const typeDefs = gql`
     success: Boolean!
     message: String!
     exercise: Exercise!
+    bookmarks: [String!]!
   }
 
   input CreateExerciseInput {

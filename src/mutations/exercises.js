@@ -18,6 +18,7 @@ export const ADD_TO_BOOKMARKS = gql`
         isBookmarked
         __typename
       }
+      bookmarks
       __typename
     }
   }
@@ -41,6 +42,7 @@ export const REMOVE_FROM_BOOKMARKS = gql`
         isBookmarked
         __typename
       }
+      bookmarks
       __typename
     }
   }
