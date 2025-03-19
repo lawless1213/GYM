@@ -106,39 +106,6 @@ export class ExerciseStore {
 		}
 	}
 
-  // async createExercise(exercise, imageFile = null, videoFile = null) {
-  //   if (!this.currentUser) return;
-    
-  //   try {
-  //     const [preview, video] = await Promise.all([
-  //       imageFile ? FirebaseService.uploadFile(imageFile, "preview") : '',
-  //       videoFile ? FirebaseService.uploadFile(videoFile, "video") : '',
-  //     ]);
-
-  //     const newExercise = {
-  //       ...exercise,
-  //       preview,
-  //       video,
-  //     };
-
-  //     const mutationResult = await client.mutate({
-  //       mutation: CREATE_EXERCISE,
-  //       variables: { input: newExercise }
-  //     });
-
-  //     if (mutationResult.data) {
-  //       runInAction(() => {
-  //         this.loadExercises();
-  //       });
-  //     } else {
-  //       throw new Error("Не вдалося створити вправу");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error creating exercise:", error);
-  //     return false;
-  //   }
-  // }
-
   async toggleBookmark(id) {
     if (!this.currentUser) return;
     

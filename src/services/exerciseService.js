@@ -100,11 +100,27 @@ const exerciseService = {
 	// -----------
 
 	// ----------- Update exercise
-  async updateExercise(updatedExercise) {
+  async updateExercise(exercise, image = null, video = null) {
 		const currentUser = getAuth().currentUser;
     if (!currentUser) return false;
 
 		try {
+			// Якщо є нові файли, завантажуємо їх
+			const uploadIfNeeded = async (file, folder) => 
+        file && typeof file !== 'string' ? await FirebaseService.uploadFile(file, folder) : file;
+    
+      const [imageUrl, videoUrl] = await Promise.all([
+        uploadIfNeeded(image, "preview"),
+        uploadIfNeeded(video, "videos")
+      ]);
+
+			// Створюємо об'єкт для оновлення, видаляючи undefined значення
+			const updatedExercise = {
+				...exercise,
+				preview: imageUrl || '',
+				video: videoUrl || '',
+			};
+
 			const { data } = await client.mutate({
 				mutation: UPDATE_EXERCISE,
 				variables: { input: updatedExercise },
