@@ -6,6 +6,16 @@ import { groupNames } from "../stores/ExerciseStore";
 export const useExercises = (group, filters, currentUser) => {
   let query, variables;
 
+  // Якщо користувач не авторизований і намагається отримати закладки або персональні вправи,
+  // повертаємо порожній масив
+  if (!currentUser && (group === groupNames.BOOKMARKS || group === groupNames.PERSONAL)) {
+    return {
+      exercises: [],
+      loading: false,
+      error: null
+    };
+  }
+
   switch (group) {
     case groupNames.BOOKMARKS:
       query = GET_USER;
@@ -20,7 +30,11 @@ export const useExercises = (group, filters, currentUser) => {
       variables = { filters };
   }
 
-  const { data, loading, error } = useQuery(query, { variables });
+  const { data, loading, error } = useQuery(query, { 
+    variables,
+    // Пропускаємо запит для закладок і персональних вправ якщо користувач не авторизований
+    skip: !currentUser && (group === groupNames.BOOKMARKS || group === groupNames.PERSONAL)
+  });
 
   return {
     exercises:

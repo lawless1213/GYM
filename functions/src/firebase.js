@@ -17,22 +17,17 @@ export const auth = admin.auth();
  */
 export const verifyToken = async (req) => {
   if (!req.headers || !req.headers.authorization) {
-    console.error("❌ Заголовок Authorization відсутній або `req` пустий:", req);
+    // Якщо немає заголовка авторизації, повертаємо null без помилки
     return null;
   }
 
   const token = req.headers.authorization.split("Bearer ")[1];
-
-  // console.log("🔑 Отриманий токен:", token);
-
   if (!token) {
-    console.error("❌ Немає токена!");
     return null;
   }
 
   try {
     const decodedToken = await auth.verifyIdToken(token);
-    // console.log("✅ Декодований токен:", decodedToken);
     return decodedToken;
   } catch (error) {
     console.error("❌ Помилка перевірки токена:", error);

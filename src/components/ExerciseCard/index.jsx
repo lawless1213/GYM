@@ -4,20 +4,16 @@ import { observer } from 'mobx-react-lite';
 import {
 	IconVideo,
 	IconVideoOff,
-  IconBookmark,
-	IconBookmarkFilled,
   IconEdit,
   IconTrash,
   IconDotsVertical,
   IconHeart,
   IconHeartFilled,
-  IconPencil,
 } from '@tabler/icons-react';
 import { useStores } from '../../hooks/useStores';
 import { useAuth } from '../../stores/context/AuthContext';
 import { modals } from '@mantine/modals';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import exerciseService from '../../services/exerciseService';
 
 import s from './index.module.scss';
@@ -27,7 +23,6 @@ const ExerciseCard = observer(({id, name, description, equipment, bodyPart, prev
 	const { currentUser } = useAuth();
 	const { SettingStore, ExerciseStore } = useStores();
 	const [isVideoPreview, setIsVideoPreview] = useState(SettingStore.isVideoPreview);
-	const navigate = useNavigate();
 	const [loading, setLoading] = useState(false);
 
 	const bookmarkToggler = async () => {

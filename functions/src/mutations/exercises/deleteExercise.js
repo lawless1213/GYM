@@ -1,55 +1,54 @@
 import { db, storage } from "../../firebase.js";
 
-export const deleteExercise = async (_, { input }, context) => {
-  if (!context.user) throw new Error("Unauthorized");
-
-  const { id, author, preview, video } = input;
-  const exerciseRef = db.collection("exercises").doc(id);
-  const exerciseDoc = await exerciseRef.get();
-
-  if (!exerciseDoc.exists) return;
-  if (context.user.uid !== author) throw new Error("Permission denied");
+export const deleteExercise = async (_, { input: { id, author, preview, video } }, context) => {
+  if (!context.user || context.user.uid !== author) {
+    throw new Error("Unauthorized");
+  }
 
   try {
-    await exerciseRef.delete();
+    // Видаляємо вправу з закладок усіх користувачів
+    const usersSnapshot = await db.collection("users").get();
+    const batch = db.batch();
 
-    const extractStoragePath = (url) => {
-      try {
-        const decodedPath = decodeURIComponent(url.split("/o/")[1].split("?")[0]);
-        return decodedPath;
-      } catch (err) {
-        console.error("❌ Error extracting storage path:", err);
-        return null;
+    usersSnapshot.docs.forEach(doc => {
+      const userData = doc.data();
+      if (userData.bookmarks && userData.bookmarks.includes(id)) {
+        batch.update(doc.ref, {
+          bookmarks: userData.bookmarks.filter(bookmarkId => bookmarkId !== id)
+        });
       }
-    };
+    });
 
+    await batch.commit();
+
+    // Видаляємо файли з Storage якщо вони є
     if (preview) {
-      const previewPath = extractStoragePath(preview);
-      console.log("📂 Видаляємо файл:", previewPath);
-      if (previewPath) {
-        try {
-          await storage.file(previewPath).delete();
-        } catch (err) {
-          console.error("❌ Error deleting preview:", err);
-        }
+      try {
+        const previewFile = storage.file(preview.split("/").pop());
+        await previewFile.delete();
+      } catch (error) {
+        console.error("❌ Помилка видалення preview:", error);
       }
     }
 
     if (video) {
-      const videoPath = extractStoragePath(video);
-      console.log("📂 Видаляємо файл:", videoPath);
-      if (videoPath) {
-        try {
-          await storage.file(videoPath).delete();
-        } catch (err) {
-          console.error("❌ Error deleting video:", err);
-        }
+      try {
+        const videoFile = storage.file(video.split("/").pop());
+        await videoFile.delete();
+      } catch (error) {
+        console.error("❌ Помилка видалення video:", error);
       }
     }
 
-    return { success: true, message: "Вправа видалена" };
+    // Видаляємо документ вправи
+    await db.collection("exercises").doc(id).delete();
+
+    return {
+      success: true,
+      message: "Вправу успішно видалено"
+    };
   } catch (error) {
-    console.error("❌ Error deleting exercise:", error);
-    throw new Error(error.message || "Помилка при видаленні вправи");
+    console.error("❌ Помилка видалення вправи:", error);
+    throw new Error("Не вдалося видалити вправу");
   }
 };

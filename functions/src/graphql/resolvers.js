@@ -13,22 +13,49 @@ export const resolvers = {
     message: () => "Hello from GraphQL on Firebase!",
     getUserData: (_, __, context) => {
       if (!context.user) {
-        console.error("❌ Користувач відсутній у контексті");
-        throw new Error("Unauthorized"); // Якщо user відсутній у контексті
+        throw new Error("Unauthorized");
       }
-
-      // console.log("👤 Користувач у контексті:", context.user);  // Лог користувача
-      return getUserData(context.user);  // Передаємо користувача в сервіс
+      return getUserData(context.user);
     },
     getExercises,
-    getPersonalExercises,
-		getFilters,
+    getPersonalExercises: (_, args, context) => {
+      if (!context.user) {
+        throw new Error("Unauthorized");
+      }
+      return getPersonalExercises(_, args, context);
+    },
+    getFilters,
   },
   Mutation: {
-    createExercise,
-    updateExercise,
-    deleteExercise,
-    addToBookmarks,
-    removeFromBookmarks,
+    createExercise: (_, args, context) => {
+      if (!context.user) {
+        throw new Error("Unauthorized");
+      }
+      return createExercise(_, args, context);
+    },
+    updateExercise: (_, args, context) => {
+      if (!context.user) {
+        throw new Error("Unauthorized");
+      }
+      return updateExercise(_, args, context);
+    },
+    deleteExercise: (_, args, context) => {
+      if (!context.user) {
+        throw new Error("Unauthorized");
+      }
+      return deleteExercise(_, args, context);
+    },
+    addToBookmarks: (_, args, context) => {
+      if (!context.user) {
+        throw new Error("Unauthorized");
+      }
+      return addToBookmarks(_, args, context);
+    },
+    removeFromBookmarks: (_, args, context) => {
+      if (!context.user) {
+        throw new Error("Unauthorized");
+      }
+      return removeFromBookmarks(_, args, context);
+    },
   },
 };

@@ -14,12 +14,12 @@ export const getPersonalExercises = async (_, { uid }, context) => {
     if (context.user) {
       const userDoc = await db.collection("users").doc(context.user.uid).get();
       const userData = userDoc.data();
-      const bookmarkedExercises = userData?.bookmarks || [];
+      const bookmarkedIds = userData?.bookmarks || [];
 
       // Додаємо поле isBookmarked до кожної вправи
       exercises = exercises.map(exercise => ({
         ...exercise,
-        isBookmarked: bookmarkedExercises.some(bookmarked => bookmarked.id === exercise.id)
+        isBookmarked: bookmarkedIds.includes(exercise.id)
       }));
     } else {
       // Якщо користувач не авторизований, встановлюємо isBookmarked в false
