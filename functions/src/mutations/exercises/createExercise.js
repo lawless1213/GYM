@@ -2,27 +2,40 @@ import { db } from "../../firebase.js";
 
 export const createExercise = async (_, { input }, context) => {
   if (!context.user) throw new Error("Unauthorized");
-  
-  try {
-    const { name, bodyPart, description, equipment, preview, video } = input;
-    const exerciseId = crypto.randomUUID();
 
-    const newExercise = {
-      id: exerciseId,
+  try {
+    let exerciseRef;
+    
+    if (input.id && input.id.trim()) {
+      exerciseRef = db.collection("exercises").doc(input.id);
+    } else {
+      exerciseRef = db.collection("exercises").doc();
+    }
+
+    const authorDoc = await db.collection("users").doc(context.user.uid).get();
+    const authorName = authorDoc.data()?.name || "Unknown";
+
+    const exercise = {
+      ...input,
+      id: exerciseRef.id,
       author: context.user.uid,
-      authorName: context.user.name,
-      name,
-      bodyPart,
-      description,
-      equipment,
-      preview,
-      video,
+      authorName,
+      createdAt: new Date().toISOString()
     };
 
-    console.log(newExercise);
+    delete exercise.id;
     
-    await db.collection("exercises").doc(exerciseId).set(newExercise);
-    return { success: true, message: "Вправа створена", exercise: newExercise };
+    await exerciseRef.set(exercise);
+
+    return {
+      success: true,
+      message: "Вправу створено",
+      exercise: {
+        id: exerciseRef.id,
+        ...exercise,
+        isBookmarked: false
+      }
+    };
   } catch (error) {
     console.error("❌ Помилка створення вправи:", error);
     throw new Error("Не вдалося створити вправу");

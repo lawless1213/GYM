@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Group, Card, Title, Badge, Loader, Image, ActionIcon, Menu, Button, Text, Stack } from '@mantine/core';
 import { observer } from 'mobx-react-lite';
 import {
@@ -15,15 +15,38 @@ import { useAuth } from '../../stores/context/AuthContext';
 import { modals } from '@mantine/modals';
 import { useTranslation } from 'react-i18next';
 import exerciseService from '../../services/exerciseService';
+import { useNavigate } from 'react-router-dom';
 
 import s from './index.module.scss';
 
-const ExerciseCard = observer(({id, name, description, equipment, bodyPart, preview, video, authorName, author, isBookmarked}) => {
+const ExerciseCard = observer(({
+	id,
+	name,
+	description,
+	equipment,
+	bodyPart,
+	preview,
+	video,
+	authorName,
+	author,
+	isBookmarked,
+	createdAt
+}) => {
 	const { t } = useTranslation();
 	const { currentUser } = useAuth();
 	const { SettingStore, ExerciseStore } = useStores();
 	const [isVideoPreview, setIsVideoPreview] = useState(SettingStore.isVideoPreview);
+	const navigate = useNavigate();
 	const [loading, setLoading] = useState(false);
+
+	const formattedDate = useMemo(() => {
+		if (!createdAt) return '';
+		return new Date(createdAt).toLocaleDateString('uk-UA', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric'
+		});
+	}, [createdAt]);
 
 	const bookmarkToggler = async () => {
 		if (!currentUser) return;
@@ -119,7 +142,13 @@ const ExerciseCard = observer(({id, name, description, equipment, bodyPart, prev
 									<Menu.Item
 										color="red"
 										leftSection={<IconTrash size={14} />}
-										onClick={handleDeleteExercise}
+										onClick={() => modals.openConfirmModal({
+											title: t('exercise.delete.title'),
+											children: t('exercise.delete.description'),
+											labels: { confirm: t('exercise.delete.confirm'), cancel: t('exercise.delete.cancel') },
+											confirmProps: { color: 'red' },
+											onConfirm: () => handleDeleteExercise()
+										})}
 									>
 										{t(`exercise.delete`)}
 									</Menu.Item>
@@ -161,12 +190,14 @@ const ExerciseCard = observer(({id, name, description, equipment, bodyPart, prev
 					</ActionIcon>
 					}
 				</Card.Section>
-				<Title ta="center" order={3}>
-					{name}
-				</Title>
-				<Title ta="center" order={6}>
-					{authorName}
-				</Title>
+				<Stack gap="xs" mt="md">
+					<Group gap="xs" justify="space-between" align="center">
+						<Title order={3} style={{ margin: 0 }}>{name}</Title>
+						<Text size="sm" c="dimmed">{formattedDate}</Text>
+					</Group>
+					<Text size="sm" c="dimmed">{t('exercise.author')}: {authorName}</Text>
+					<Text size="sm">{description}</Text>
+				</Stack>
 			</Card>
 		</>
 	)

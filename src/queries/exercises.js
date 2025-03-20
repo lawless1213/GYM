@@ -13,6 +13,7 @@ export const GET_EXERCISES = gql`
       preview
       video
       isBookmarked
+      createdAt
     }
   }
 `;
@@ -27,9 +28,10 @@ export const GET_PERSONAL_EXERCISES = gql`
       bodyPart
       description
       equipment
-			preview
-			video
+      preview
+      video
       isBookmarked
+      createdAt
     }
   }
 `;

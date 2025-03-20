@@ -1,8 +1,7 @@
 import { useForm } from '@mantine/form';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Button, Group, Paper, SimpleGrid, Text, Textarea, TextInput,  useMantineTheme, Stack } from '@mantine/core';
 import MyDropzone from '../../components/Dropzone';
-import { useStores } from '../../hooks/useStores';
 import { MultiSelectAsync } from '../../components/MultiSelectAsync';
 import { GET_FILTERS } from '../../queries/filters';
 import { useQuery } from '@apollo/client';
@@ -11,7 +10,6 @@ import exerciseService from '../../services/exerciseService';
 
 function Exercise({ closeModal, exercise = null}) {  
   const { t } = useTranslation();
-  const { ExerciseStore } = useStores();
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(exercise && exercise.preview ? exercise.preview : '');
   const [video, setVideo] = useState(exercise && exercise.video ? exercise.video : '');

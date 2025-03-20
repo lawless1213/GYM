@@ -37,6 +37,7 @@ export const typeDefs = gql`
     equipment: [String!]!
     preview: String
     video: String
+    createdAt: String
   }
 
   input UpdateExerciseInput {
@@ -76,6 +77,7 @@ export const typeDefs = gql`
     preview: String!
     video: String!
     isBookmarked: Boolean!
+    createdAt: String!
   }
 
 	type Filter {

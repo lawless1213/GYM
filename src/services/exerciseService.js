@@ -5,6 +5,17 @@ import client from "../providers/apolloClient";
 import { getAuth } from "firebase/auth";
 import { FirebaseService } from "../firebase/functions";
 
+export const groupNames = {
+  ALL: 'all',
+  BOOKMARKS: 'bookmarks',
+  PERSONAL: 'personal',
+};
+
+export const filterNames = {
+  BODYPART: 'bodyPart',
+  EQUIPMENT: 'equipment'
+};
+
 const exerciseService = {
 	// ----------- Create exercise
 	async createExercise(exercise, imageFile = null, videoFile = null) {

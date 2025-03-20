@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { GET_EXERCISES, GET_PERSONAL_EXERCISES } from "../queries/exercises";
 import { GET_USER } from "../queries/user";
-import { groupNames } from "../stores/ExerciseStore";
+import { groupNames } from "../services/exerciseService";
 
 export const useExercises = (group, filters, currentUser) => {
   let query, variables;

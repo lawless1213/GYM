@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { useStores } from '../hooks/useStores.jsx';
 import ExerciseCard from '../components/ExerciseCard/index.jsx';
 import { MultiSelectAsync } from '../components/MultiSelectAsync.jsx';
-import { filterNames, groupNames } from '../stores/ExerciseStore.js';
+import { filterNames, groupNames } from '../services/exerciseService.js';
 import { useAuth } from '../stores/context/AuthContext.jsx';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from "@apollo/client";
@@ -50,6 +50,7 @@ const Exercises = observer(() => {
       authorName={item.authorName}
       author={item.author}
       isBookmarked={item.isBookmarked}
+      createdAt={item.createdAt}
     />
   ));
 
