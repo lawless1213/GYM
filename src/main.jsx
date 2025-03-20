@@ -13,6 +13,8 @@ import { ApolloProvider } from '@apollo/client';
 import client from './providers/apolloClient.js';
 import './locales/i18n.js';
 import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
+import '@mantine/dropzone/styles.css';
 import './assets/index.scss';
 
 createRoot(document.getElementById('root')).render(

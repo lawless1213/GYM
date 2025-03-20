@@ -15,6 +15,7 @@ function Slider() {
   )
 
   return (
+    
     <div ref={sliderRef} className="keen-slider">
       <div className="keen-slider__slide">1</div>
       <div className="keen-slider__slide">2</div>

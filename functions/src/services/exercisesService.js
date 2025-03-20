@@ -13,6 +13,9 @@ export const getExercises = async (_, { filters }, context) => {
       }
     }
 
+    // Додаємо сортування за датою створення в спадаючому порядку
+    query = query.orderBy("createdAt", "desc");
+
     const snapshot = await query.get();
     let exercises = snapshot.docs.map((doc) => ({
       id: doc.id,

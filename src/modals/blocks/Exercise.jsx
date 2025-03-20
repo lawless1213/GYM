@@ -1,6 +1,6 @@
 import { useForm } from '@mantine/form';
 import { useState } from 'react';
-import { Button, Group, Paper, SimpleGrid, Text, Textarea, TextInput,  useMantineTheme, Stack } from '@mantine/core';
+import { Button, Group, Paper, SimpleGrid, Text, Textarea, TextInput, NumberInput,  useMantineTheme, Stack, Switch, SegmentedControl, Flex } from '@mantine/core';
 import MyDropzone from '../../components/Dropzone';
 import { MultiSelectAsync } from '../../components/MultiSelectAsync';
 import { GET_FILTERS } from '../../queries/filters';
@@ -81,6 +81,25 @@ function Exercise({ closeModal, exercise = null}) {
               {...form.getInputProps('description')}
             />
 
+            <Flex gap="xs">
+                <SegmentedControl size="md" orientation="vertical"  data={['Reps', 'Time']} />
+                <Stack gap='xs'>
+                  <Group gap='2'>
+                    <NumberInput
+                      placeholder="Value per approach"
+                      {...form.getInputProps('approach')}
+                    />
+                    <Text>minutes</Text>
+                  </Group>
+                  <Group gap='2'>
+                    <NumberInput
+                      placeholder="Callories per approach"
+                      {...form.getInputProps('callories')}
+                    />
+                    <Text>cal</Text>
+                  </Group>
+                </Stack>
+            </Flex>
             <SimpleGrid cols={{ base: 1, sm: 2 }}>
               <Paper radius="md" p="md" withBorder style={{ flex: 1 }}>
                 <MyDropzone setFile={setImage} urlSelectedFile={exercise ? exercise.preview : null}/>
