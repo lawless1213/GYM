@@ -40,17 +40,7 @@ const Exercises = observer(() => {
   const cards = exercises.map((item) => (
     <ExerciseCard
       key={item.id}
-      id={item.id}
-      name={item.name}
-      description={item.description}
-      preview={item.preview}
-      video={item.video}
-      equipment={item.equipment}
-      bodyPart={item.bodyPart}
-      authorName={item.authorName}
-      author={item.author}
-      isBookmarked={item.isBookmarked}
-      createdAt={item.createdAt}
+      exercise={item}
     />
   ));
 

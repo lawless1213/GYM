@@ -19,25 +19,33 @@ import { useNavigate } from 'react-router-dom';
 
 import s from './index.module.scss';
 
-const ExerciseCard = observer(({
-	id,
-	name,
-	description,
-	equipment,
-	bodyPart,
-	preview,
-	video,
-	authorName,
-	author,
-	isBookmarked,
-	createdAt
-}) => {
+const ExerciseCard = observer(({exercise}) => {
 	const { t } = useTranslation();
 	const { currentUser } = useAuth();
 	const { SettingStore, ExerciseStore } = useStores();
 	const [isVideoPreview, setIsVideoPreview] = useState(SettingStore.isVideoPreview);
 	const navigate = useNavigate();
 	const [loading, setLoading] = useState(false);
+
+	console.log(exercise);
+	
+
+	const {
+		id,
+		name,
+		description,
+		equipment,
+		bodyPart,
+		preview,
+		video,
+		authorName,
+		author,
+		isBookmarked,
+		createdAt,
+		type,
+		valuePerSet,
+		caloriesPerSet,
+	} = exercise;
 
 	const formattedDate = useMemo(() => {
 		if (!createdAt) return '';
@@ -197,6 +205,7 @@ const ExerciseCard = observer(({
 					</Group>
 					<Text size="sm" c="dimmed">{t('exercise.author')}: {authorName}</Text>
 					<Text size="sm">{description}</Text>
+					<Text size="sm">{valuePerSet}pers per set</Text>
 				</Stack>
 			</Card>
 		</>

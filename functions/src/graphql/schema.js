@@ -38,6 +38,9 @@ export const typeDefs = gql`
     preview: String
     video: String
     createdAt: String
+    type: String!
+    valuePerSet: Int!
+    caloriesPerSet: Int!
   }
 
   input UpdateExerciseInput {
@@ -48,6 +51,9 @@ export const typeDefs = gql`
     equipment: [String!]!
     preview: String
     video: String
+    type: String!
+    valuePerSet: Int!
+    caloriesPerSet: Int!
   }
 
   input DeleteExerciseInput {
@@ -78,6 +84,9 @@ export const typeDefs = gql`
     video: String!
     isBookmarked: Boolean!
     createdAt: String!
+    type: String!
+    valuePerSet: Int!
+    caloriesPerSet: Int!
   }
 
 	type Filter {

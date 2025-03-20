@@ -13,6 +13,9 @@ export const GET_EXERCISES = gql`
       preview
       video
       isBookmarked
+      type
+      valuePerSet
+      caloriesPerSet
       createdAt
     }
   }
@@ -31,6 +34,9 @@ export const GET_PERSONAL_EXERCISES = gql`
       preview
       video
       isBookmarked
+      type
+      valuePerSet
+      caloriesPerSet
       createdAt
     }
   }

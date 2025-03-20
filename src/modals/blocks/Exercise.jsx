@@ -20,7 +20,10 @@ function Exercise({ closeModal, exercise = null}) {
 			description: exercise ? exercise.description : '',
       bodyPart: exercise && Array.isArray(exercise.bodyPart) ? [...exercise.bodyPart] : [],
       equipment: exercise && Array.isArray(exercise.equipment) ? [...exercise.equipment] : [],
-      id: exercise ? exercise.id : ''
+      id: exercise ? exercise.id : '',
+      type: exercise ? exercise.type : 'Reps',
+      valuePerSet: exercise ? exercise.valuePerSet : 0,
+      caloriesPerSet: exercise ? exercise.caloriesPerSet : 0
 		},
 
 		validate: {
@@ -28,12 +31,17 @@ function Exercise({ closeModal, exercise = null}) {
 			description: (val) => (val.trim().length < 10 ? 'Description should be at least 10 characters' : null),
       bodyPart: (val) => (!val ? 'Body part is required' : null),
       equipment: (val) => (!val ? 'Equipment is required' : null),
+      valuePerSet: (val) => (val < 1 ? 'Value per set must be greater than 0' : null),
+      caloriesPerSet: (val) => (val < 0 ? 'Calories per set must be non-negative' : null),
 		},
 	});
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!form.validate().hasErrors) {
+      console.log(form.values);
+      
+
       setLoading(true);
       
       const success = exercise 
@@ -81,25 +89,39 @@ function Exercise({ closeModal, exercise = null}) {
               {...form.getInputProps('description')}
             />
 
-            <Flex gap="xs">
-                <SegmentedControl size="md" orientation="vertical"  data={['Reps', 'Time']} />
-                <Stack gap='xs'>
-                  <Group gap='2'>
-                    <NumberInput
-                      placeholder="Value per approach"
-                      {...form.getInputProps('approach')}
-                    />
-                    <Text>minutes</Text>
-                  </Group>
-                  <Group gap='2'>
-                    <NumberInput
-                      placeholder="Callories per approach"
-                      {...form.getInputProps('callories')}
-                    />
-                    <Text>cal</Text>
-                  </Group>
-                </Stack>
-            </Flex>
+            <Group justify='space-between'>
+              <Group gap='4'>
+                <NumberInput
+                  placeholder={t('exercise.valuePerSet')}
+                  min={1}
+                  {...form.getInputProps('valuePerSet')}
+                />
+                <SegmentedControl
+                  value={form.values.type || 'reps'} 
+                  onChange={(value) => form.setFieldValue('type', value)}
+                  data={[
+                    { label: t('exercise.type.reps'), value: 'reps' },
+                    { label: t('exercise.type.seconds'), value: 'time' }
+                  ]}
+                  required
+                />
+              </Group>
+              <Group gap='4'>
+                <NumberInput
+                  placeholder={t('exercise.caloriesPerSet')}
+                  min={0}
+                  {...form.getInputProps('caloriesPerSet')}
+                />
+                <Text>ccal</Text>
+              </Group>
+            </Group>
+
+            
+
+            
+
+            
+
             <SimpleGrid cols={{ base: 1, sm: 2 }}>
               <Paper radius="md" p="md" withBorder style={{ flex: 1 }}>
                 <MyDropzone setFile={setImage} urlSelectedFile={exercise ? exercise.preview : null}/>

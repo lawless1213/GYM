@@ -73,6 +73,10 @@ export const CREATE_EXERCISE = gql`
         preview
         video
         isBookmarked
+        type
+        valuePerSet
+        caloriesPerSet
+        createdAt
         __typename
       }
       __typename
@@ -96,6 +100,10 @@ export const UPDATE_EXERCISE = gql`
         preview
         video
         isBookmarked
+        type
+        valuePerSet
+        caloriesPerSet
+        createdAt
         __typename
       }
       __typename
