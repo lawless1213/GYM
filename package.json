@@ -23,6 +23,7 @@
     "graphql": "^16.10.0",
     "graphql-upload": "^17.0.0",
     "i18next": "^24.2.2",
+    "keen-slider": "^6.8.6",
     "mobx": "^6.13.5",
     "mobx-react-lite": "^4.1.0",
     "react": "^18.3.1",

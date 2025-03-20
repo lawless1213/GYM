@@ -59,22 +59,21 @@ function Exercise({ closeModal, exercise = null}) {
               {...form.getInputProps('name')}
             />
             <MultiSelectAsync
-              selectedValue = { exercise ? exercise.equipment : [] }
+              selectedValue={exercise ? exercise.equipment : []}
               title={t('exercises.equipment')}
               translateKey="filters.equipment."
-              data={filterBodyPartsData?.getFilters.values || []}
-              loading={loadingBodyParts}
+              data={filterEquipmentData?.getFilters.values || []}
+              loading={loadingEquipment}
               onSelect={(value) => form.setFieldValue('equipment', value)}
             />
             <MultiSelectAsync
-              selectedValue = { exercise ? exercise.bodyPart : [] }
+              selectedValue={exercise ? exercise.bodyPart : []}
               title={t('exercises.bodyParts')}
               translateKey="filters.bodyPart."
-              data={filterEquipmentData?.getFilters.values || []}
-              loading={loadingEquipment}
+              data={filterBodyPartsData?.getFilters.values || []}
+              loading={loadingBodyParts}
               onSelect={(value) => form.setFieldValue('bodyPart', value)}
             />
-              
 
             <Textarea
               placeholder="Description"

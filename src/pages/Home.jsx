@@ -1,5 +1,6 @@
 import { Title } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
+import Slider from '../components/slider';
 
 const Home = () => {
   const { t } = useTranslation();
@@ -7,6 +8,7 @@ const Home = () => {
 	return (
 		<>
 			<Title order={1}>{t('home.pageTitle')}</Title>
+			<Slider />
 		</>
 	)
 } 
