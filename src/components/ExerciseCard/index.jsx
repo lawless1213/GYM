@@ -199,13 +199,13 @@ const ExerciseCard = observer(({exercise}) => {
 					}
 				</Card.Section>
 				<Stack gap="xs" mt="md">
-					<Group gap="xs" justify="space-between" align="center">
-						<Title order={3} style={{ margin: 0 }}>{name}</Title>
-						<Text size="sm" c="dimmed">{formattedDate}</Text>
-					</Group>
-					<Text size="sm" c="dimmed">{t('exercise.author')}: {authorName}</Text>
+					<Title order={3} style={{ margin: 0 }}>{name}</Title>
 					<Text size="sm">{description}</Text>
-					<Text size="sm">{valuePerSet}pers per set</Text>
+					<Text size="sm" c="dimmed">{valuePerSet}{t(`exercise.${type}.per.set`)}</Text>
+					<Group>
+						<Text size="sm" c="dimmed">{formattedDate}</Text>
+						<Text ml='auto' size="sm" c="dimmed">{authorName}</Text>
+					</Group>
 				</Stack>
 			</Card>
 		</>

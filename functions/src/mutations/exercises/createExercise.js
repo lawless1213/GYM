@@ -12,8 +12,7 @@ export const createExercise = async (_, { input }, context) => {
       exerciseRef = db.collection("exercises").doc();
     }
 
-    const authorDoc = await db.collection("users").doc(context.user.uid).get();
-    const authorName = authorDoc.data()?.name || "Unknown";
+    const authorName = context.user.name;
 
     const exercise = {
       ...input,
