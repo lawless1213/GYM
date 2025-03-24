@@ -7,6 +7,7 @@ export const typeDefs = gql`
     getExercises(filters: ExerciseFilter): [Exercise]
     getPersonalExercises(uid: String!): [Exercise]
     getFilters(name: String!): Filter
+    getUserWorkouts: [Workout]!
   }
 
   type Mutation {
@@ -93,6 +94,22 @@ export const typeDefs = gql`
     id: ID!
     name: String!
     values: [String!]!
+  }
+
+  type Workout {
+    id: ID!
+    name: String!
+    color: String!
+    calories: Int!
+    exercises: [WorkoutExercise!]!
+  }
+
+  type WorkoutExercise {
+    exerciseId: ID!
+    exercise: Exercise!
+    sets: Int!
+    valuePerSet: Int!
+    caloriesPerSet: Int!
   }
 	
 `;

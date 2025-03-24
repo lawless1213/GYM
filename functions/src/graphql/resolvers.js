@@ -7,6 +7,8 @@ import { addToBookmarks } from "../mutations/exercises/addToBookmarks.js";
 import { deleteExercise } from "../mutations/exercises/deleteExercise.js";
 import { createExercise } from "../mutations/exercises/createExercise.js";
 import { updateExercise } from "../mutations/exercises/updateExercise.js";
+import { getUserWorkouts } from "../services/workoutService.js";
+import { db } from "../firebase.js";
 
 export const resolvers = {
   Query: {
@@ -25,6 +27,7 @@ export const resolvers = {
       return getPersonalExercises(_, args, context);
     },
     getFilters,
+    getUserWorkouts
   },
   Mutation: {
     createExercise: (_, args, context) => {
@@ -58,4 +61,28 @@ export const resolvers = {
       return removeFromBookmarks(_, args, context);
     },
   },
+  WorkoutExercise: {
+    exercise: async (parent) => {
+      console.log('Resolving exercise for:', parent.exerciseId);
+      
+      if (!parent.exerciseId) return null;
+      
+      const exerciseDoc = await db.collection("exercises")
+        .doc(parent.exerciseId)
+        .get();
+      
+      if (!exerciseDoc.exists) {
+        console.log('Exercise not found:', parent.exerciseId);
+        return null;
+      }
+      
+      const exerciseData = {
+        id: exerciseDoc.id,
+        ...exerciseDoc.data()
+      };
+      console.log('Found exercise:', exerciseData);
+      
+      return exerciseData;
+    }
+  }
 };
