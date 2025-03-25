@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@apollo/client": "^3.13.1",
+    "@dnd-kit/react": "^0.0.10",
+    "@dnd-kit/utilities": "^3.2.2",
     "@hookform/resolvers": "^3.10.0",
     "@mantine/core": "^7.17.2",
     "@mantine/dates": "^7.17.2",

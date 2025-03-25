@@ -1,5 +1,55 @@
-import { Card, Title, Text, Group, Stack, Badge, Image } from '@mantine/core';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Card, Title, Text, Group, Stack, Badge, Image, ActionIcon, Box, Container, Flex } from '@mantine/core';
+import { IconGripVertical } from '@tabler/icons-react';
+import { useSortable } from '@dnd-kit/react/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+
+function WorkoutExercise({id, index, data}) {
+  const handleRef = useRef(null);
+  const {
+    isDragging,
+    transform,
+    transition, 
+    ref
+  } = useSortable({
+    id, 
+    index,
+    handle: handleRef
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <Group ref={ref} key={index} align="center" style={style} >
+      <Flex  w={50} h={50} >
+        <Image 
+          src={data.exercise.preview} 
+          fit='contain'
+        />
+      </Flex>
+      <Stack gap={0}>
+        <Text size="sm" fw={500}>{data.exercise.name}</Text>
+        <Text size="xs" c="dimmed">
+          {data.sets} × {data.valuePerSet} {data.exercise.type}
+        </Text>
+      </Stack>
+      <ActionIcon 
+        variant="subtle" 
+        color="gray" 
+        ml="auto"
+        ref={handleRef}
+      >
+        <IconGripVertical size={16} />
+      </ActionIcon>
+    </Group>
+  );
+}
 
 function WorkoutCard({ id, name, color, calories, exercises }) {
   const { t } = useTranslation();
@@ -14,20 +64,7 @@ function WorkoutCard({ id, name, color, calories, exercises }) {
         
         <Stack gap="xs">
           {exercises.map((exerciseData, index) => (
-            <Group key={index} align="center">
-              <Image 
-                src={exerciseData.exercise.preview} 
-                width={50} 
-                height={50} 
-                radius="md"
-              />
-              <Stack gap={0}>
-                <Text size="sm" fw={500}>{exerciseData.exercise.name}</Text>
-                <Text size="xs" c="dimmed">
-                  {exerciseData.sets} × {exerciseData.valuePerSet} {exerciseData.exercise.type}
-                </Text>
-              </Stack>
-            </Group>
+            <WorkoutExercise key={id + exerciseData.exercise.id} id={id + exerciseData.exercise.id} index={index} data={exerciseData} />
           ))}
         </Stack>
       </Stack>

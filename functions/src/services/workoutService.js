@@ -36,7 +36,7 @@ export const getUserWorkouts = async (_, __, context) => {
         calories: Number(workout.calories) || 0,
         exercises: validExercises
       };
-    }).filter(workout => workout.exercises.length > 0); // Повертаємо тільки тренування з валідними вправами
+    });
   } catch (error) {
     console.error("Error fetching user workouts:", error);
     throw new Error("Failed to fetch workouts");
