@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, Title, Text, Group, Stack, Badge, Image, ActionIcon, Box, Container, Flex } from '@mantine/core';
-import { IconGripVertical } from '@tabler/icons-react';
+import { IconGripVertical, IconPlus } from '@tabler/icons-react';
 import { useSortable } from '@dnd-kit/react/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -51,23 +51,30 @@ function WorkoutExercise({id, index, data}) {
   );
 }
 
-function WorkoutCard({ id, name, color, calories, exercises }) {
+function WorkoutCard({ id, name, color, calories, exercises, create = false }) {
   const { t } = useTranslation();
 
   return (
     <Card shadow="sm" padding="md" radius="md" withBorder>
-      <Stack gap="xs">
-        <Group justify="space-between" align="center">
-          <Title order={3} style={{ color }}>{name}</Title>
-          <Badge size="lg">{calories} kcal</Badge>
-        </Group>
-        
-        <Stack gap="xs">
-          {exercises.map((exerciseData, index) => (
-            <WorkoutExercise key={id + exerciseData.exercise.id} id={id + exerciseData.exercise.id} index={index} data={exerciseData} />
-          ))}
-        </Stack>
-      </Stack>
+      {
+        !create ? 
+          <Stack gap="xs">
+            <Group justify="space-between" align="center">
+              <Title order={3} style={{ color }}>{name}</Title>
+              <Badge size="lg">{calories} kcal</Badge>
+            </Group>
+            
+            <Stack gap="xs">
+              {exercises.map((exerciseData, index) => (
+                <WorkoutExercise key={id + exerciseData.exercise.id} id={id + exerciseData.exercise.id} index={index} data={exerciseData} />
+              ))}
+            </Stack>
+          </Stack>
+        :
+        <ActionIcon m='auto' variant="transparent" size="xl" aria-label="Create">
+          <IconPlus style={{ width: '100%', height: '100%' }} stroke={1.5}/>
+        </ActionIcon>
+      }
     </Card>
   );
 }

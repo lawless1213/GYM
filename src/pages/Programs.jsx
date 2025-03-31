@@ -20,11 +20,9 @@ function Programs() {
       <Title order={1}>{t('workouts.pageTitle')}</Title>
 			{/* <WorkoutCalendar /> */}
       
-      {workouts.length === 0 ? (
-        <Text>{t('workouts.empty')}</Text>
-      ) : (
-        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
-          {workouts.map(workout => (
+      <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
+        {workouts.length !== 0 && 
+          workouts.map(workout => (
             <WorkoutCard
               key={workout.id}
               id={workout.id}
@@ -33,9 +31,10 @@ function Programs() {
               calories={workout.calories}
               exercises={workout.exercises}
             />
-          ))}
-        </SimpleGrid>
-      )}
+          ))
+        }
+        <WorkoutCard create={true}/>
+      </SimpleGrid>
     </Stack>
   );
 }

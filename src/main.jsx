@@ -16,6 +16,7 @@ import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/dropzone/styles.css';
 import './assets/index.scss';
+import '@mantine/charts/styles.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
