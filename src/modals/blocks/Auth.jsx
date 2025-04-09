@@ -6,7 +6,7 @@ import { GoogleButton } from '../../components/buttons/GoogleButton';
 import { TwitterButton } from '../../components/buttons/TwitterButton';
 import { updateProfile } from "firebase/auth";
 
-function Auth() {
+function Auth({ closeModal }) {
   const { signUp, signIn } = useAuth();
   const [type, toggle] = useToggle(['login', 'register']);
 
@@ -33,12 +33,13 @@ function Auth() {
     const { name, email, password } = form.values;
 
     try {
-      const userCredential = await signUp(email, password); // Реєстрація користувача
+      const userCredential = await signUp(email, password);
       const user = userCredential.user;
   
       await updateProfile(user, {
         displayName: name,
       });
+      closeModal();
     } catch (error) {
       console.error('Error signing up:', error.message);
       form.setErrors({ email: 'Error creating account. Please try again.' });
@@ -54,6 +55,7 @@ function Auth() {
 
     try {
       await signIn(email, password);
+      closeModal();
     } catch (error) {
       console.error('Error signing in:', error.message);
       form.setErrors({ email: 'Error login. Please try again.' });
