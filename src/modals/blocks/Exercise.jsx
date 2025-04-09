@@ -39,9 +39,6 @@ function Exercise({ closeModal, exercise = null}) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!form.validate().hasErrors) {
-      console.log(form.values);
-      
-
       setLoading(true);
       
       const success = exercise 
@@ -115,12 +112,6 @@ function Exercise({ closeModal, exercise = null}) {
                 <Text>ccal</Text>
               </Group>
             </Group>
-
-            
-
-            
-
-            
 
             <SimpleGrid cols={{ base: 1, sm: 2 }}>
               <Paper radius="md" p="md" withBorder style={{ flex: 1 }}>

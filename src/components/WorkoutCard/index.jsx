@@ -19,6 +19,8 @@ import {
   useSortable,
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
+
+import { modals } from '@mantine/modals';
 import { CSS } from '@dnd-kit/utilities';
 
 const WorkoutExercise = memo(function WorkoutExercise({ id, index, data }) {
@@ -80,45 +82,68 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
     }
   };
 
+  const buttonCreateHandler = () => {
+    modals.openContextModal({
+      modal: 'workout',
+      title: <Title order={2}>Create your workout</Title>,
+      size: 'lg',
+    })
+  }
+
   return (
-    <Card shadow="sm" padding="md" radius="md" withBorder>
+    <>
       {
         !create ? (
-          <Stack gap="xs">
-            <Group justify="space-between" align="center">
-              <Title order={3} style={{ color }}>{name}</Title>
-              <Badge size="lg">{calories} kcal</Badge>
-            </Group>
+          <Card shadow="sm" padding="md" radius="md" withBorder>
+            <Stack gap="xs" h="100%">
+              <Group justify="space-between" align="center">
+                <Title order={3} style={{ color }}>{name}</Title>
+                <Badge size="lg">{calories} kcal</Badge>
+              </Group>
 
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext
-                items={exercises.map(e => id + e.exercise.id)}
-                strategy={verticalListSortingStrategy}
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
               >
-                <Stack gap="xs">
-                  {exercises.map((exerciseData, index) => (
-                    <WorkoutExercise
-                      key={id + exerciseData.exercise.id}
-                      id={id + exerciseData.exercise.id}
-                      index={index}
-                      data={exerciseData}
-                    />
-                  ))}
-                </Stack>
-              </SortableContext>
-            </DndContext>
-          </Stack>
-        ) : (
-          <ActionIcon m="auto" variant="transparent" size="xl" aria-label="Create">
-            <IconPlus style={{ width: '100%', height: '100%' }} stroke={1.5} />
+                <SortableContext
+                  items={exercises.map(e => id + e.exercise.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <Stack gap="xs" h="100%">
+                    {exercises.map((exerciseData, index) => (
+                      <WorkoutExercise
+                        key={id + exerciseData.exercise.id}
+                        id={id + exerciseData.exercise.id}
+                        index={index}
+                        data={exerciseData}
+                      />
+                    ))}
+                    <ActionIcon mt="auto" w="100%" variant="default" size="xl" aria-label="Add exercise to workout">
+                      <IconPlus stroke={1.5} />
+                    </ActionIcon>
+                  </Stack>
+                </SortableContext>
+              </DndContext>
+            </Stack>
+        </Card>
+      ) : (
+        <Card shadow="sm" padding="0" radius="md">
+          <ActionIcon 
+            radius="md" 
+            w="100%" 
+            h="100%" 
+            variant="default" 
+            size="xl" 
+            aria-label="Create workout"
+            onClick={buttonCreateHandler}
+          >
+            <IconPlus stroke={1.5} />
           </ActionIcon>
-        )
-      }
-    </Card>
+        </Card>
+      )
+    }
+    </>
   );
 }
 

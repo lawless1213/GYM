@@ -9,7 +9,7 @@ function CreateExerciseButton() {
 	const buttonHandler = () => {
 		if (currentUser) {
 			modals.openContextModal({
-				modal: 'create',
+				modal: 'exercise',
 				title: <Title order={2}>Create your exercise</Title>,
 				size: 'xl',
 			})

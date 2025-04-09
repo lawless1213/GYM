@@ -77,7 +77,7 @@ const ExerciseCard = observer(({exercise}) => {
 
 	const editHandler = () => {
 		modals.openContextModal({
-			modal: 'create',
+			modal: 'exercise',
 			title: "Update your exercise",
 			size: 'xl',
 			innerProps: {

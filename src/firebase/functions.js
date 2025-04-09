@@ -43,31 +43,4 @@ export const FirebaseService = {
         console.warn("Помилка при видаленні файлу:", error);
     }
   },
-
-  async updateExercise(exerciseId, updatedData, imageFile = null, videoFile = null) {
-    const exerciseRef = doc(db, "exercises", exerciseId);
-    const exerciseDoc = await getDoc(exerciseRef);
-    
-    if (!exerciseDoc.exists()) throw new Error("Exercise not found");
-  
-    const existingData = exerciseDoc.data();
-
-    const updatedExercise = { ...existingData, ...updatedData };
-  
-    try {
-      if (existingData.preview) await this.deleteFile(existingData.preview);
-      updatedExercise.preview = null;
-      if (imageFile) updatedExercise.preview = await this.uploadFile(imageFile, "preview");
-      
-      if (existingData.video) await this.deleteFile(existingData.video);
-      updatedExercise.video = null;
-      if (videoFile) updatedExercise.video = await this.uploadFile(videoFile, "video");
-      
-      await updateDoc(exerciseRef, updatedExercise);
-      return updatedExercise;
-    } catch (error) {
-      console.error("Error updating exercise:", error);
-      throw error;
-    }
-  },
 };

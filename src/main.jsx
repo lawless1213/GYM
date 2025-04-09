@@ -5,7 +5,7 @@ import { StoreProvider } from './providers/StoreProvider';
 import { ModalsProvider } from '@mantine/modals';
 import './firebase/firebase';
 import App from './App.jsx';
-import { AuthModal, ExerciseModal } from './modals';
+import { AuthModal, ExerciseModal, WorkoutModal } from './modals';
 import { AuthProvider } from './stores/context/AuthContext.jsx';
 import { MantineProvider } from '@mantine/core';
 import { theme } from './theme';
@@ -26,7 +26,7 @@ createRoot(document.getElementById('root')).render(
           <BrowserRouter basename='/'>
             <MantineProvider theme={theme} defaultColorScheme="dark">
                 <ModalsProvider
-                  modals={{ auth: AuthModal, create: ExerciseModal }}
+                  modals={{ auth: AuthModal, exercise: ExerciseModal, workout: WorkoutModal }}
                 >
                   <App/>
                 </ModalsProvider>
