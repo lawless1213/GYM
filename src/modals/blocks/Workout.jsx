@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import workoutService from '../../services/workoutService';
-import { ColorInput, ColorPicker, Group, Stack, Textarea, TextInput } from '@mantine/core';
+import { Button, ColorInput, ColorPicker, Group, Stack, Textarea, TextInput } from '@mantine/core';
 
 function Workout({ closeModal }) {  
 	const { t } = useTranslation();
@@ -24,35 +24,49 @@ function Workout({ closeModal }) {
 	const handleSubmit = async (event) => {
     event.preventDefault();
     if (!form.validate().hasErrors) {
-      console.log(form.values);
-  
       setLoading(true);
+			const success = await workoutService.createExercise(form.values);
   
       if (success) {
         closeModal();
       }
+      
       setLoading(false);
     }
   };
 
 	return (
 		<>
-			<form>
+			<form onSubmit={handleSubmit}>
 				<Stack gap="md">
-					<TextInput
-						placeholder="Workout name"
-						{...form.getInputProps('name')}
-					/>
-					<Group >
-						<Textarea
-							placeholder="Workout description"
+					<Group>
+						<ColorInput 
+							w="130px" 
+							disallowInput 
+							placeholder='Color'
+							{...form.getInputProps('color')}
+						/>
+						<TextInput
 							flex="1"
-							h="125px"
-							{...form.getInputProps('description')}
+							placeholder="Workout name"
+							{...form.getInputProps('name')}
 						/>
-						<ColorPicker
-							size="xs"
-						/>
+					</Group>
+					
+					<Textarea
+						placeholder="Workout description"
+						h="100%"
+						{...form.getInputProps('description')}
+					/>
+					
+					<Group justify="flex-end">
+						<Button fullWidth size='m' type="submit" radius="xl">
+							{
+								loading ?
+								"Loading.." :
+								"Create workout"
+							} 
+						</Button>
 					</Group>
 				</Stack>
 			</form>

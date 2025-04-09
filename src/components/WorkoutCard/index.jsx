@@ -40,7 +40,7 @@ const WorkoutExercise = memo(function WorkoutExercise({ id, index, data }) {
   };
 
   return (
-    <Group ref={setNodeRef} key={index} align="center" style={style} {...attributes} {...listeners}>
+    <Group ref={setNodeRef} key={index} align="center" style={style}>
       <Flex w={50} h={50}>
         <Image src={data.exercise.preview} fit="contain" />
       </Flex>
@@ -50,7 +50,7 @@ const WorkoutExercise = memo(function WorkoutExercise({ id, index, data }) {
           {data.sets} × {data.valuePerSet} {data.exercise.type}
         </Text>
       </Stack>
-      <ActionIcon variant="subtle" color="gray" ml="auto">
+      <ActionIcon variant="subtle" color="gray" ml="auto" {...attributes} {...listeners}>
         <IconGripVertical size={16} />
       </ActionIcon>
     </Group>
