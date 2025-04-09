@@ -25,10 +25,7 @@ const ExerciseCard = observer(({exercise}) => {
 	const { SettingStore, ExerciseStore } = useStores();
 	const [isVideoPreview, setIsVideoPreview] = useState(SettingStore.isVideoPreview);
 	const navigate = useNavigate();
-	const [loading, setLoading] = useState(false);
-
-	console.log(exercise);
-	
+	const [loading, setLoading] = useState(false);	
 
 	const {
 		id,

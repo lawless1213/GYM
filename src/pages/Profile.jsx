@@ -41,7 +41,7 @@ const Profile = () => {
 			<Stack>
 				<SimpleGrid cols={{ base: 1, md: 2 }}>
 					{charts.map(chart => (
-							<Stack>
+							<Stack key={chart}>
 								<Title ta='center' order={5}>{chart}</Title>
 								<AreaChart
 									key={chart}
