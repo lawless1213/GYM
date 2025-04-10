@@ -4,13 +4,17 @@ import { getAuth } from "firebase/auth";
 
 const workoutService = {
 	// ----------- Create workout
-	async createExercise() {
+	async createWorkout( workout ) {
 		const currentUser = getAuth().currentUser;
     if (!currentUser) return false;
 
 		try {
-			console.log('create');
-			
+			const { data }  = await client.mutate({
+				mutation: CREATE_WORKOUT,
+				variables: {input: workout}
+			})
+
+			return data?.createWorkout || null;
 		} catch (error) {
 			console.error("Error creating workout:", error);
       return null;

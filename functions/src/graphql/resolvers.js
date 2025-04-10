@@ -8,6 +8,7 @@ import { deleteExercise } from "../mutations/exercises/deleteExercise.js";
 import { createExercise } from "../mutations/exercises/createExercise.js";
 import { updateExercise } from "../mutations/exercises/updateExercise.js";
 import { getUserWorkouts } from "../services/workoutService.js";
+import { createWorkout } from "../mutations/workouts/createWorkout.js";
 import { db } from "../firebase.js";
 
 export const resolvers = {
@@ -59,6 +60,12 @@ export const resolvers = {
         throw new Error("Unauthorized");
       }
       return removeFromBookmarks(_, args, context);
+    },
+    createWorkout: (_, args, context) => {
+      if (!context.user) {
+        throw new Error("Unauthorized");
+      }
+      return createWorkout(_, args, context);
     },
   },
   WorkoutExercise: {

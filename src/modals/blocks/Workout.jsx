@@ -1,6 +1,5 @@
 import { useForm } from '@mantine/form';
 import { useState } from 'react';
-import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import workoutService from '../../services/workoutService';
 import { Button, ColorInput, ColorPicker, Group, Stack, Textarea, TextInput } from '@mantine/core';
@@ -25,7 +24,7 @@ function Workout({ closeModal }) {
     event.preventDefault();
     if (!form.validate().hasErrors) {
       setLoading(true);
-			const success = await workoutService.createExercise(form.values);
+			const success = await workoutService.createWorkout(form.values);
   
       if (success) {
         closeModal();
