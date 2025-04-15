@@ -2,9 +2,10 @@ import { useState, useRef, memo  } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Card, Title, Text, Group, Stack,
-  Badge, ActionIcon, Flex, Image
+  Badge, ActionIcon, Flex, Image,
+  Menu
 } from '@mantine/core';
-import { IconGripVertical, IconPlus } from '@tabler/icons-react';
+import { IconGripVertical, IconPlus, IconEdit, IconTrash, IconDotsVertical } from '@tabler/icons-react';
 
 import {
   DndContext,
@@ -42,7 +43,7 @@ const WorkoutExercise = memo(function WorkoutExercise({ id, index, data }) {
   return (
     <Group ref={setNodeRef} key={index} align="center" style={style}>
       <Flex w={50} h={50}>
-        <Image src={data.exercise.preview} fit="contain" />
+        {/* <Image src={data.exercise.preview} fit="contain" /> */}
       </Flex>
       <Stack gap={0}>
         <Text size="sm" fw={500}>{data.exercise.name}</Text>
@@ -94,11 +95,45 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
     <>
       {
         !create ? (
-          <Card shadow="sm" padding="md" radius="md" withBorder>
+          <Card shadow="sm" padding="md" radius="md" withBorder style={{ borderColor: color }}>
             <Stack gap="xs" h="100%">
-              <Group justify="space-between" align="center">
-                <Title order={3} style={{ color }}>{name}</Title>
-                <Badge size="lg">{calories} kcal</Badge>
+              <Badge m="auto" fullWidth variant="light" color={ color } size="xl" style={{ 'flex-shrink': '0' }}>
+                {name}
+              </Badge>
+              <Group wrap='nowrap' justify="space-between" width="100%">
+                <Badge variant="light" size="lg">{calories} kcal</Badge>
+                <Menu position="bottom-end" shadow="md" width={200}>
+                  <Menu.Target>
+                    <ActionIcon variant="default" aria-label="Settings">
+                      <IconDotsVertical/>
+                    </ActionIcon>
+                  </Menu.Target>
+
+                  <Menu.Dropdown>
+                    <Menu.Item 
+                      leftSection={<IconEdit size={14} />}
+                      // onClick={editHandler}
+                    >
+                      {t(`workout.edit`)}
+                    </Menu.Item>
+
+                    <Menu.Divider />
+
+                    <Menu.Item
+                      color="red"
+                      leftSection={<IconTrash size={14} />}
+                      // onClick={() => modals.openConfirmModal({
+                      //   title: t('exercise.delete.title'),
+                      //   children: t('exercise.delete.description'),
+                      //   labels: { confirm: t('exercise.delete.confirm'), cancel: t('exercise.delete.cancel') },
+                      //   confirmProps: { color: 'red' },
+                      //   onConfirm: () => handleDeleteExercise()
+                      // })}
+                    >
+                      {t(`workout.delete`)}
+                    </Menu.Item>
+                  </Menu.Dropdown>
+                </Menu>
               </Group>
 
               <DndContext
@@ -119,8 +154,8 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
                         data={exerciseData}
                       />
                     ))}
-                    <ActionIcon mt="auto" w="100%" variant="default" size="xl" aria-label="Add exercise to workout">
-                      <IconPlus stroke={1.5} />
+                    <ActionIcon h="100%" w="100%" variant="default" size="xl" aria-label="Add exercise to workout">
+                      <IconPlus color={ color } stroke={1.5} />
                     </ActionIcon>
                   </Stack>
                 </SortableContext>

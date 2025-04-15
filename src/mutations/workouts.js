@@ -1,11 +1,16 @@
 import { gql } from "@apollo/client";
 
 export const CREATE_WORKOUT = gql`
-	mutation AddToWorkouts($input: CreateWorkoutInput!) {
-		addToWorkouts(input: $input) {
-			success
-			message
-			__typename
-		}
-	}
+  mutation CreateWorkout($input: CreateWorkoutInput!) {
+    createWorkout(input: $input) {
+      success
+      message
+      workout {
+        id
+        name
+        color
+        calories
+      }
+    }
+  }
 `;

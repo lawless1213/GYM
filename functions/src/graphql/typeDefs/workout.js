@@ -25,7 +25,7 @@ export default gql`
 		color: String!
   }
 
-	type UpdateWorkoutResponse {
+	type WorkoutResponse {
     success: Boolean!
     message: String!
     workout: Workout!
@@ -36,7 +36,6 @@ export default gql`
   }
 
 	extend type Mutation {
-    
-    createWorkout(input: CreateWorkoutInput!): UpdateWorkoutResponse!
+    createWorkout(input: CreateWorkoutInput!): WorkoutResponse!
   }
 `;
