@@ -14,3 +14,12 @@ export const CREATE_WORKOUT = gql`
     }
   }
 `;
+
+export const DELETE_WORKOUT = gql`
+  mutation DeleteWorkout($input: DeleteWorkoutInput!) {
+    deleteWorkout(input: $input) {
+      success
+      message
+    }
+  }
+`;

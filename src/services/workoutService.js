@@ -1,5 +1,5 @@
 import client from "../providers/apolloClient";
-import { CREATE_WORKOUT } from "../mutations/workouts";
+import { CREATE_WORKOUT, DELETE_WORKOUT } from "../mutations/workouts";
 import { GET_USER_WORKOUTS } from "../queries/workouts";
 import { getAuth } from "firebase/auth";
 
@@ -44,6 +44,30 @@ const workoutService = {
       return null;
 		}
 	},
+	// -----------
+
+	// ----------- Delete Workout
+  async deleteWorkout({ id }) {
+    const currentUser = getAuth().currentUser;
+    if (!currentUser) return false;
+		console.log(id);
+		
+    try {
+      const { data } = await client.mutate({
+        mutation: DELETE_WORKOUT,
+        variables: { input: { id } },
+        update(cache) {
+					cache.evict({ id: `Workout:${id}` });
+					cache.gc();
+				}
+      });
+
+      return data?.deleteWorkout || null;
+    } catch (error) {
+      console.error("Error deleting Workout:", error);
+      return null;
+    }
+  },
 	// -----------
 }
 

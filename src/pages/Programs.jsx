@@ -14,6 +14,8 @@ function Programs() {
   }
 
   const workouts = data?.getUserWorkouts || [];
+  console.log(workouts);
+  
 
   return (
     <Stack>

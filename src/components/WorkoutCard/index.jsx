@@ -23,6 +23,7 @@ import {
 
 import { modals } from '@mantine/modals';
 import { CSS } from '@dnd-kit/utilities';
+import workoutService from '../../services/workoutService';
 
 const WorkoutExercise = memo(function WorkoutExercise({ id, index, data }) {
   const {
@@ -61,7 +62,7 @@ const WorkoutExercise = memo(function WorkoutExercise({ id, index, data }) {
 function WorkoutCard({ id, name, color, calories, exercises: initialExercises, create = false, onExerciseOrderChange }) {
   const { t } = useTranslation();
   const [exercises, setExercises] = useState(initialExercises);
-
+  
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   );
@@ -90,6 +91,10 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
       size: 'lg',
     })
   }
+
+  const handleDeleteWorkout  = async () => {
+		const result = await workoutService.deleteWorkout({ id });
+	};
 
   return (
     <>
@@ -122,13 +127,13 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
                     <Menu.Item
                       color="red"
                       leftSection={<IconTrash size={14} />}
-                      // onClick={() => modals.openConfirmModal({
-                      //   title: t('exercise.delete.title'),
-                      //   children: t('exercise.delete.description'),
-                      //   labels: { confirm: t('exercise.delete.confirm'), cancel: t('exercise.delete.cancel') },
-                      //   confirmProps: { color: 'red' },
-                      //   onConfirm: () => handleDeleteExercise()
-                      // })}
+                      onClick={() => modals.openConfirmModal({
+                        title: t('workout.delete.title'),
+                        children: t('workout.delete.description'),
+                        labels: { confirm: t('workout.delete.confirm'), cancel: t('workout.delete.cancel') },
+                        confirmProps: { color: 'red' },
+                        onConfirm: () => handleDeleteWorkout()
+                      })}
                     >
                       {t(`workout.delete`)}
                     </Menu.Item>

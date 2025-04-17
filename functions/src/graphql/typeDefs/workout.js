@@ -25,6 +25,10 @@ export default gql`
 		color: String!
   }
 
+  input DeleteWorkoutInput {
+    id: String
+  }
+
 	type WorkoutResponse {
     success: Boolean!
     message: String!
@@ -37,5 +41,6 @@ export default gql`
 
 	extend type Mutation {
     createWorkout(input: CreateWorkoutInput!): WorkoutResponse!
+    deleteWorkout(input: DeleteWorkoutInput!): MutationResponse! 
   }
 `;

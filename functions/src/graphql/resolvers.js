@@ -10,6 +10,7 @@ import { updateExercise } from "../mutations/exercises/updateExercise.js";
 import { getUserWorkouts } from "../services/workoutService.js";
 import { createWorkout } from "../mutations/workouts/createWorkout.js";
 import { db } from "../firebase.js";
+import { deleteWorkout } from "../mutations/workouts/deleteWorkout.js";
 
 export const resolvers = {
   Query: {
@@ -66,6 +67,12 @@ export const resolvers = {
         throw new Error("Unauthorized");
       }
       return createWorkout(_, args, context);
+    },
+    deleteWorkout: (_, args, context) => {
+      if (!context.user) {
+        throw new Error("Unauthorized");
+      }
+      return deleteWorkout(_, args, context);
     },
   },
   WorkoutExercise: {
