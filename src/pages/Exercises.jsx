@@ -14,7 +14,6 @@ import { GET_FILTERS } from '../queries/filters.js';
 const Exercises = observer(() => {
   const { t } = useTranslation();
   const { currentUser } = useAuth();
-  const { ExerciseStore } = useStores();
   const [groupExercise, setGroupExercise] = useState(groupNames.ALL);
   const [filters, setFilters] = useState({});
 

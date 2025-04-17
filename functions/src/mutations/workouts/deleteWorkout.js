@@ -8,12 +8,16 @@ export const deleteWorkout = async(_, {input: { id }}, context) => {
 	try {
     const userRef = db.collection("users").doc(context.user.uid);
     const userDoc = await userRef.get();
-    const currentWorkouts = userDoc.data()?.workouts || [];
-
-    const updatedWorkouts = currentWorkouts.filter(workout => workout.id !== id);
+    const currentWorkouts = userDoc.data()?.workouts || {};
+    
+    // Створюємо новий об'єкт без програми, яку видаляємо
+    const updatedWorkouts = Object.fromEntries(
+        Object.entries(currentWorkouts)
+            .filter(([key]) => key !== id)
+    );
 
     await userRef.update({
-      workouts: updatedWorkouts
+        workouts: updatedWorkouts
     });
 
     return { success: true, message: "Програму видалено" };

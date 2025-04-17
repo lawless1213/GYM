@@ -93,8 +93,19 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
   }
 
   const handleDeleteWorkout  = async () => {
-		const result = await workoutService.deleteWorkout({ id });
+		 await workoutService.deleteWorkout({ id });
 	};
+
+  const buttonAddExerciseHandler = () => {
+    modals.openContextModal({
+      modal: 'workoutExercise',
+      title: <Title order={2}>Add exercise to your workout</Title>,
+      size: 'xl',
+      innerProps: {
+				workout: { id }
+			}
+    })
+  }
 
   return (
     <>
@@ -159,7 +170,14 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
                         data={exerciseData}
                       />
                     ))}
-                    <ActionIcon h="100%" w="100%" variant="default" size="xl" aria-label="Add exercise to workout">
+                    <ActionIcon 
+                      h="100%" 
+                      w="100%" 
+                      variant="default" 
+                      size="xl" 
+                      aria-label="Add exercise to workout"
+                      onClick={buttonAddExerciseHandler}
+                    >
                       <IconPlus color={ color } stroke={1.5} />
                     </ActionIcon>
                   </Stack>
