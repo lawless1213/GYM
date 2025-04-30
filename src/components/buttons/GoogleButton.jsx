@@ -30,5 +30,5 @@ function GoogleIcon(props) {
 }
 
 export function GoogleButton(props) {
-  return <Button leftSection={<GoogleIcon />} variant="default" {...props} />;
+  return <Button disabled leftSection={<GoogleIcon />} variant="default" {...props} />;
 }
