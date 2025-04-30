@@ -4,15 +4,6 @@ export const getExercises = async (_, { filters }, context) => {
   try {
     let query = db.collection("exercises");
 
-    if (filters) {
-      if (filters.bodyPart && filters.bodyPart.length > 0) {
-        query = query.where("bodyPart", "array-contains-any", filters.bodyPart);
-      }
-      if (filters.equipment && filters.equipment.length > 0) {
-        query = query.where("equipment", "array-contains-any", filters.equipment);
-      }
-    }
-
     // Додаємо сортування за датою створення в спадаючому порядку
     query = query.orderBy("createdAt", "desc");
 
@@ -21,6 +12,20 @@ export const getExercises = async (_, { filters }, context) => {
       id: doc.id,
       ...doc.data(),
     }));
+
+    // Застосовуємо фільтри на клієнтській стороні
+    if (filters) {
+      if (filters.bodyPart && filters.bodyPart.length > 0) {
+        exercises = exercises.filter(exercise => 
+          exercise.bodyPart.some(part => filters.bodyPart.includes(part))
+        );
+      }
+      if (filters.equipment && filters.equipment.length > 0) {
+        exercises = exercises.filter(exercise => 
+          exercise.equipment.some(item => filters.equipment.includes(item))
+        );
+      }
+    }
 
     // Якщо користувач авторизований, перевіряємо чи є вправи в улюблених
     if (context.user) {
