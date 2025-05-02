@@ -54,6 +54,8 @@ function WorkoutExercise({ closeModal }) {
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 		
+		console.log(selectedExercises);
+		
 		// if (!form.validate().hasErrors) {
 		// 	setLoading(true);
 		// 	const success = await workoutService.createWorkout(form.values);
@@ -73,9 +75,6 @@ function WorkoutExercise({ closeModal }) {
 			setSelectedExercises(selectedExercises.filter(item => item !== id));
 		}
 	}
-
-	console.log(selectedExercises);
-
 
 	const cards = exercises.map((item) => (
     <ExerciseCard
