@@ -1,4 +1,5 @@
 .Card {
+  border: 1px solid transparent;
   .Preview {
     height: 160px;
     background: #fff;
@@ -14,11 +15,12 @@
 
   @media (hover: hover) {
     &:hover{
-      box-shadow: inset 0 0 0 1px #fff;
+      border-color: #fff;
+
     }
   }
 
   &.Active {
-    box-shadow: inset 0 0 3px 3px #aaa317;
+    border-color: #aaa317;
   }
 }

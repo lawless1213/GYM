@@ -71,8 +71,9 @@ const ExerciseCard = ({exercise, active = false, simple = false, onClick }) => {
 		console.log("Mutation result:", result);
 	};
 
-	const previewToggleHandler = () => {
+	const previewToggleHandler = (event) => {
     setIsVideoPreview(!isVideoPreview);
+		event.stopPropagation();
   };
 
 	const editHandler = () => {
