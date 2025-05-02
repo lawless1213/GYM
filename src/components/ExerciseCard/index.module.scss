@@ -13,8 +13,12 @@
   }
 
   @media (hover: hover) {
-    &:hover {
+    &:hover{
       box-shadow: inset 0 0 0 1px #fff;
     }
+  }
+
+  &.Active {
+    box-shadow: inset 0 0 3px 3px #aaa317;
   }
 }

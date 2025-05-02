@@ -5,12 +5,7 @@ import { groupNames } from "../services/exerciseService";
 
 export const useExercises = (group, filters, currentUser) => {
   let query, variables;
-
-  console.log(group);
-  console.log(filters);
-  console.log(currentUser);
   
-
   // Якщо користувач не авторизований і намагається отримати закладки або персональні вправи,
   // повертаємо порожній масив
   if (!currentUser && (group === groupNames.BOOKMARKS || group === groupNames.PERSONAL)) {

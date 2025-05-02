@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 
 import s from './index.module.scss';
 
-const ExerciseCard = observer(({exercise}) => {
+const ExerciseCard = ({exercise, active = false, simple = false, onClick }) => {
 	const { t } = useTranslation();
 	const { currentUser } = useAuth();
 	const { SettingStore, ExerciseStore } = useStores();
@@ -91,7 +91,8 @@ const ExerciseCard = observer(({exercise}) => {
 			<Card
 				shadow="sm"
 				padding="md"
-				className={s.Card}
+				className={`${s.Card} ${active && s.Active}`}
+				onClick={() => onClick(id)} 
 			>
 				<Group gap="xs" justify='space-between'>
 					<Stack gap="xs">
@@ -117,52 +118,54 @@ const ExerciseCard = observer(({exercise}) => {
 							</Group>
 						}
 					</Stack>
-					<Group gap="xs">
-						{
-							!!currentUser &&  
-							<ActionIcon onClick={bookmarkToggler} variant="default" aria-label="Bookmark" loading={loading} disabled={loading}>
-								{isBookmarked ? <IconHeartFilled /> : <IconHeart />}
-							</ActionIcon>
-						}
-						
-						{
-							!!currentUser && author === currentUser.uid &&
-							<Menu position="bottom-end" shadow="md" width={200}>
-								<Menu.Target>
-									<ActionIcon variant="default" aria-label="Settings">
-										<IconDotsVertical/>
-									</ActionIcon>
-								</Menu.Target>
+					{
+						!simple && 
+						<Group gap="xs">
+							{
+								!!currentUser &&  
+								<ActionIcon onClick={bookmarkToggler} variant="default" aria-label="Bookmark" loading={loading} disabled={loading}>
+									{isBookmarked ? <IconHeartFilled /> : <IconHeart />}
+								</ActionIcon>
+							}
+							
+							{
+								!!currentUser && author === currentUser.uid &&
+								<Menu position="bottom-end" shadow="md" width={200}>
+									<Menu.Target>
+										<ActionIcon variant="default" aria-label="Settings">
+											<IconDotsVertical/>
+										</ActionIcon>
+									</Menu.Target>
 
-								<Menu.Dropdown>
-									<Menu.Item 
-										leftSection={<IconEdit size={14} />}
-										onClick={editHandler}
-									>
-										{t(`exercise.edit`)}
-									</Menu.Item>
+									<Menu.Dropdown>
+										<Menu.Item 
+											leftSection={<IconEdit size={14} />}
+											onClick={editHandler}
+										>
+											{t(`exercise.edit`)}
+										</Menu.Item>
 
-									<Menu.Divider />
+										<Menu.Divider />
 
-									<Menu.Item
-										color="red"
-										leftSection={<IconTrash size={14} />}
-										onClick={() => modals.openConfirmModal({
-											title: t('exercise.delete.title'),
-											children: t('exercise.delete.description'),
-											labels: { confirm: t('exercise.delete.confirm'), cancel: t('exercise.delete.cancel') },
-											confirmProps: { color: 'red' },
-											onConfirm: () => handleDeleteExercise()
-										})}
-									>
-										{t(`exercise.delete`)}
-									</Menu.Item>
-								</Menu.Dropdown>
-							</Menu>
-						}
-						
-					</Group>
-					
+										<Menu.Item
+											color="red"
+											leftSection={<IconTrash size={14} />}
+											onClick={() => modals.openConfirmModal({
+												title: t('exercise.delete.title'),
+												children: t('exercise.delete.description'),
+												labels: { confirm: t('exercise.delete.confirm'), cancel: t('exercise.delete.cancel') },
+												confirmProps: { color: 'red' },
+												onConfirm: () => handleDeleteExercise()
+											})}
+										>
+											{t(`exercise.delete`)}
+										</Menu.Item>
+									</Menu.Dropdown>
+								</Menu>
+							}
+							
+						</Group>
+					}
 				</Group>
 				<Card.Section
 					className={s.Preview} 
@@ -207,6 +210,6 @@ const ExerciseCard = observer(({exercise}) => {
 			</Card>
 		</>
 	)
-})
+}
 
 export default ExerciseCard;

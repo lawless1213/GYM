@@ -1,5 +1,5 @@
 import { useForm } from '@mantine/form';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { filterNames, groupNames } from '../../services/exerciseService.js';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from "@apollo/client";
@@ -18,6 +18,7 @@ function WorkoutExercise({ closeModal }) {
 	const [submitLoading, setSubmitLoading] = useState(false);
 	const [groupExercise, setGroupExercise] = useState(groupNames.ALL);
 	const [filters, setFilters] = useState({});
+	const [selectedExercises, setSelectedExercises] = useState([])
 
 	const { data: filterBodyPartsData, loading: loadingBodyParts } = useQuery(GET_FILTERS, { variables: { name: "bodyPart" } });
 	const { data: filterEquipmentData, loading: loadingEquipment } = useQuery(GET_FILTERS, { variables: { name: "equipment" } });
@@ -52,7 +53,6 @@ function WorkoutExercise({ closeModal }) {
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
-		console.log('test');
 		
 		// if (!form.validate().hasErrors) {
 		// 	setLoading(true);
@@ -65,11 +65,25 @@ function WorkoutExercise({ closeModal }) {
 		// 	setLoading(false);
 		// }
 	};
+	
+	const handleSelectExercise = (id) => {
+		if (!selectedExercises.includes(id)) {
+			setSelectedExercises([...selectedExercises, id]);
+		} else {
+			setSelectedExercises(selectedExercises.filter(item => item !== id));
+		}
+	}
+
+	console.log(selectedExercises);
+
 
 	const cards = exercises.map((item) => (
     <ExerciseCard
       key={item.id}
       exercise={item}
+			simple={true}
+			active={selectedExercises.includes(item.id)}
+			onClick={handleSelectExercise}
     />
   ));
 
