@@ -5,7 +5,7 @@ import {
   Badge, ActionIcon, Flex, Image,
   Menu
 } from '@mantine/core';
-import { IconGripVertical, IconPlus, IconEdit, IconTrash, IconDotsVertical } from '@tabler/icons-react';
+import { IconGripVertical, IconPlus, IconEdit, IconTrash, IconCheck  } from '@tabler/icons-react';
 
 import {
   DndContext,
@@ -25,7 +25,7 @@ import { modals } from '@mantine/modals';
 import { CSS } from '@dnd-kit/utilities';
 import workoutService from '../../services/workoutService';
 
-const WorkoutExercise = memo(function WorkoutExercise({ id, index, data }) {
+const WorkoutExercise = memo(function WorkoutExercise({ id, index, data, isEdit }) {
   const {
     attributes,
     listeners,
@@ -44,7 +44,7 @@ const WorkoutExercise = memo(function WorkoutExercise({ id, index, data }) {
   return (
     <Group ref={setNodeRef} key={index} align="center" style={style}>
       <Flex w={50} h={50}>
-        {/* <Image src={data.exercise.preview} fit="contain" /> */}
+        <Image src={data.exercise.preview} fit="contain" />
       </Flex>
       <Stack gap={0}>
         <Text size="sm" fw={500}>{data.exercise.name}</Text>
@@ -52,9 +52,13 @@ const WorkoutExercise = memo(function WorkoutExercise({ id, index, data }) {
           {data.sets} × {data.valuePerSet} {data.exercise.type}
         </Text>
       </Stack>
-      <ActionIcon variant="subtle" color="gray" ml="auto" {...attributes} {...listeners}>
-        <IconGripVertical size={16} />
-      </ActionIcon>
+      {
+        isEdit 
+        && 
+        <ActionIcon variant="subtle" color="gray" ml="auto" {...attributes} {...listeners}>
+          <IconGripVertical size={16} />
+        </ActionIcon>
+      }
     </Group>
   );
 });
@@ -62,10 +66,14 @@ const WorkoutExercise = memo(function WorkoutExercise({ id, index, data }) {
 function WorkoutCard({ id, name, color, calories, exercises: initialExercises, create = false, onExerciseOrderChange }) {
   const { t } = useTranslation();
   const [exercises, setExercises] = useState(initialExercises);
+  const [isEdit, setIsEdit] = useState(false);
   
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   );
+
+  console.log(exercises);
+  
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -118,71 +126,89 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
               </Badge>
               <Group wrap='nowrap' justify="space-between" width="100%">
                 <Badge variant="light" size="lg">{calories} kcal</Badge>
-                <Menu position="bottom-end" shadow="md" width={200}>
-                  <Menu.Target>
-                    <ActionIcon variant="default" aria-label="Settings">
-                      <IconDotsVertical/>
+                {
+                  isEdit 
+                  ? 
+                    <Group gap="4">
+                      
+                      <ActionIcon 
+                        variant="default" 
+                        aria-label="Edit"
+                        onClick={() => {setIsEdit(!isEdit)}}
+                      >
+                        <IconCheck size={14}/>
+                      </ActionIcon>
+                      <ActionIcon 
+                        variant="default" 
+                        aria-label="Delete"
+                        onClick={() => modals.openConfirmModal({
+                          title: t('workout.delete.title'),
+                          children: t('workout.delete.description'),
+                          labels: { confirm: t('workout.delete.confirm'), cancel: t('workout.delete.cancel') },
+                          confirmProps: { color: 'red' },
+                          onConfirm: () => handleDeleteWorkout()
+                        })}
+                      >
+                        <IconTrash size={14}/>
+                      </ActionIcon>
+                    </Group> 
+                  :
+                    <ActionIcon 
+                      variant="default" 
+                      aria-label="Edit"
+                      onClick={() => {setIsEdit(!isEdit)}}
+                    >
+                      <IconEdit size={14}/>
                     </ActionIcon>
-                  </Menu.Target>
-
-                  <Menu.Dropdown>
-                    <Menu.Item 
-                      leftSection={<IconEdit size={14} />}
-                      // onClick={editHandler}
-                    >
-                      {t(`workout.edit`)}
-                    </Menu.Item>
-
-                    <Menu.Divider />
-
-                    <Menu.Item
-                      color="red"
-                      leftSection={<IconTrash size={14} />}
-                      onClick={() => modals.openConfirmModal({
-                        title: t('workout.delete.title'),
-                        children: t('workout.delete.description'),
-                        labels: { confirm: t('workout.delete.confirm'), cancel: t('workout.delete.cancel') },
-                        confirmProps: { color: 'red' },
-                        onConfirm: () => handleDeleteWorkout()
-                      })}
-                    >
-                      {t(`workout.delete`)}
-                    </Menu.Item>
-                  </Menu.Dropdown>
-                </Menu>
+                }
+                
               </Group>
 
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={exercises.map(e => id + e.exercise.id)}
-                  strategy={verticalListSortingStrategy}
+              {isEdit ? 
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
                 >
-                  <Stack gap="xs" h="100%">
-                    {exercises.map((exerciseData, index) => (
-                      <WorkoutExercise
-                        key={id + exerciseData.exercise.id}
-                        id={id + exerciseData.exercise.id}
-                        index={index}
-                        data={exerciseData}
-                      />
-                    ))}
-                    <ActionIcon 
-                      h="100%" 
-                      w="100%" 
-                      variant="default" 
-                      size="xl" 
-                      aria-label="Add exercise to workout"
-                      onClick={buttonAddExerciseHandler}
-                    >
-                      <IconPlus color={ color } stroke={1.5} />
-                    </ActionIcon>
-                  </Stack>
-                </SortableContext>
-              </DndContext>
+                  <SortableContext
+                    items={exercises.map(e => id + e.exercise.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <Stack gap="xs" h="100%">
+                      {exercises.map((exerciseData, index) => (
+                        <WorkoutExercise
+                          key={id + exerciseData.exercise.id}
+                          id={id + exerciseData.exercise.id}
+                          index={index}
+                          data={exerciseData}
+                          isEdit={true}
+                        />
+                      ))}
+                      <ActionIcon 
+                        h="100%" 
+                        w="100%" 
+                        variant="default" 
+                        size="xl" 
+                        aria-label="Add exercise to workout"
+                        onClick={buttonAddExerciseHandler}
+                      >
+                        <IconPlus color={color} stroke={1.5} />
+                      </ActionIcon>
+                    </Stack>
+                  </SortableContext>
+                </DndContext>
+               : 
+                <Stack gap="xs" h="100%">
+                  {exercises.map((exerciseData, index) => (
+                    <WorkoutExercise
+                      key={id + exerciseData.exercise.id}
+                      id={id + exerciseData.exercise.id}
+                      index={index}
+                      data={exerciseData}
+                    />
+                  ))}
+                </Stack>
+              }
             </Stack>
         </Card>
       ) : (

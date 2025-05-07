@@ -75,7 +75,7 @@ function WorkoutExercise({ closeModal }) {
 			setSelectedExercises(selectedExercises.filter(item => item !== id));
 		}
 	}
-
+	
 	const cards = exercises.map((item) => (
     <ExerciseCard
       key={item.id}

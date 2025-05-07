@@ -202,11 +202,14 @@ const ExerciseCard = ({exercise, active = false, simple = false, onClick }) => {
 				<Stack gap="xs" mt="md">
 					<Title order={3} style={{ margin: 0 }}>{name}</Title>
 					<Text size="sm">{description}</Text>
-					<Text size="sm" c="dimmed">{valuePerSet}{t(`exercise.${type}.per.set`)}</Text>
 					<Group>
+						<Text size="sm" >{valuePerSet} {t(`exercise.${type}.per.set`)}</Text>
+						<Text ml='auto' size="sm">{caloriesPerSet} {t(`exercise.calories.per.set`)}</Text>
+					</Group>
+					{/* <Group>
 						<Text size="sm" c="dimmed">{formattedDate}</Text>
 						<Text ml='auto' size="sm" c="dimmed">{authorName}</Text>
-					</Group>
+					</Group> */}
 				</Stack>
 			</Card>
 		</>
