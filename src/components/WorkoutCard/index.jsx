@@ -73,64 +73,67 @@ const WorkoutExercise = memo(function WorkoutExercise({
   return (
     <Paper ref={setNodeRef} key={index} style={style}>
       <Group gap="xs" align="center" p="sm">
+        <Flex w={50} h={50}>
+          <Image src={data.exercise.preview} fit="contain" />
+        </Flex>
         <Stack gap={0} miw={75}>
           <Text size='xs' fw={500}>{data.exercise.name}</Text>
-          <Flex w={50} h={50}>
-            <Image src={data.exercise.preview} fit="contain" />
-          </Flex>
+          <Group gap="0" align='baseline'>
+            <NumberInput
+              variant="filled"
+              size="xs"
+              radius="xs"
+              w={36}
+              max={100}
+              min={0}
+              value={currentSets}
+              readOnly={!isEdit}
+              styles={(theme) => ({
+                input: {
+                  background: isEdit ? theme.colors.dark[6] : 'transparent',
+                  cursor: isEdit ? 'text' : 'default',
+                  '&:focus-within': {
+                    borderColor: isEdit ? theme.colors[theme.primaryColor][6] : 'transparent',
+                  },
+                  borderColor: isEdit ? 'transparent' : 'transparent',
+                },
+              })}
+              onChange={(val) => {
+                if (isEdit) {
+                  onValueChange(id, 'sets', val);
+                }
+              }}
+            />
+            <Text mr="6px" ml="6px" c="dimmed">x</Text>
+            <NumberInput
+              variant="filled"
+              size="xs"
+              radius="xs"
+              w={100}
+              max={100}
+              min={0}
+              value={currentValuePerSet}
+              readOnly={!isEdit}
+              suffix={` ${data.exercise.type}`}
+              styles={(theme) => ({
+                input: {
+                  background: isEdit ? theme.colors.dark[6] : 'transparent',
+                  cursor: isEdit ? 'text' : 'default',
+                  '&:focus-within': {
+                    borderColor: isEdit ? theme.colors[theme.primaryColor][6] : 'transparent',
+                  },
+                  borderColor: isEdit ? 'transparent' : 'transparent',
+                },
+              })}
+              onChange={(val) => {
+                if (isEdit) {
+                  onValueChange(id, 'valuePerSet', val);
+                }
+              }}
+            />
+          </Group>
         </Stack>
-        <Group gap="0" align='baseline'>
-          <NumberInput
-            variant="filled"
-            size="xs"
-            radius="xs"
-            w={36}
-            max={100}
-            min={0}
-            value={currentSets}
-            readOnly={!isEdit}
-            styles={(theme) => ({
-              input: {
-                cursor: isEdit ? 'text' : 'default',
-                '&:focus-within': {
-                  borderColor: isEdit ? theme.colors[theme.primaryColor][6] : 'transparent',
-                },
-                borderColor: isEdit ? 'transparent' : 'transparent',
-              },
-            })}
-            onChange={(val) => {
-              if (isEdit) {
-                onValueChange(id, 'sets', val);
-              }
-            }}
-          />
-          <Text mr="6px" ml="6px" c="dimmed">x</Text>
-          <NumberInput
-            variant="filled"
-            size="xs"
-            radius="xs"
-            w={100}
-            max={100}
-            min={0}
-            value={currentValuePerSet}
-            readOnly={!isEdit}
-            suffix={` ${data.exercise.type}`}
-            styles={(theme) => ({
-              input: {
-                cursor: isEdit ? 'text' : 'default',
-                '&:focus-within': {
-                  borderColor: isEdit ? theme.colors[theme.primaryColor][6] : 'transparent',
-                },
-                borderColor: isEdit ? 'transparent' : 'transparent',
-              },
-            })}
-            onChange={(val) => {
-              if (isEdit) {
-                onValueChange(id, 'valuePerSet', val);
-              }
-            }}
-          />
-        </Group>
+        
 
         {
           isEdit
@@ -229,13 +232,16 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
     <>
       {
         !create ? (
-          <Card shadow="sm" padding="md" radius="md" withBorder style={{ borderColor: color }}>
+          <Card shadow="sm" withBorder padding="md" radius="md"  style={{ borderColor: color }}>
             <Stack gap="xs" h="100%">
-              <Badge m="auto" fullWidth variant="light" color={color} size="xl" style={{ 'flex-shrink': '0' }}>
-                {name}
-              </Badge>
-              <Group wrap='nowrap' justify="space-between" width="100%">
-                <Badge variant="light" size="lg">{calories} kcal</Badge>
+              
+              <Group wrap='nowrap' withBorder justify="space-between" width="100%">
+                {/* <Badge m="auto" variant="light" color={color} size="xl" flex="1" style={{ 'flex-shrink': '0' }}>
+                  {name} - {calories} kcal
+                </Badge> */}
+                <Title order={4}>
+                  {name} - {calories} kcal
+                </Title>
                 {
                   isEdit
                     ?
