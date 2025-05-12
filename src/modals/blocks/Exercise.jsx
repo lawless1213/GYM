@@ -107,9 +107,9 @@ function Exercise({ closeModal, exercise = null}) {
                 <NumberInput
                   placeholder={t('exercise.caloriesPerSet')}
                   min={0}
+                  suffix={' ccal'}
                   {...form.getInputProps('caloriesPerSet')}
                 />
-                <Text>ccal</Text>
               </Group>
             </Group>
 
