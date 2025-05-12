@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Card, Title, Text, Group, Stack,
   Badge, ActionIcon, Flex, Image,
-  Menu
+  Menu, NumberInput, Paper
 } from '@mantine/core';
 import { IconGripVertical, IconPlus, IconEdit, IconTrash, IconCheck  } from '@tabler/icons-react';
 
@@ -42,24 +42,57 @@ const WorkoutExercise = memo(function WorkoutExercise({ id, index, data, isEdit 
   };
 
   return (
-    <Group ref={setNodeRef} key={index} align="center" style={style}>
-      <Flex w={50} h={50}>
-        <Image src={data.exercise.preview} fit="contain" />
-      </Flex>
-      <Stack gap={0}>
-        <Text size="sm" fw={500}>{data.exercise.name}</Text>
-        <Text size="xs" c="dimmed">
-          {data.sets} × {data.valuePerSet} {data.exercise.type}
-        </Text>
-      </Stack>
-      {
-        isEdit 
-        && 
-        <ActionIcon variant="subtle" color="gray" ml="auto" {...attributes} {...listeners}>
-          <IconGripVertical size={16} />
-        </ActionIcon>
-      }
-    </Group>
+    <Paper ref={setNodeRef} key={index} style={style}>
+      <Group gap="xs" align="center" p="xs">
+        <Stack  gap={0} miw={75}>
+          <Text size='xs' fw={500}>{data.exercise.name}</Text>
+          <Flex w={50} h={50}>
+            <Image src={data.exercise.preview} fit="contain" />
+          </Flex>
+        </Stack>
+        {
+          isEdit 
+          ? 
+          <Group gap="xs" align='baseline'>
+            <NumberInput
+              variant="filled"
+              size="xs"
+              radius="xs"
+              w={50}
+              max={100}
+              min={0}
+              startValue={data.sets}
+            />
+            <Text c="dimmed">x</Text>
+            <NumberInput
+              variant="filled"
+              size="xs"
+              radius="xs"
+              w={50}
+              max={100}
+              min={0}
+              startValue={data.valuePerSet}
+            />
+            <Text c="dimmed">{data.exercise.type}</Text>
+          </Group>
+          :
+          <Group gap="xs" align='baseline'>
+            <Text size='26px' c="dimmed">{data.sets}</Text>
+            <Text c="dimmed">x</Text>
+            <Text size='26px' c="dimmed">{data.valuePerSet}</Text>
+            <Text c="dimmed">{data.exercise.type}</Text>
+          </Group>
+        }
+        {
+          isEdit 
+          && 
+          <ActionIcon variant="subtle" color="gray" ml="auto" {...attributes} {...listeners}>
+            <IconGripVertical size={16} />
+          </ActionIcon>
+        }
+      </Group>
+      
+    </Paper>
   );
 });
 
