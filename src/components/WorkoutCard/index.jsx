@@ -74,7 +74,7 @@ const WorkoutExercise = memo(function WorkoutExercise({
     <Paper ref={setNodeRef} key={index} style={style}>
       <Group gap="xs" align="center" p="sm">
         <Flex w={50} h={50}>
-          <Image src={data.exercise.preview} fit="contain" />
+          {/* <Image src={data.exercise.preview} fit="contain" /> */}
         </Flex>
         <Stack gap={0} miw={75}>
           <Text size='xs' fw={500}>{data.exercise.name}</Text>
@@ -92,9 +92,6 @@ const WorkoutExercise = memo(function WorkoutExercise({
                 input: {
                   background: isEdit ? theme.colors.dark[6] : 'transparent',
                   cursor: isEdit ? 'text' : 'default',
-                  '&:focus-within': {
-                    borderColor: isEdit ? theme.colors[theme.primaryColor][6] : 'transparent',
-                  },
                   borderColor: isEdit ? 'transparent' : 'transparent',
                 },
               })}
@@ -119,9 +116,6 @@ const WorkoutExercise = memo(function WorkoutExercise({
                 input: {
                   background: isEdit ? theme.colors.dark[6] : 'transparent',
                   cursor: isEdit ? 'text' : 'default',
-                  '&:focus-within': {
-                    borderColor: isEdit ? theme.colors[theme.primaryColor][6] : 'transparent',
-                  },
                   borderColor: isEdit ? 'transparent' : 'transparent',
                 },
               })}
@@ -147,7 +141,7 @@ const WorkoutExercise = memo(function WorkoutExercise({
   );
 });
 
-function WorkoutCard({ id, name, color, calories, exercises: initialExercises, create = false, onExerciseOrderChange }) {
+function WorkoutCard({ id, name, color, calories, exercises: initialExercises, create = false, onExerciseOrderChange, previewMode = false }) {
   const { t } = useTranslation();
   const [exercises, setExercises] = useState(initialExercises);
   const [isEdit, setIsEdit] = useState(false);
@@ -184,7 +178,7 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
     modals.openContextModal({
       modal: 'workout',
       title: <Title order={2}>Create your workout</Title>,
-      size: 'lg',
+      size: '100%',
     })
   }
 
@@ -196,7 +190,7 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
     modals.openContextModal({
       modal: 'workoutExercise',
       title: <Title order={2}>Add exercise to your workout</Title>,
-      size: 'xl',
+      size: '100%',
       innerProps: {
         workout: { id }
       }
@@ -235,18 +229,14 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
           <Card shadow="sm" withBorder padding="md" radius="md"  style={{ borderColor: color }}>
             <Stack gap="xs" h="100%">
               
-              <Group wrap='nowrap' withBorder justify="space-between" width="100%">
-                {/* <Badge m="auto" variant="light" color={color} size="xl" flex="1" style={{ 'flex-shrink': '0' }}>
+              <Group wrap='nowrap' justify="space-between" width="100%">
+                <Badge variant="light" color={color} size="xl">
                   {name} - {calories} kcal
-                </Badge> */}
-                <Title order={4}>
-                  {name} - {calories} kcal
-                </Title>
+                </Badge>
                 {
                   isEdit
                     ?
                     <Group gap="4">
-
                       <ActionIcon
                         variant="default"
                         aria-label="Edit"
@@ -302,33 +292,49 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
                           editableData={editableExercises.find(ex => (id + ex.exercise.id) === (id + exerciseData.exercise.id))}
                         />
                       ))}
-                      <ActionIcon
-                        h="100%"
-                        w="100%"
-                        variant="default"
-                        size="xl"
-                        aria-label="Add exercise to workout"
-                        onClick={buttonAddExerciseHandler}
-                      >
-                        <IconPlus color={color} stroke={1.5} />
-                      </ActionIcon>
+                      {
+                        !previewMode && 
+                        <ActionIcon
+                          h="100%"
+                          w="100%"
+                          variant="default"
+                          size="xl"
+                          aria-label="Add exercise to workout"
+                          onClick={buttonAddExerciseHandler}
+                        >
+                          <IconPlus color={color} stroke={1.5} />
+                        </ActionIcon>
+                      }
                     </Stack>
                   </SortableContext>
                 </DndContext>
                 :
                 <Stack gap="xs" h="100%">
-                  {exercises.map((exerciseData, index) => (
-                    <WorkoutExercise
-                      key={id + exerciseData.exercise.id}
-                      id={id + exerciseData.exercise.id}
-                      index={index}
-                      data={exerciseData}
-                      isEdit={false}
-                      // У режимі перегляду `onValueChange` та `editableData` не потрібні
-                      // Але якщо вони не передаються, то їх значення будуть `undefined`
-                      // що дозволить внутрішнім NumberInput правильно визначити readOnly
-                    />
-                  ))}
+                  {
+                    exercises.length > 0 ?
+                    exercises.map((exerciseData, index) => (
+                      <WorkoutExercise
+                        key={id + exerciseData.exercise.id}
+                        id={id + exerciseData.exercise.id}
+                        index={index}
+                        data={exerciseData}
+                        isEdit={false}
+                      />
+                    )) : 
+                    !previewMode && 
+                    <ActionIcon
+                      h="100%"
+                      w="100%"
+                      variant="default"
+                      size="xl"
+                      aria-label="Add exercise to workout"
+                      onClick={buttonAddExerciseHandler}
+                    >
+                      <IconPlus color={color} stroke={1.5} />
+                    </ActionIcon>
+                      
+                  }
+                  
                 </Stack>
               }
             </Stack>

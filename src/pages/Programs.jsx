@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { Title, SimpleGrid, Loader, Text, Stack } from '@mantine/core';
+import { Title, SimpleGrid, Loader, Text, Stack, Flex } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { GET_USER_WORKOUTS } from '../queries/workouts';
 import WorkoutCard from '../components/WorkoutCard';
@@ -10,11 +10,12 @@ function Programs() {
   const { data, loading, error } = useQuery(GET_USER_WORKOUTS);
 
   if (loading) {
-    return <Loader />;
+    return <Flex flex={1} justify='center' align='center'>
+              <Loader />
+            </Flex>;
   }
 
   const workouts = data?.getUserWorkouts || [];
-  console.log(workouts);
 
   return (
     <Stack>
