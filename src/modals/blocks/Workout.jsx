@@ -55,6 +55,19 @@ function Workout({ closeModal }) {
     });
   };
 
+	// // ФУНКЦІЯ ДЛЯ ЗМІНИ ПОРЯДКУ ВПРАВ (передаємо в WorkoutCard)
+  // const handleExerciseOrderChange = useCallback((reorderedExercisesDndIds) => {
+  //   setSelectedExercises(prevSelected => {
+  //     const selectedMap = new Map(prevSelected.map(ex => [ex.exerciseId, ex]));
+  //     const newOrderedSelectedExercises = reorderedExercisesDndIds.map(dndId => {
+  //       const foundExercise = prevSelected.find(ex => `${form.values.name}_${ex.exerciseId}` === dndId);
+  //       return foundExercise;
+  //     }).filter(Boolean);
+
+  //     return newOrderedSelectedExercises;
+  //   });
+  // }, [form.values.name]);
+
 	const enrichedExercisesForPreview = selectedExercises.map(selected => {
     const originalExercise = allExercises.find(ex => ex.id === selected.exerciseId);
     if (originalExercise) {
@@ -149,6 +162,7 @@ function Workout({ closeModal }) {
                 calories={0}
                 exercises={enrichedExercisesForPreview}
                 previewMode={true}
+								// onExerciseOrderChange={handleExerciseOrderChange}
               />
             </Box>
           </Stepper.Step>

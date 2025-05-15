@@ -1,4 +1,4 @@
-import { useState, useRef, memo, useEffect } from 'react';
+import { useState, useRef, memo, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Card, Title, Text, Group, Stack,
