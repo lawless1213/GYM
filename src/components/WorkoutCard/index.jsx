@@ -23,16 +23,17 @@ import {
 
 import { modals } from '@mantine/modals';
 import { CSS } from '@dnd-kit/utilities';
-import workoutService from '../../services/workoutService';
 
-// Допоміжна функція для порівняння масивів об'єктів
 const areExercisesEqual = (arr1, arr2) => {
   if (arr1.length !== arr2.length) {
     return false;
   }
+
   for (let i = 0; i < arr1.length; i++) {
-    // Порівнюємо ID вправи (якщо вони унікальні)
-    if (arr1[i].exercise.id !== arr2[i].exercise.id ||
+    const id1 = arr1[i].exerciseId || arr1[i].exercise?.id;
+    const id2 = arr2[i].exerciseId || arr2[i].exercise?.id;
+
+    if (id1 !== id2 ||
         arr1[i].sets !== arr2[i].sets ||
         arr1[i].valuePerSet !== arr2[i].valuePerSet) {
       return false;
@@ -41,15 +42,11 @@ const areExercisesEqual = (arr1, arr2) => {
   return true;
 };
 
-
-// Компонент WorkoutExercise приймає пропси для керування своїм станом
 const WorkoutExercise = memo(function WorkoutExercise({
   id,
-  index,
-  data, // Оригінальні дані в режимі перегляду
+  data,
   isEdit,
-  onValueChange, // Функція зворотного виклику для зміни значень
-  editableData // Дані для редагування
+  onValueChange,
 }) {
   const {
     attributes,
@@ -66,18 +63,17 @@ const WorkoutExercise = memo(function WorkoutExercise({
     opacity: isDragging ? 0.5 : 1,
   };
 
-  // Визначаємо, яке значення використовувати: editableData (якщо є) або data
-  const currentSets = isEdit ? (editableData?.sets ?? 0) : data.sets;
-  const currentValuePerSet = isEdit ? (editableData?.valuePerSet ?? 0) : data.valuePerSet;
+  const currentSets = data.sets;
+  const currentValuePerSet = data.valuePerSet;
 
   return (
-    <Paper ref={setNodeRef} key={index} style={style}>
+    <Paper ref={setNodeRef} style={style}>
       <Group gap="xs" align="center" p="sm">
         <Flex w={50} h={50}>
-          {/* <Image src={data.exercise.preview} fit="contain" /> */}
+          {/* {data.exercise?.preview && <Image src={data.exercise.preview} fit="contain" />} */}
         </Flex>
         <Stack gap={0} miw={75}>
-          <Text size='xs' fw={500}>{data.exercise.name}</Text>
+          <Text size='xs' fw={500}>{data.exercise?.name}</Text>
           <Group gap="0" align='baseline'>
             <NumberInput
               variant="filled"
@@ -111,7 +107,7 @@ const WorkoutExercise = memo(function WorkoutExercise({
               min={0}
               value={currentValuePerSet}
               readOnly={!isEdit}
-              suffix={` ${data.exercise.type}`}
+              suffix={` ${data.exercise?.type}`}
               styles={(theme) => ({
                 input: {
                   background: isEdit ? theme.colors.dark[6] : 'transparent',
@@ -128,7 +124,6 @@ const WorkoutExercise = memo(function WorkoutExercise({
           </Group>
         </Stack>
         
-
         {
           isEdit
           &&
@@ -141,7 +136,18 @@ const WorkoutExercise = memo(function WorkoutExercise({
   );
 });
 
-function WorkoutCard({ id, name, color, calories, exercises: initialExercises, create = false, onExerciseOrderChange, previewMode = false }) {
+
+function WorkoutCard({ 
+  id,
+  name, 
+  color, 
+  calories, 
+  exercises: initialExercises,
+  create = false, 
+  onExerciseOrderChange,
+  onDeleteWorkout,
+  previewMode = false
+}) {
   const { t } = useTranslation();
   const [exercises, setExercises] = useState(initialExercises);
   const [isEdit, setIsEdit] = useState(false);
@@ -160,17 +166,23 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    const oldIndex = exercises.findIndex(e => id + e.exercise.id === active.id);
-    const newIndex = exercises.findIndex(e => id + e.exercise.id === over.id);
+    const oldIndex = editableExercises.findIndex(e => id + e.exercise.id === active.id);
+    const newIndex = editableExercises.findIndex(e => id + e.exercise.id === over.id);
 
     if (oldIndex !== newIndex) {
-      const reordered = arrayMove(exercises, oldIndex, newIndex);
-      setExercises(reordered);
-      setEditableExercises(arrayMove(editableExercises, oldIndex, newIndex));
-      onExerciseOrderChange?.(reordered);
+      const reordered = arrayMove(editableExercises, oldIndex, newIndex);
+      setEditableExercises(reordered);
 
-      const movedExercise = exercises[oldIndex];
-      console.log(`Moved: "${movedExercise.exercise.name}" from ${oldIndex} to ${newIndex}`);
+      if (onExerciseOrderChange) {
+        const cleanedReordered = reordered.map(ex => ({
+          exerciseId: ex.exerciseId,
+          sets: ex.sets,
+          valuePerSet: ex.valuePerSet
+        }));
+        onExerciseOrderChange(cleanedReordered);
+      }
+
+      console.log(`Moved: "${reordered[newIndex].exercise.name}" from original index ${oldIndex} to ${newIndex}`);
     }
   };
 
@@ -182,8 +194,20 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
     })
   }
 
-  const handleDeleteWorkout = async () => {
-    await workoutService.deleteWorkout({ id });
+  const handleConfirmDeleteWorkout = () => {
+    modals.openConfirmModal({
+      title: t('workout.delete.title'),
+      children: t('workout.delete.description'),
+      labels: { confirm: t('workout.delete.confirm'), cancel: t('workout.delete.cancel') },
+      confirmProps: { color: 'red' },
+      onConfirm: () => {
+        if (onDeleteWorkout) {
+          onDeleteWorkout();
+        } else {
+          console.warn("No onDeleteWorkout prop provided. Cannot delete workout.");
+        }
+      }
+    });
   };
 
   const buttonAddExerciseHandler = () => {
@@ -197,21 +221,37 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
     })
   }
 
-  const handleExerciseValueChange = (exerciseId, field, value) => {
+  const handleExerciseValueChange = useCallback((dndId, field, value) => {
     setEditableExercises(prevExercises =>
       prevExercises.map(ex =>
-        (id + ex.exercise.id) === exerciseId
+        (id + ex.exercise.id) === dndId
           ? { ...ex, [field]: value }
           : ex
       )
     );
-  };
+  }, [id]);
 
-  const handleEditSaveToggle = () => {
+  const handleEditSaveToggle = async () => {
     if (isEdit) {
       if (!areExercisesEqual(exercises, editableExercises)) {
         console.log('Зміни виявлено. Зберігаємо дані:', editableExercises);
-        setExercises(editableExercises);
+        setExercises(editableExercises); // Оновлюємо "оригінальний" стан WorkoutCard
+        
+        if (onExerciseOrderChange && !previewMode) {
+          const cleanedExercises = editableExercises.map(ex => ({
+            exerciseId: ex.exerciseId,
+            sets: ex.sets,
+            valuePerSet: ex.valuePerSet
+          }));
+          await onExerciseOrderChange(cleanedExercises);
+        } else if (onExerciseOrderChange && previewMode) {
+            const cleanedExercises = editableExercises.map(ex => ({
+                exerciseId: ex.exerciseId,
+                sets: ex.sets,
+                valuePerSet: ex.valuePerSet
+            }));
+            onExerciseOrderChange(cleanedExercises);
+        }
       } else {
         console.log('Змін не виявлено. Нічого не зберігаємо.');
       }
@@ -238,25 +278,24 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
                     ?
                     <Group gap="4">
                       <ActionIcon
-                        variant="default"
-                        aria-label="Edit"
+                        variant="outline"
+                        aria-label="Save"
                         onClick={handleEditSaveToggle}
                       >
                         <IconCheck size={14} />
                       </ActionIcon>
-                      <ActionIcon
-                        variant="default"
-                        aria-label="Delete"
-                        onClick={() => modals.openConfirmModal({
-                          title: t('workout.delete.title'),
-                          children: t('workout.delete.description'),
-                          labels: { confirm: t('workout.delete.confirm'), cancel: t('workout.delete.cancel') },
-                          confirmProps: { color: 'red' },
-                          onConfirm: () => handleDeleteWorkout()
-                        })}
-                      >
-                        <IconTrash size={14} />
-                      </ActionIcon>
+                      {
+                        !previewMode && 
+                        <ActionIcon
+                          // variant="default"
+                          variant="outline" 
+                          color="red"
+                          aria-label="Delete"
+                          onClick={handleConfirmDeleteWorkout}
+                        >
+                          <IconTrash size={14} />
+                        </ActionIcon>
+                      }
                     </Group>
                     :
                     <ActionIcon
@@ -277,23 +316,21 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
                   onDragEnd={handleDragEnd}
                 >
                   <SortableContext
-                    items={exercises.map(e => id + e.exercise.id)}
+                    items={editableExercises.map(e => id + e.exercise.id)} 
                     strategy={verticalListSortingStrategy}
                   >
                     <Stack gap="xs" h="100%">
-                      {editableExercises.map((exerciseData, index) => (
+                      {editableExercises.map((exerciseData) => (
                         <WorkoutExercise
                           key={id + exerciseData.exercise.id}
-                          id={id + exerciseData.exercise.id}
-                          index={index}
-                          data={exerciseData}
+                          id={id + exerciseData.exercise.id} // DND ID
+                          data={exerciseData} // Передаємо "збагачені" дані для відображення
                           isEdit={true}
                           onValueChange={handleExerciseValueChange}
-                          editableData={editableExercises.find(ex => (id + ex.exercise.id) === (id + exerciseData.exercise.id))}
                         />
                       ))}
                       {
-                        !previewMode && 
+                        !previewMode &&
                         <ActionIcon
                           h="100%"
                           w="100%"
@@ -312,11 +349,10 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
                 <Stack gap="xs" h="100%">
                   {
                     exercises.length > 0 ?
-                    exercises.map((exerciseData, index) => (
+                    exercises.map((exerciseData) => (
                       <WorkoutExercise
                         key={id + exerciseData.exercise.id}
                         id={id + exerciseData.exercise.id}
-                        index={index}
                         data={exerciseData}
                         isEdit={false}
                       />
@@ -332,9 +368,7 @@ function WorkoutCard({ id, name, color, calories, exercises: initialExercises, c
                     >
                       <IconPlus color={color} stroke={1.5} />
                     </ActionIcon>
-                      
                   }
-                  
                 </Stack>
               }
             </Stack>

@@ -40,7 +40,7 @@ export function ExerciseCatalogFilters({
       )}
 
       {(groupExercise === groupNames.ALL || !showGroupButtons) && (
-        <Group gap="xs">
+        <Group ml="auto" gap="xs">
           <MultiSelectAsync
             title={t('exercises.equipment')}
             translateKey="filters.equipment."

@@ -1,10 +1,10 @@
 import { useForm } from '@mantine/form';
-import { useState } from 'react';
+import { useState, useCallback } from 'react'; // Важливо: useCallback
 import { useTranslation } from 'react-i18next';
 import { Button, ColorInput, Stepper, Group, Stack, Textarea, TextInput, Box } from '@mantine/core';
-import { useExerciseCatalog } from '../../hooks/useExerciseCatalog.js'; // Імпортуємо наш новий хук
-import { ExerciseCatalogFilters } from '../../components/ExerciseCatalogFilters.jsx'; // Імпортуємо новий компонент фільтрів
-import { ExerciseCatalogDisplay } from '../../components/ExerciseCatalogDisplay.jsx'; // Імпортуємо новий компонент відображення вправ
+import { useExerciseCatalog } from '../../hooks/useExerciseCatalog.js';
+import { ExerciseCatalogFilters } from '../../components/ExerciseCatalogFilters.jsx';
+import { ExerciseCatalogDisplay } from '../../components/ExerciseCatalogDisplay.jsx';
 import WorkoutCard from '../../components/WorkoutCard/index.jsx';
 
 function Workout({ closeModal }) {
@@ -13,7 +13,6 @@ function Workout({ closeModal }) {
   const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
   const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
 
-  // Використовуємо наш універсальний хук для каталогу вправ
   const {
     exercises: allExercises,
     loading,
@@ -23,7 +22,7 @@ function Workout({ closeModal }) {
     currentUser
   } = useExerciseCatalog();
 
-  const [selectedExercises, setSelectedExercises] = useState([]);
+  const [selectedExercises, setSelectedExercises] = useState([]); // Цей масив йде на бекенд
 
   const form = useForm({
     initialValues: {
@@ -55,21 +54,13 @@ function Workout({ closeModal }) {
     });
   };
 
-	// // ФУНКЦІЯ ДЛЯ ЗМІНИ ПОРЯДКУ ВПРАВ (передаємо в WorkoutCard)
-  // const handleExerciseOrderChange = useCallback((reorderedExercisesDndIds) => {
-  //   setSelectedExercises(prevSelected => {
-  //     const selectedMap = new Map(prevSelected.map(ex => [ex.exerciseId, ex]));
-  //     const newOrderedSelectedExercises = reorderedExercisesDndIds.map(dndId => {
-  //       const foundExercise = prevSelected.find(ex => `${form.values.name}_${ex.exerciseId}` === dndId);
-  //       return foundExercise;
-  //     }).filter(Boolean);
+  const handleExerciseOrderChange = useCallback((newOrderedSelectedExercises) => {
+    setSelectedExercises(newOrderedSelectedExercises);
+  }, []);
 
-  //     return newOrderedSelectedExercises;
-  //   });
-  // }, [form.values.name]);
-
-	const enrichedExercisesForPreview = selectedExercises.map(selected => {
+  const enrichedExercisesForPreview = selectedExercises.map(selected => {
     const originalExercise = allExercises.find(ex => ex.id === selected.exerciseId);
+    
     if (originalExercise) {
       return {
         exerciseId: selected.exerciseId,
@@ -78,30 +69,27 @@ function Workout({ closeModal }) {
         exercise: originalExercise
       };
     }
-    return selected;
+    return selected; // або null, якщо ви хочете, щоб вони були відфільтровані
   }).filter(Boolean);
-
-	const handleSubmitFirstStep = async () => {
-    if (!form.validate().hasErrors) {
-      nextStep();
-    }
-  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-		console.log("Workout Name:", form.values.name);
-		console.log("Workout Description:", form.values.description);
-		console.log("Workout Color:", form.values.color);
-		console.log("Selected Exercises for Backend:", selectedExercises);
+    if (!form.validate().hasErrors) {
+      console.log("Workout Name:", form.values.name);
+      console.log("Workout Description:", form.values.description);
+      console.log("Workout Color:", form.values.color);
+      console.log("Selected Exercises (for backend):", selectedExercises); // Цей масив у потрібному форматі!
 
-		// Тут буде ваша реальна логіка створення тренування
-		// Приклад:
-		// setLoading(true);
-		// const success = await workoutService.createWorkout({ ...form.values, exercises: selectedExercises });
-		// if (success) {
-		//   closeModal();
-		// }
-		// setLoading(false);
+      // Тут буде ваша реальна логіка створення тренування,
+      // де ви відправляєте form.values та selectedExercises на бекенд
+      // Приклад:
+      // setLoading(true);
+      // const success = await workoutService.createWorkout({ ...form.values, exercises: selectedExercises });
+      // if (success) {
+      //   closeModal();
+      // }
+      // setLoading(false);
+    }
   };
 
   return (
@@ -124,9 +112,9 @@ function Workout({ closeModal }) {
                 />
               </Group>
               <Textarea
-                placeholder="Workout description"
-                h="100%"
-                {...form.getInputProps('description')}
+                  placeholder="Workout description"
+                  h="100%"
+                  {...form.getInputProps('description')}
               />
             </Stack>
           </Stepper.Step>
@@ -162,24 +150,24 @@ function Workout({ closeModal }) {
                 calories={0}
                 exercises={enrichedExercisesForPreview}
                 previewMode={true}
-								// onExerciseOrderChange={handleExerciseOrderChange}
+                onExerciseOrderChange={handleExerciseOrderChange}
               />
             </Box>
           </Stepper.Step>
+
+          <Stepper.Completed>
+            Completed, click back button to get to previous step
+          </Stepper.Completed>
         </Stepper>
 
         <Group justify="center" mt="xl">
           {active !== 0 && <Button variant="default" onClick={prevStep}>Back</Button>}
           {
             active < 2 ?
-              <Button onClick={active === 0 ? handleSubmitFirstStep : nextStep}>Next step</Button>
+              <Button onClick={nextStep}>Next step</Button>
               :
               <Button type="submit">
-                {
-                  // loading ?
-                  // "Loading.." :
-                  "Create workout"
-                }
+                {"Create workout"}
               </Button>
           }
         </Group>
