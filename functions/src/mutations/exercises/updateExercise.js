@@ -3,7 +3,7 @@ import { db, storage } from "../../firebase.js";
 export const updateExercise = async (_, { input }, context) => {
 	if (!context.user) throw new Error("Unauthorized");
 	
-	const { id, name, bodyPart, description, equipment, preview, video } = input;
+	const { id, name, bodyPart, description, equipment, preview, video, type, valuePerSet, caloriesPerSet } = input;
 	const exerciseRef = db.collection("exercises").doc(id);
   const exerciseDoc = await exerciseRef.get();
 	
@@ -57,6 +57,10 @@ export const updateExercise = async (_, { input }, context) => {
 			equipment,
 			preview,
 			video,
+			type, 
+			valuePerSet, 
+			caloriesPerSet,
+      caloriesPerUnit: input.caloriesPerSet/valuePerSet,
 		};
 
 		console.log(newExercise);

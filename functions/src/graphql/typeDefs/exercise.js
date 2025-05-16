@@ -16,6 +16,7 @@ export default gql`
     type: String!
     valuePerSet: Int!
     caloriesPerSet: Int!
+    caloriesPerUnit: Int!
   }
 
   input CreateExerciseInput {

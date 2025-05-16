@@ -16,6 +16,7 @@ export const GET_EXERCISES = gql`
       type
       valuePerSet
       caloriesPerSet
+      caloriesPerUnit
       createdAt
     }
   }
@@ -37,6 +38,7 @@ export const GET_PERSONAL_EXERCISES = gql`
       type
       valuePerSet
       caloriesPerSet
+      caloriesPerUnit
       createdAt
     }
   }

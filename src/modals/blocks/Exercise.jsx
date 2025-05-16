@@ -1,12 +1,13 @@
 import { useForm } from '@mantine/form';
 import { useState } from 'react';
-import { Button, Group, Paper, SimpleGrid, Text, Textarea, TextInput, NumberInput,  useMantineTheme, Stack, Switch, SegmentedControl, Flex } from '@mantine/core';
+import { Button, Group, Paper, SimpleGrid, Text, Textarea, TextInput, NumberInput,  Badge, Stack, Switch, SegmentedControl, Flex } from '@mantine/core';
 import MyDropzone from '../../components/Dropzone';
 import { MultiSelectAsync } from '../../components/MultiSelectAsync';
 import { GET_FILTERS } from '../../queries/filters';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import exerciseService from '../../services/exerciseService';
+import { IconClock, IconRepeat  } from '@tabler/icons-react';
 
 function Exercise({ closeModal, exercise = null}) {  
   const { t } = useTranslation();
@@ -21,8 +22,7 @@ function Exercise({ closeModal, exercise = null}) {
       bodyPart: exercise && Array.isArray(exercise.bodyPart) ? [...exercise.bodyPart] : [],
       equipment: exercise && Array.isArray(exercise.equipment) ? [...exercise.equipment] : [],
       id: exercise ? exercise.id : '',
-      type: exercise ? exercise.type : 'Reps',
-      valuePerSet: exercise ? exercise.valuePerSet : 0,
+      type: exercise ? exercise.type : 'reps',
       caloriesPerSet: exercise ? exercise.caloriesPerSet : 0
 		},
 
@@ -35,6 +35,8 @@ function Exercise({ closeModal, exercise = null}) {
       caloriesPerSet: (val) => (val < 0 ? 'Calories per set must be non-negative' : null),
 		},
 	});
+
+  form.values.valuePerSet = form.values.type === "reps" ? 10 : 60;
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -88,17 +90,45 @@ function Exercise({ closeModal, exercise = null}) {
 
             <Group justify='space-between'>
               <Group gap='4'>
-                <NumberInput
+                {/* <NumberInput
                   placeholder={t('exercise.valuePerSet')}
                   min={1}
+                  readOnly
+                  w="40px"
+                  styles={() => ({
+                    input: {
+                      background: 'transparent',
+                      cursor: 'default',
+                      borderColor: 'transparent',
+                    },
+                  })}
                   {...form.getInputProps('valuePerSet')}
-                />
+                /> */}
+                <Badge variant="default" radius="xs" size="xl">
+                  <Text>{form.values.valuePerSet}</Text>
+                </Badge>
                 <SegmentedControl
                   value={form.values.type || 'reps'} 
                   onChange={(value) => form.setFieldValue('type', value)}
                   data={[
-                    { label: t('exercise.type.reps'), value: 'reps' },
-                    { label: t('exercise.type.seconds'), value: 'time' }
+                    {
+                      label: (
+                        <Group gap="xs" align='center' wrap='nowrap'>
+                          <IconRepeat/>
+                          <Text>{t('exercise.type.reps')}</Text>
+                        </Group>
+                      ),
+                      value: 'reps',
+                    },
+                    {
+                      label: (
+                        <Group gap="xs" align='center' wrap='nowrap'>
+                          <IconClock/>
+                          <Text>{t('exercise.type.seconds')}</Text>
+                        </Group>
+                      ),
+                      value: 'time',
+                    },
                   ]}
                   required
                 />

@@ -19,7 +19,8 @@ export const createExercise = async (_, { input }, context) => {
       id: exerciseRef.id,
       author: context.user.uid,
       authorName,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      caloriesPerUnit: input.caloriesPerSet/input.valuePerSet,
     };
 
     delete exercise.id;
