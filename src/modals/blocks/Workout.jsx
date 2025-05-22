@@ -203,17 +203,12 @@ function Workout({ closeModal }) {
           </Stepper.Completed>
         </Stepper>
 
+        {active}
         <Group justify="center" mt="xl">
           {active !== 0 && <Button variant="default" onClick={prevStep}>Back</Button>}
-
-          {
-            active < 2 ?
-              <Button type="button" onClick={active === 0 ? handleSubmitFirstStep : nextStep}>Next step</Button>
-              :
-              <Button type="submit">
-                {"Create workout"}
-              </Button>
-          }
+          {active === 0 && <Button type="button" onClick={handleSubmitFirstStep}>Next step</Button>}
+          {active === 1 && <Button type="button" onClick={nextStep}>Next step</Button>}
+          {active === 2 && <Button type="submit">Create workout</Button>}
         </Group>
       </form>
     </>
