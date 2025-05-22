@@ -93,7 +93,7 @@ const ExerciseCard = ({exercise, active = false, simple = false, onClick }) => {
 				shadow="sm"
 				padding="md"
 				className={`${s.Card} ${active && s.Active}`}
-				onClick={() => onClick(id)} 
+				onClick={onClick && (() => onClick(id))} 
 			>
 				<Group gap="xs" justify='space-between'>
 					<Stack gap="xs">

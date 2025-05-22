@@ -6,6 +6,7 @@ import { useExerciseCatalog } from '../../hooks/useExerciseCatalog.js';
 import { ExerciseCatalogFilters } from '../../components/ExerciseCatalogFilters.jsx';
 import { ExerciseCatalogDisplay } from '../../components/ExerciseCatalogDisplay.jsx';
 import WorkoutCard from '../../components/WorkoutCard/index.jsx';
+import { useMediaQuery } from '@mantine/hooks';
 
 
 
@@ -15,6 +16,8 @@ function Workout({ closeModal }) {
   const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
   const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
   const [newWorkout, setNewWorkout] = useState({});
+
+  const isMobile = useMediaQuery('(max-width: 700px)');
 
   const {
     exercises: allExercises,
@@ -31,7 +34,7 @@ function Workout({ closeModal }) {
     initialValues: {
       name: '',
       description: '',
-      color: ''
+      color: '#fffff'
     },
     validate: {
       name: (val) => (val.trim().length < 3 ? 'Name must be at least 3 characters long' : null),
@@ -137,7 +140,13 @@ function Workout({ closeModal }) {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <Stepper iconSize={32} active={active} onStepClick={setActive} allowNextStepsSelect={false}>
+        <Stepper 
+          iconSize={32} 
+          active={active} 
+          onStepClick={setActive} 
+          allowNextStepsSelect={false}
+          orientation={isMobile ? 'vertical' : 'horizontal'}
+        >
           <Stepper.Step label="Create" description="Create a program">
             <Stack gap="md">
               <Group>
@@ -145,6 +154,7 @@ function Workout({ closeModal }) {
                   w="130px"
                   disallowInput
                   placeholder='Color'
+                  defaultValue={form.getInputProps('color').value}
                   {...form.getInputProps('color')}
                 />
                 <TextInput
@@ -206,7 +216,7 @@ function Workout({ closeModal }) {
           {active !== 0 && <Button variant="default" onClick={prevStep}>Back</Button>}
           {active === 0 && <Button type="button" onClick={handleSubmitFirstStep}>Next step</Button>}
           {active === 1 && <Button type="button" onClick={nextStep}>Next step</Button>}
-          {active === 2 && <Button type="submit">Create workout</Button>}
+          {active === 2 && !!selectedExercises.length && <Button type="submit">Create workout</Button>}
         </Group>
       </form>
     </>

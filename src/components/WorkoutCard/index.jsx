@@ -281,15 +281,25 @@ function WorkoutCard({
                       </ActionIcon>
                       {
                         !previewMode && 
-                        <ActionIcon
-                          // variant="default"
-                          variant="outline" 
-                          color="red"
-                          aria-label="Delete"
-                          onClick={handleConfirmDeleteWorkout}
-                        >
-                          <IconTrash size={14} />
-                        </ActionIcon>
+                        <>
+                          <ActionIcon
+                            variant="outline"
+                            color='orange'
+                            aria-label="Edit"
+                            // onClick={handleEditSaveToggle}
+                          >
+                            <IconEdit size={14} />
+                          </ActionIcon>
+                          <ActionIcon
+                            // variant="default"
+                            variant="outline" 
+                            color="red"
+                            aria-label="Delete"
+                            onClick={handleConfirmDeleteWorkout}
+                          >
+                            <IconTrash size={14} />
+                          </ActionIcon>
+                        </>
                       }
                     </Group>
                     :
@@ -324,19 +334,6 @@ function WorkoutCard({
                           onValueChange={handleExerciseValueChange}
                         />
                       ))}
-                      {
-                        !previewMode &&
-                        <ActionIcon
-                          h="100%"
-                          w="100%"
-                          variant="default"
-                          size="xl"
-                          aria-label="Add exercise to workout"
-                          onClick={buttonAddExerciseHandler}
-                        >
-                          <IconPlus color={color} stroke={1.5} />
-                        </ActionIcon>
-                      }
                     </Stack>
                   </SortableContext>
                 </DndContext>
@@ -352,17 +349,11 @@ function WorkoutCard({
                         isEdit={false}
                       />
                     )) : 
-                    !previewMode && 
-                    <ActionIcon
-                      h="100%"
-                      w="100%"
-                      variant="default"
-                      size="xl"
-                      aria-label="Add exercise to workout"
-                      onClick={buttonAddExerciseHandler}
-                    >
-                      <IconPlus color={color} stroke={1.5} />
-                    </ActionIcon>
+                    <Paper>
+                      <Text p="sm" ta='center' lh='47px'>
+                        Go back and add exercises
+                      </Text>
+                    </Paper>
                   }
                 </Stack>
               }
