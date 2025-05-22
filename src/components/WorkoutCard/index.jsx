@@ -145,6 +145,7 @@ function WorkoutCard({
   exercises: initialExercises,
   create = false, 
   onExerciseOrderChange,
+  onExerciseValuesChange,
   onDeleteWorkout,
   previewMode = false
 }) {
@@ -229,28 +230,22 @@ function WorkoutCard({
           : ex
       )
     );
+
   }, [id]);
 
   const handleEditSaveToggle = async () => {
     if (isEdit) {
       if (!areExercisesEqual(exercises, editableExercises)) {
         console.log('Зміни виявлено. Зберігаємо дані:', editableExercises);
-        setExercises(editableExercises); // Оновлюємо "оригінальний" стан WorkoutCard
-        
-        if (onExerciseOrderChange && !previewMode) {
+        setExercises(editableExercises);
+
+        if (onExerciseValuesChange) {
           const cleanedExercises = editableExercises.map(ex => ({
             exerciseId: ex.exerciseId,
             sets: ex.sets,
             valuePerSet: ex.valuePerSet
           }));
-          await onExerciseOrderChange(cleanedExercises);
-        } else if (onExerciseOrderChange && previewMode) {
-            const cleanedExercises = editableExercises.map(ex => ({
-                exerciseId: ex.exerciseId,
-                sets: ex.sets,
-                valuePerSet: ex.valuePerSet
-            }));
-            onExerciseOrderChange(cleanedExercises);
+          await onExerciseValuesChange(cleanedExercises);
         }
       } else {
         console.log('Змін не виявлено. Нічого не зберігаємо.');

@@ -1,5 +1,5 @@
 import { useForm } from '@mantine/form';
-import { useState, useCallback } from 'react'; // Важливо: useCallback
+import { useState, useCallback, useEffect } from 'react'; // Важливо: useCallback
 import { useTranslation } from 'react-i18next';
 import { Button, ColorInput, Stepper, Group, Stack, Textarea, TextInput, Box } from '@mantine/core';
 import { useExerciseCatalog } from '../../hooks/useExerciseCatalog.js';
@@ -66,6 +66,10 @@ function Workout({ closeModal }) {
     setSelectedExercises(newOrderedSelectedExercises);
   }, []);
 
+  const handleExerciseValuesChange = useCallback((newValuesSelectedExercises) => {
+    setSelectedExercises(newValuesSelectedExercises);
+  }, []);
+
   const enrichedExercisesForPreview = selectedExercises.map(selected => {
     const originalExercise = allExercises.find(ex => ex.id === selected.exerciseId);
     
@@ -101,20 +105,22 @@ function Workout({ closeModal }) {
     return value;
   }
 
+  useEffect(() => {
+    console.log(selectedExercises);
+    
+    setNewWorkout(prevStateWorkout=>({
+      ...prevStateWorkout,
+      calories: calculateCalories(),
+      exercises: selectedExercises
+    }))
+    
+  }, [selectedExercises]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!form.validate().hasErrors) {
-      const newProgram = {
-        name: form.values.name,
-        description: form.values.description,
-        color: form.values.color,
-        calories: calculateCalories(),
-        exercises: selectedExercises,
-      }
-
-      // console.log(newProgram);
+      console.log(newWorkout);
       
-
       // Тут буде ваша реальна логіка створення тренування,
       // де ви відправляєте form.values та selectedExercises на бекенд
       // Приклад:
@@ -127,7 +133,6 @@ function Workout({ closeModal }) {
     }
   };
 
-  console.log(newWorkout);
   
   return (
     <>
@@ -184,10 +189,11 @@ function Workout({ closeModal }) {
                 id='previwCard'
                 name={form.values.name}
                 color={form.values.color}
-                calories={0}
+                calories={newWorkout.calories}
                 exercises={enrichedExercisesForPreview}
                 previewMode={true}
                 onExerciseOrderChange={handleExerciseOrderChange}
+                onExerciseValuesChange={handleExerciseValuesChange}
               />
             </Box>
           </Stepper.Step>
@@ -199,6 +205,7 @@ function Workout({ closeModal }) {
 
         <Group justify="center" mt="xl">
           {active !== 0 && <Button variant="default" onClick={prevStep}>Back</Button>}
+
           {
             active < 2 ?
               <Button type="button" onClick={active === 0 ? handleSubmitFirstStep : nextStep}>Next step</Button>
