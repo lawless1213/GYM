@@ -202,8 +202,6 @@ function Workout({ closeModal }) {
             Completed, click back button to get to previous step
           </Stepper.Completed>
         </Stepper>
-
-        {active}
         <Group justify="center" mt="xl">
           {active !== 0 && <Button variant="default" onClick={prevStep}>Back</Button>}
           {active === 0 && <Button type="button" onClick={handleSubmitFirstStep}>Next step</Button>}
