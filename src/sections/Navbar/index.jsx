@@ -2,6 +2,8 @@ import {
   IconLogin,
   IconLogout,
 	IconLanguage,
+	IconLayoutSidebarLeftCollapse,
+	IconLayoutSidebarLeftExpand,
 } from '@tabler/icons-react';
 import { Stack, Title, Tooltip, ActionIcon } from '@mantine/core';
 import { NavLink, useLocation } from "react-router-dom";
@@ -11,6 +13,8 @@ import s from './index.module.css';
 import { useAuth } from '../../stores/context/AuthContext';
 import ProtectedRoute from '../../systemComponents/ProtectedRoute';
 import { useStores } from '../../hooks/useStores';
+import { useMediaQuery } from '@mantine/hooks';
+import { useState } from 'react';
 
 function NavbarLink({ label, icon: Icon, url, onClick, variant }) {
   if (url) {
@@ -34,7 +38,9 @@ function NavbarLink({ label, icon: Icon, url, onClick, variant }) {
 
 export function Navbar() {
 	const { currentUser, logOut } = useAuth();
-		const { SettingStore } = useStores();
+	const { SettingStore } = useStores();
+  const isMobile = useMediaQuery('(max-width: 700px)');
+	const [ asideOpen, setAsideOpen] = useState(false);
 	
   const location = useLocation();
 
@@ -70,12 +76,23 @@ export function Navbar() {
     }
   };
 
+	const asideOpenHandler = () => {
+		setAsideOpen(!asideOpen);
+	}
+
 	const handleLanguage = async () => {
     SettingStore.changeLanguage();
   };
 
   return (
-    <nav className={s.navbar}>
+    <nav className={`${s.navbar} ${isMobile && !asideOpen ? s.hide : ''}`}>
+			{
+				isMobile && 
+				<ActionIcon onClick={asideOpenHandler} className={s.Toggler} size="lg" variant="default" aria-label="Aside toggle">
+					{asideOpen ? <IconLayoutSidebarLeftCollapse/> : <IconLayoutSidebarLeftExpand/>}
+				</ActionIcon>
+			}
+
 			<Stack className={s.menu} justify="center" gap={4} mb={4}>
 				{links}
 			</Stack>

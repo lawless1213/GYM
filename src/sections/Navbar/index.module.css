@@ -1,10 +1,24 @@
 .navbar {
+  --aside-width: 80px;
   position: sticky;
   top: 0;
   display: flex;
   flex-direction: column;
-  width: 80px;
+  width: var(--aside-width);
   height: 100%;
   padding: var(--mantine-spacing-md);
   border-right: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  z-index: 1;
+  transition: 0.2s;
+
+  &.hide {
+    transform: translateX(calc(-1 * var(--aside-width)));
+    margin-right: calc(-1 * var(--aside-width));
+  }
+
+  .Toggler {
+    position: absolute;
+    left: 100%;
+    bottom: 10%;
+  }
 }

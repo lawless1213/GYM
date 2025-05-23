@@ -277,7 +277,7 @@ function WorkoutCard({
                 {
                   isEdit
                     ?
-                    <Group gap="4">
+                    <ActionIcon.Group gap="4">
                       <ActionIcon
                         variant="outline"
                         aria-label="Save"
@@ -307,7 +307,7 @@ function WorkoutCard({
                           </ActionIcon>
                         </>
                       }
-                    </Group>
+                    </ActionIcon.Group>
                     :
                     <ActionIcon
                       variant="default"
