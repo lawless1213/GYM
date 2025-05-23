@@ -1,5 +1,5 @@
 import { useModals } from '@mantine/modals';
-import { Auth, Exercise, Workout, WorkoutExercise } from './blocks';
+import { Auth, Exercise, Workout } from './blocks';
 
 export const AuthModal = ({ context, id, innerProps }) => {
   const modals = useModals();
@@ -42,23 +42,6 @@ export const WorkoutModal = ({ context, id, innerProps }) => {
   return (
     <>
       <Workout 
-        closeModal={handleClose}
-        workout={innerProps?.workout}
-      />
-    </>
-  );
-};
-
-export const WorkoutExerciseModal = ({ context, id, innerProps }) => {
-  const modals = useModals();
-
-  const handleClose = () => {
-    modals.closeModal(id);
-  };
-
-  return (
-    <>
-      <WorkoutExercise 
         closeModal={handleClose}
         workout={innerProps?.workout}
       />

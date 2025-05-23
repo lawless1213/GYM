@@ -1,4 +1,4 @@
-import { ActionIcon, Title } from '@mantine/core';
+import { ActionIcon, Text } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { useAuth } from '../../stores/context/AuthContext';
@@ -10,7 +10,7 @@ function CreateExerciseButton() {
 		if (currentUser) {
 			modals.openContextModal({
 				modal: 'exercise',
-				title: <Title order={2}>Create your exercise</Title>,
+				title: <Text span size="xl" fw={700}>Create your exercise</Text>,
 				size: 'xl',
 			})
 		} else {

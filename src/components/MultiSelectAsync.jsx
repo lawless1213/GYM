@@ -48,6 +48,7 @@ export function MultiSelectAsync({
         setValue(val);
         onSelect?.(val);
       }}
+      size="md"
       checkIconPosition="right"
       searchable
       onSearchChange={setSearch}

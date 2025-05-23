@@ -190,16 +190,22 @@ function WorkoutCard({
   const buttonCreateHandler = () => {
     modals.openContextModal({
       modal: 'workout',
-      title: <Title order={2}>Create your workout</Title>,
+      title: <Text span size="xl" fw={700}>Create your workout</Text>,
       size: '100%',
+      overlayProps: {
+        closeOnClickOutside: false,
+      },
     })
   }
 
   const handleEditWorkout = () => {
     modals.openContextModal({
       modal: 'workout',
-      title: <Title order={2}>Edit your workout</Title>,
+      title: <Text span size="xl" fw={700}>Edit your workout</Text>,
       size: '100%',
+      overlayProps: {
+        closeOnClickOutside: false,
+      },
       innerProps: {
         workout: {
           id,

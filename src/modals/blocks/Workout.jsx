@@ -110,8 +110,6 @@ function Workout({ closeModal, workout = null }) {
   }
 
   useEffect(() => {
-    console.log(selectedExercises);
-    
     setNewWorkout(prevStateWorkout=>({
       ...prevStateWorkout,
       calories: calculateCalories(),
@@ -155,8 +153,10 @@ function Workout({ closeModal, workout = null }) {
                   flex="1"
                   placeholder="Workout name"
                   {...form.getInputProps('name')}
+                  size="md"
                 />
                 <ColorInput
+                  size="md"
                   w="130px"
                   disallowInput
                   placeholder='Color'
@@ -165,6 +165,7 @@ function Workout({ closeModal, workout = null }) {
                 />
               </Group>
               <Textarea
+                  size="md"
                   placeholder="Workout description"
                   h="100%"
                   {...form.getInputProps('description')}

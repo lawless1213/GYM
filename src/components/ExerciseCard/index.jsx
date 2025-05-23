@@ -79,7 +79,7 @@ const ExerciseCard = ({exercise, active = false, simple = false, onClick }) => {
 	const editHandler = () => {
 		modals.openContextModal({
 			modal: 'exercise',
-			title: "Update your exercise",
+			title: <Text span size="xl" fw={700}> "Update your exercise"</Text>,
 			size: 'xl',
 			innerProps: {
 				exercise: {id, name, description, equipment, bodyPart, preview, video}
