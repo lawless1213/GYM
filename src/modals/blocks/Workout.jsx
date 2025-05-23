@@ -10,7 +10,7 @@ import { useMediaQuery } from '@mantine/hooks';
 
 
 
-function Workout({ closeModal }) {
+function Workout({ closeModal, workout = null }) {
   const { t } = useTranslation();
   const [active, setActive] = useState(0);
   const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
@@ -28,13 +28,13 @@ function Workout({ closeModal }) {
     currentUser
   } = useExerciseCatalog();
 
-  const [selectedExercises, setSelectedExercises] = useState([]);
+  const [selectedExercises, setSelectedExercises] = useState( workout ? workout.exercises : []);
 
   const form = useForm({
     initialValues: {
-      name: '',
-      description: '',
-      color: '#fffff'
+      name: workout ? workout.name : '',
+      description: workout ? workout.description : '',
+      color: workout ? workout.color : '#fffff'
     },
     validate: {
       name: (val) => (val.trim().length < 3 ? 'Name must be at least 3 characters long' : null),
@@ -72,7 +72,7 @@ function Workout({ closeModal }) {
   const handleExerciseValuesChange = useCallback((newValuesSelectedExercises) => {
     setSelectedExercises(newValuesSelectedExercises);
   }, []);
-
+  
   const enrichedExercisesForPreview = selectedExercises.map(selected => {
     const originalExercise = allExercises.find(ex => ex.id === selected.exerciseId);
     
@@ -84,7 +84,8 @@ function Workout({ closeModal }) {
         exercise: originalExercise
       };
     }
-    return selected; // або null, якщо ви хочете, щоб вони були відфільтровані
+    
+    return selected;
   }).filter(Boolean);
 
   const handleSubmitFirstStep = async () => {

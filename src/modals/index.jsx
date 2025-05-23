@@ -41,7 +41,10 @@ export const WorkoutModal = ({ context, id, innerProps }) => {
 
   return (
     <>
-      <Workout closeModal={handleClose} />
+      <Workout 
+        closeModal={handleClose}
+        workout={innerProps?.workout}
+      />
     </>
   );
 };

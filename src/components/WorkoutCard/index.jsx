@@ -195,6 +195,23 @@ function WorkoutCard({
     })
   }
 
+  const handleEditWorkout = () => {
+    modals.openContextModal({
+      modal: 'workout',
+      title: <Title order={2}>Edit your workout</Title>,
+      size: '100%',
+      innerProps: {
+        workout: {
+          id,
+          name, 
+          color, 
+          calories, 
+          exercises
+        } 
+      }
+    })
+  }
+
   const handleConfirmDeleteWorkout = () => {
     modals.openConfirmModal({
       title: t('workout.delete.title'),
@@ -210,17 +227,6 @@ function WorkoutCard({
       }
     });
   };
-
-  const buttonAddExerciseHandler = () => {
-    modals.openContextModal({
-      modal: 'workoutExercise',
-      title: <Title order={2}>Add exercise to your workout</Title>,
-      size: '100%',
-      innerProps: {
-        workout: { id }
-      }
-    })
-  }
 
   const handleExerciseValueChange = useCallback((dndId, field, value) => {
     setEditableExercises(prevExercises =>
@@ -286,7 +292,7 @@ function WorkoutCard({
                             variant="outline"
                             color='orange'
                             aria-label="Edit"
-                            // onClick={handleEditSaveToggle}
+                            onClick={handleEditWorkout}
                           >
                             <IconEdit size={14} />
                           </ActionIcon>
