@@ -25,17 +25,42 @@ import { modals } from '@mantine/modals';
 import { CSS } from '@dnd-kit/utilities';
 
 const areExercisesEqual = (arr1, arr2) => {
+  // Додаємо перевірку на undefined/null для обох масивів
+  if (!Array.isArray(arr1) && !Array.isArray(arr2)) {
+    // Якщо обидва не є масивами (наприклад, обидва undefined/null), вважаємо їх рівними
+    return arr1 === arr2;
+  }
+
+  if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
+    // Якщо один є масивом, а інший ні, вони не рівні
+    return false;
+  }
+
   if (arr1.length !== arr2.length) {
     return false;
   }
 
-  for (let i = 0; i < arr1.length; i++) {
-    const id1 = arr1[i].exerciseId || arr1[i].exercise?.id;
-    const id2 = arr2[i].exerciseId || arr2[i].exercise?.id;
+  const sortedArr1 = [...arr1].sort((a, b) => {
+    const idA = a.exerciseId || a.exercise?.id;
+    const idB = b.exerciseId || b.exercise?.id;
+    return String(idA).localeCompare(String(idB));
+  });
+  const sortedArr2 = [...arr2].sort((a, b) => {
+    const idA = a.exerciseId || a.exercise?.id;
+    const idB = b.exerciseId || b.exercise?.id;
+    return String(idA).localeCompare(String(idB));
+  });
+
+  for (let i = 0; i < sortedArr1.length; i++) {
+    const item1 = sortedArr1[i];
+    const item2 = sortedArr2[i];
+
+    const id1 = item1.exerciseId || item1.exercise?.id;
+    const id2 = item2.exerciseId || item2.exercise?.id;
 
     if (id1 !== id2 ||
-        arr1[i].sets !== arr2[i].sets ||
-        arr1[i].valuePerSet !== arr2[i].valuePerSet) {
+        item1.sets !== item2.sets ||
+        item1.valuePerSet !== item2.valuePerSet) {
       return false;
     }
   }
@@ -47,6 +72,7 @@ const WorkoutExercise = memo(function WorkoutExercise({
   data,
   isEdit,
   onValueChange,
+  onRemove
 }) {
   const {
     attributes,
@@ -70,7 +96,7 @@ const WorkoutExercise = memo(function WorkoutExercise({
     <Paper ref={setNodeRef} style={style}>
       <Group gap="xs" align="center" p="sm">
         <Flex w={50} h={50}>
-          {/* {data.exercise?.preview && <Image src={data.exercise.preview} fit="contain" />} */}
+          {data.exercise?.preview && <Image src={data.exercise.preview} fit="contain" />}
         </Flex>
         <Stack gap={0} miw={75}>
           <Text size='xs' fw={500}>{data.exercise?.name}</Text>
@@ -127,9 +153,14 @@ const WorkoutExercise = memo(function WorkoutExercise({
         {
           isEdit
           &&
-          <ActionIcon variant="subtle" color="gray" ml="auto" {...attributes} {...listeners}>
-            <IconGripVertical size={16} />
-          </ActionIcon>
+          <ActionIcon.Group  ml="auto">
+            <ActionIcon variant='outline' color="red" onClick={() => onRemove(id)}>
+              <IconTrash size={16} />
+            </ActionIcon>
+            <ActionIcon variant="subtle" color="gray" {...attributes} {...listeners}>
+              <IconGripVertical size={16} />
+            </ActionIcon>
+          </ActionIcon.Group>
         }
       </Group>
     </Paper>
@@ -147,6 +178,7 @@ function WorkoutCard({
   onExerciseOrderChange,
   onExerciseValuesChange,
   onDeleteWorkout,
+  onExerciseRemove,
   previewMode = false
 }) {
   const { t } = useTranslation();
@@ -155,9 +187,11 @@ function WorkoutCard({
   const [editableExercises, setEditableExercises] = useState(initialExercises);
 
   useEffect(() => {
-    setExercises(initialExercises);
-    setEditableExercises(initialExercises);
-  }, [initialExercises]);
+    if (!areExercisesEqual(exercises, initialExercises)) {
+      setExercises(initialExercises);
+      setEditableExercises(initialExercises);
+    }
+  }, [initialExercises, exercises]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
@@ -173,17 +207,6 @@ function WorkoutCard({
     if (oldIndex !== newIndex) {
       const reordered = arrayMove(editableExercises, oldIndex, newIndex);
       setEditableExercises(reordered);
-
-      if (onExerciseOrderChange) {
-        const cleanedReordered = reordered.map(ex => ({
-          exerciseId: ex.exerciseId,
-          sets: ex.sets,
-          valuePerSet: ex.valuePerSet
-        }));
-        onExerciseOrderChange(cleanedReordered);
-      }
-
-      console.log(`Moved: "${reordered[newIndex].exercise.name}" from original index ${oldIndex} to ${newIndex}`);
     }
   };
 
@@ -242,7 +265,12 @@ function WorkoutCard({
           : ex
       )
     );
+  }, [id]);
 
+  const handleRemoveExercise = useCallback((dndIdToRemove) => {
+    setEditableExercises(prevExercises =>
+      prevExercises.filter(ex => (id + ex.exercise.id) !== dndIdToRemove)
+    );
   }, [id]);
 
   const handleEditSaveToggle = async () => {
@@ -251,14 +279,22 @@ function WorkoutCard({
         console.log('Зміни виявлено. Зберігаємо дані:', editableExercises);
         setExercises(editableExercises);
 
-        if (onExerciseValuesChange) {
-          const cleanedExercises = editableExercises.map(ex => ({
-            exerciseId: ex.exerciseId,
-            sets: ex.sets,
-            valuePerSet: ex.valuePerSet
-          }));
-          await onExerciseValuesChange(cleanedExercises);
+        const cleanedExercises = editableExercises.map(ex => ({
+          exerciseId: ex.exerciseId,
+          sets: ex.sets,
+          valuePerSet: ex.valuePerSet
+        }));
+
+        if (onExerciseOrderChange) {
+            onExerciseOrderChange(cleanedExercises);
         }
+        if (onExerciseValuesChange) {
+            onExerciseValuesChange(cleanedExercises);
+        }
+        if (onExerciseRemove) {
+            onExerciseRemove(cleanedExercises); 
+        }
+
       } else {
         console.log('Змін не виявлено. Нічого не зберігаємо.');
       }
@@ -267,7 +303,6 @@ function WorkoutCard({
     }
     setIsEdit(!isEdit);
   };
-
 
   return (
     <>
@@ -303,7 +338,6 @@ function WorkoutCard({
                             <IconEdit size={14} />
                           </ActionIcon>
                           <ActionIcon
-                            // variant="default"
                             variant="outline" 
                             color="red"
                             aria-label="Delete"
@@ -341,10 +375,11 @@ function WorkoutCard({
                         {editableExercises.map((exerciseData) => (
                           <WorkoutExercise
                             key={id + exerciseData.exercise.id}
-                            id={id + exerciseData.exercise.id} // DND ID
-                            data={exerciseData} // Передаємо "збагачені" дані для відображення
+                            id={id + exerciseData.exercise.id}
+                            data={exerciseData}
                             isEdit={true}
                             onValueChange={handleExerciseValueChange}
+                            onRemove={handleRemoveExercise}
                           />
                         ))}
                       </Stack>
@@ -360,7 +395,7 @@ function WorkoutCard({
                         data={exerciseData}
                         isEdit={false}
                       />
-                    ))
+                      ))
                     }
                   </Stack>
                 : 
