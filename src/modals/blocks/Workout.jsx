@@ -84,7 +84,7 @@ function Workout({ closeModal, workout = null }) {
         exercise: originalExercise
       };
     }
-    
+
     return selected;
   }).filter(Boolean);
 
@@ -151,17 +151,17 @@ function Workout({ closeModal, workout = null }) {
           <Stepper.Step label="Create" description="Create a program">
             <Stack gap="md">
               <Group>
+                <TextInput
+                  flex="1"
+                  placeholder="Workout name"
+                  {...form.getInputProps('name')}
+                />
                 <ColorInput
                   w="130px"
                   disallowInput
                   placeholder='Color'
                   defaultValue={form.getInputProps('color').value}
                   {...form.getInputProps('color')}
-                />
-                <TextInput
-                  flex="1"
-                  placeholder="Workout name"
-                  {...form.getInputProps('name')}
                 />
               </Group>
               <Textarea
