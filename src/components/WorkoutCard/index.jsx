@@ -313,49 +313,52 @@ function WorkoutCard({
                 }
 
               </Group>
-
-              {isEdit ?
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
-                >
-                  <SortableContext
-                    items={editableExercises.map(e => id + e.exercise.id)} 
-                    strategy={verticalListSortingStrategy}
+              {
+                exercises.length > 0 ?
+                  isEdit ?
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
                   >
-                    <Stack gap="xs" h="100%">
-                      {editableExercises.map((exerciseData) => (
-                        <WorkoutExercise
-                          key={id + exerciseData.exercise.id}
-                          id={id + exerciseData.exercise.id} // DND ID
-                          data={exerciseData} // Передаємо "збагачені" дані для відображення
-                          isEdit={true}
-                          onValueChange={handleExerciseValueChange}
-                        />
-                      ))}
-                    </Stack>
-                  </SortableContext>
-                </DndContext>
-                :
-                <Stack gap="xs" h="100%">
-                  {
-                    exercises.length > 0 ?
-                    exercises.map((exerciseData) => (
+                    <SortableContext
+                      items={editableExercises.map(e => id + e.exercise.id)} 
+                      strategy={verticalListSortingStrategy}
+                    >
+                      <Stack gap="xs" h="100%">
+                        {editableExercises.map((exerciseData) => (
+                          <WorkoutExercise
+                            key={id + exerciseData.exercise.id}
+                            id={id + exerciseData.exercise.id} // DND ID
+                            data={exerciseData} // Передаємо "збагачені" дані для відображення
+                            isEdit={true}
+                            onValueChange={handleExerciseValueChange}
+                          />
+                        ))}
+                      </Stack>
+                    </SortableContext>
+                  </DndContext>
+                  :
+                  <Stack gap="xs" h="100%">
+                    {
+                      exercises.map((exerciseData) => (
                       <WorkoutExercise
                         key={id + exerciseData.exercise.id}
                         id={id + exerciseData.exercise.id}
                         data={exerciseData}
                         isEdit={false}
                       />
-                    )) : 
-                    <Paper>
-                      <Text p="sm" ta='center' lh='47px'>
-                        Go back and add exercises
-                      </Text>
-                    </Paper>
-                  }
-                </Stack>
+                    ))
+                    }
+                  </Stack>
+                : 
+                <Paper flex="1">
+                  <Stack h='100%' justify='center'>
+                    <Text p="sm" ta='center'>
+                      No exercises..
+                    </Text>
+                  </Stack>
+                </Paper>
               }
             </Stack>
           </Card>
