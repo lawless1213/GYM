@@ -7,9 +7,12 @@ import { ExerciseCatalogFilters } from '../../components/ExerciseCatalogFilters.
 import { ExerciseCatalogDisplay } from '../../components/ExerciseCatalogDisplay.jsx';
 import WorkoutCard from '../../components/WorkoutCard/index.jsx';
 import { useMediaQuery } from '@mantine/hooks';
+import workoutService from '../../services/workoutService.js';
 
 function Workout({ closeModal, workout = null }) {
   const { t } = useTranslation();
+  const [editLoading, setEditLoading] = useState(false);
+  
   const [active, setActive] = useState(0);
   const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
   const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
@@ -127,17 +130,25 @@ function Workout({ closeModal, workout = null }) {
 
   // Фінальна функція відправки форми
   const handleSubmit = async (event) => {
-    event.preventDefault(); // Запобігаємо стандартній поведінці форми
-    if (!form.validate().hasErrors) { // Валідуємо форму перед відправкою
-      // Створюємо фінальний об'єкт тренування безпосередньо в момент відправки
+    event.preventDefault();
+    if (!form.validate().hasErrors) {
+      setEditLoading(true);
+
       const finalWorkoutData = {
         name: form.values.name,
         description: form.values.description,
         color: form.values.color,
-        exercises: selectedExercises, // Використовуємо найновіший selectedExercises
-        calories: calculateCalories() // Використовуємо найновіший розрахунок калорій
+        exercises: selectedExercises,
+        calories: calculateCalories()
       };
       console.log("Відправка тренування:", finalWorkoutData);
+
+      const success = finalWorkoutData && await workoutService.createWorkout(finalWorkoutData);
+
+      if (success) {
+        closeModal();
+      }
+      setEditLoading(false);
       
       // Тут буде ваша реальна логіка створення/оновлення тренування.
       // Приклад:
@@ -234,7 +245,13 @@ function Workout({ closeModal, workout = null }) {
           {active !== 0 && <Button variant="default" onClick={prevStep}>Back</Button>}
           {active === 0 && <Button type="button" onClick={handleSubmitFirstStep}>Next step</Button>}
           {active === 1 && <Button type="button" onClick={nextStep}>Next step</Button>}
-          {active === 2 && !!selectedExercises.length && <Button type="submit">Create workout</Button>}
+          {active === 2 && !!selectedExercises.length && <Button type="submit">
+            {
+              editLoading ?
+              "Loading.." :
+              workout ? "Update workout" : "Create workout"
+            } </Button>
+          }
         </Group>
       </form>
     </>
