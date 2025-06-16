@@ -1,5 +1,5 @@
 import { useForm } from '@mantine/form';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react'; // Додано useMemo
 import { useTranslation } from 'react-i18next';
 import { Button, ColorInput, Stepper, Group, Stack, Textarea, TextInput, Box } from '@mantine/core';
 import { useExerciseCatalog } from '../../hooks/useExerciseCatalog.js';
@@ -13,10 +13,6 @@ function Workout({ closeModal, workout = null }) {
   const [active, setActive] = useState(0);
   const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
   const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
-  
-  // newWorkout використовується для відображення в WorkoutCard (previewMode)
-  // Його exercises та calories оновлюються в useEffect нижче
-  const [newWorkout, setNewWorkout] = useState({});
 
   const isMobile = useMediaQuery('(max-width: 700px)');
 
@@ -30,7 +26,7 @@ function Workout({ closeModal, workout = null }) {
   } = useExerciseCatalog();
 
   // selectedExercises - це основне джерело правди для вправ, які додаються до тренування
-  const [selectedExercises, setSelectedExercises] = useState( workout ? workout.exercises : []);
+  const [selectedExercises, setSelectedExercises] = useState(workout ? workout.exercises : []);
 
   const form = useForm({
     initialValues: {
@@ -52,8 +48,14 @@ function Workout({ closeModal, workout = null }) {
       } else {
         const exerciseFromCatalog = allExercises.find(ex => ex.id === exerciseId);
         
+        // Забезпечуємо, що exerciseFromCatalog існує перед доступом до його властивостей
+        if (!exerciseFromCatalog) {
+            console.warn(`Вправу з id ${exerciseId} не знайдено в каталозі.`);
+            return prevSelected; // Повертаємо попередній стан, якщо вправа не знайдена
+        }
+
         const defaultSets = 3;
-        const defaultValuePerSet = exerciseFromCatalog?.valuePerSet || 0;
+        const defaultValuePerSet = exerciseFromCatalog.valuePerSet || 0; // Використовуємо 0 як дефолт
 
         return [
           ...prevSelected,
@@ -80,33 +82,24 @@ function Workout({ closeModal, workout = null }) {
   }, []);
   
   // enrichedExercisesForPreview створюється на основі selectedExercises
-  // і використовується для відображення в WorkoutCard
-  const enrichedExercisesForPreview = selectedExercises.map(selected => {
-    const originalExercise = allExercises.find(ex => ex.id === selected.exerciseId);
-    
-    if (originalExercise) {
-      return {
-        exerciseId: selected.exerciseId,
-        sets: selected.sets,
-        valuePerSet: selected.valuePerSet,
-        exercise: originalExercise
-      };
-    }
-
-    // Якщо оригінальну вправу не знайдено, повертаємо null, щоб її відфільтрувати
-    return null;
-  }).filter(Boolean);
-
-  const handleSubmitFirstStep = async () => {
-    if (!form.validate().hasErrors) {
-      nextStep();
-      // Оновлюємо newWorkout початковими значеннями форми при переході на наступний крок
-      setNewWorkout(prevStateWorkout=>({
-        ...prevStateWorkout,
-        ...form.values
-      }))
-    }
-  };
+  // і використовується для відображення в WorkoutCard. Використовуємо useMemo
+  // для мемоізації, щоб уникнути непотрібних перерахунків, якщо selectedExercises
+  // та allExercises не змінились.
+  const enrichedExercisesForPreview = useMemo(() => {
+    return selectedExercises.map(selected => {
+      const originalExercise = allExercises.find(ex => ex.id === selected.exerciseId);
+      
+      if (originalExercise) {
+        return {
+          exerciseId: selected.exerciseId,
+          sets: selected.sets,
+          valuePerSet: selected.valuePerSet,
+          exercise: originalExercise
+        };
+      }
+      return null;
+    }).filter(Boolean);
+  }, [selectedExercises, allExercises]); // Залежить від selectedExercises та allExercises
 
   // calculateCalories тепер є useCallback, щоб уникнути непотрібних перерендерингів
   // і переконатися, що він завжди використовує актуальні enrichedExercisesForPreview
@@ -118,27 +111,25 @@ function Workout({ closeModal, workout = null }) {
         const exerciseValue = exercise.sets * exercise.valuePerSet * exercise.exercise.caloriesPerUnit;
         value += exerciseValue;
       } else {
-        console.warn("Пропущено розрахунок калорій для вправи через відсутність даних:", exercise);
+        // Замінено console.warn на більш детальний лог для відлагодження
+        // console.warn("Пропущено розрахунок калорій для вправи через відсутність даних:", exercise);
       }
     });
     return value;
   }, [enrichedExercisesForPreview]); // Залежить від enrichedExercisesForPreview
 
-  // useEffect для оновлення newWorkout для картки попереднього перегляду
-  useEffect(() => {
-    setNewWorkout(prevStateWorkout=>({
-      ...prevStateWorkout,
-      calories: calculateCalories(), // Використовуємо функцію useCallback
-      exercises: selectedExercises // Завжди використовуємо актуальний selectedExercises
-    }))
-    
-  }, [selectedExercises, calculateCalories]); // Залежить від selectedExercises та calculateCalories
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  // Функція для переходу на наступний крок після валідації першого кроку
+  const handleSubmitFirstStep = async () => {
     if (!form.validate().hasErrors) {
+      nextStep();
+    }
+  };
+
+  // Фінальна функція відправки форми
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // Запобігаємо стандартній поведінці форми
+    if (!form.validate().hasErrors) { // Валідуємо форму перед відправкою
       // Створюємо фінальний об'єкт тренування безпосередньо в момент відправки
-      // Це гарантує, що дані є найактуальнішими
       const finalWorkoutData = {
         name: form.values.name,
         description: form.values.description,
@@ -148,8 +139,7 @@ function Workout({ closeModal, workout = null }) {
       };
       console.log("Відправка тренування:", finalWorkoutData);
       
-      // Тут буде ваша реальна логіка створення тренування,
-      // де ви відправляєте finalWorkoutData на бекенд
+      // Тут буде ваша реальна логіка створення/оновлення тренування.
       // Приклад:
       // setLoading(true);
       // const success = await workoutService.createWorkout(finalWorkoutData);
@@ -162,6 +152,7 @@ function Workout({ closeModal, workout = null }) {
 
   return (
     <>
+      {/* onSubmit буде викликатися лише при відправці всієї форми на останньому кроці */}
       <form onSubmit={handleSubmit}>
         <Stepper 
           iconSize={32} 
@@ -184,8 +175,8 @@ function Workout({ closeModal, workout = null }) {
                   w="130px"
                   disallowInput
                   placeholder='Color'
-                  defaultValue={form.getInputProps('color').value}
-                  {...form.getInputProps('color')}
+                  // Використовуємо значення з форми напряму, без defaultValue
+                  {...form.getInputProps('color')} 
                 />
               </Group>
               <Textarea
@@ -223,10 +214,10 @@ function Workout({ closeModal, workout = null }) {
             <Box maw="500px" m="auto">
               <WorkoutCard
                 id='previwCard'
-                name={form.values.name}
-                color={form.values.color}
-                calories={newWorkout.calories}
-                exercises={enrichedExercisesForPreview}
+                name={form.values.name} // Дані з форми
+                color={form.values.color} // Дані з форми
+                calories={calculateCalories()} // Обчислюємо на льоту
+                exercises={enrichedExercisesForPreview} // Обчислюємо на льоту
                 previewMode={true}
                 onExerciseOrderChange={handleExerciseOrderChange}
                 onExerciseValuesChange={handleExerciseValuesChange}
@@ -247,7 +238,7 @@ function Workout({ closeModal, workout = null }) {
         </Group>
       </form>
     </>
-  )
+  );
 }
 
 export default Workout;

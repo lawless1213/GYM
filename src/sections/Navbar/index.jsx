@@ -15,6 +15,7 @@ import ProtectedRoute from '../../systemComponents/ProtectedRoute';
 import { useStores } from '../../hooks/useStores';
 import { useMediaQuery } from '@mantine/hooks';
 import { useState } from 'react';
+import Show from '../../components/Show';
 
 function NavbarLink({ label, icon: Icon, url, onClick, variant }) {
   if (url) {
@@ -86,12 +87,12 @@ export function Navbar() {
 
   return (
     <nav className={`${s.navbar} ${isMobile && !asideOpen ? s.hide : ''}`}>
-			{
-				isMobile && 
+
+			<Show when={isMobile}>
 				<ActionIcon onClick={asideOpenHandler} className={s.Toggler} size="lg" variant="default" aria-label="Aside toggle">
 					{asideOpen ? <IconLayoutSidebarLeftCollapse/> : <IconLayoutSidebarLeftExpand/>}
 				</ActionIcon>
-			}
+			</Show>
 
 			<Stack className={s.menu} justify="center" gap={4} mb={4}>
 				{links}
@@ -103,26 +104,29 @@ export function Navbar() {
 					variant='default' 
 					onClick={handleLanguage}
 				/>
-				{currentUser ? 
+				<Show 
+					when={currentUser}
+					fallback={
+						<NavbarLink 
+							icon={IconLogin} 
+							label="Login" 
+							variant='default'
+							onClick={() =>
+								modals.openContextModal({
+									modal: 'auth',
+									size: 'lg',
+								})
+							}
+						/> 
+					}	
+				>
 					<NavbarLink 
 						icon={IconLogout} 
 						label="Logout" 
 						variant='default' 
 						onClick={handleLogout}
 					/>
-				:
-					<NavbarLink 
-						icon={IconLogin} 
-						label="Login" 
-						variant='default'
-						onClick={() =>
-							modals.openContextModal({
-								modal: 'auth',
-								size: 'lg',
-							})
-						}
-					/> 
-				}
+				</Show>
 			</Stack>
     </nav>
   );
