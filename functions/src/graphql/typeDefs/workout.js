@@ -24,6 +24,14 @@ export default gql`
     calories: Int!
 		description: String!
 		color: String!
+    exercises: [WorkoutExerciseInput!]
+  }
+
+  input WorkoutExerciseInput {
+    exerciseId: String!
+    sets: Int!
+    valuePerSet: Int!
+    caloriesPerSet: Int!
   }
 
   input DeleteWorkoutInput {

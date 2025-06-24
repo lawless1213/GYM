@@ -134,16 +134,30 @@ function Workout({ closeModal, workout = null }) {
     if (!form.validate().hasErrors) {
       setEditLoading(true);
 
+      const exercisesWithCalories = selectedExercises.map(selected => {
+        const originalExercise = allExercises.find(ex => ex.id === selected.exerciseId);
+        let caloriesPerSet = 0;
+        if (originalExercise && typeof originalExercise.caloriesPerUnit === 'number') {
+          caloriesPerSet = selected.valuePerSet * originalExercise.caloriesPerUnit;
+        }
+        return {
+          ...selected,
+          caloriesPerSet
+        };
+      });
+
       const finalWorkoutData = {
         name: form.values.name,
         description: form.values.description,
         color: form.values.color,
-        exercises: selectedExercises,
+        exercises: exercisesWithCalories,
         calories: calculateCalories()
       };
       console.log("Відправка тренування:", finalWorkoutData);
 
-      const success = finalWorkoutData && await workoutService.createWorkout(finalWorkoutData);
+      const success = workout 
+        ? finalWorkoutData && await workoutService.updateWorkout(finalWorkoutData)
+        : finalWorkoutData && await workoutService.createWorkout(finalWorkoutData)
 
       if (success) {
         closeModal();

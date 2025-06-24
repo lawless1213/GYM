@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { GET_USER_WORKOUTS } from '../queries/workouts';
 import WorkoutCard from '../components/WorkoutCard';
 import WorkoutCalendar from '../components/workoutCalendar';
+import workoutService from '../services/workoutService';
 
 function Programs() {
   const { t } = useTranslation();
@@ -32,6 +33,7 @@ function Programs() {
               color={workout.color}
               calories={workout.calories}
               exercises={workout.exercises}
+              onDeleteWorkout={() => workoutService.deleteWorkout({ id: workout.id })}
             />
           ))
         }

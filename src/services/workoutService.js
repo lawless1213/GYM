@@ -46,11 +46,19 @@ const workoutService = {
 	},
 	// -----------
 
+	// ----------- Create workout
+	async updateWorkout( workout ) {
+		const currentUser = getAuth().currentUser;
+    if (!currentUser) return false;
+
+		console.log("Editing workout:", workout);
+	},
+	// -----------
+
 	// ----------- Delete Workout
   async deleteWorkout({ id }) {
     const currentUser = getAuth().currentUser;
     if (!currentUser) return false;
-		console.log(id);
 		
     try {
       const { data } = await client.mutate({

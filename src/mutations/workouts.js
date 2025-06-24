@@ -10,6 +10,13 @@ export const CREATE_WORKOUT = gql`
         name
         color
         calories
+        description
+        exercises {
+          exerciseId
+          sets
+          valuePerSet
+          caloriesPerSet
+        }
       }
     }
   }

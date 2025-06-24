@@ -11,7 +11,6 @@ export const createWorkout = async (_, { input }, context) => {
 		const workout = {
 			...input,
 			id: newId,
-			calories: 0
 		}
 
 		await userRef.set(
