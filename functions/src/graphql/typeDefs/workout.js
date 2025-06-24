@@ -6,6 +6,7 @@ export default gql`
     name: String!
     color: String!
     calories: Int!
+    description: String!
     exercises: [WorkoutExercise!]!
   }
 

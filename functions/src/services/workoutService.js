@@ -34,6 +34,7 @@ export const getUserWorkouts = async (_, __, context) => {
         name: workout.name || '',
         color: workout.color || '#000000',
         calories: Number(workout.calories) || 0,
+        description: workout.description || '',
         exercises: validExercises
       };
     });

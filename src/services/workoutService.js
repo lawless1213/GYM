@@ -9,7 +9,7 @@ const workoutService = {
 		const currentUser = getAuth().currentUser;
     if (!currentUser) return false;
 
-		let newWorkout = workout.calories ? workout : {calories: 0, ...workout}
+		let newWorkout = workout;
 
 		try {
 			const { data }  = await client.mutate({

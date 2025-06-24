@@ -7,6 +7,7 @@ export const GET_USER_WORKOUTS = gql`
       name
       color
       calories
+      description
       exercises {
         exerciseId
         exercise {
@@ -20,6 +21,7 @@ export const GET_USER_WORKOUTS = gql`
           type
           valuePerSet
           caloriesPerSet
+          caloriesPerUnit
         }
         sets
         valuePerSet
