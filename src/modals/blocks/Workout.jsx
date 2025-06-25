@@ -8,6 +8,7 @@ import { ExerciseCatalogDisplay } from '../../components/ExerciseCatalogDisplay.
 import WorkoutCard from '../../components/WorkoutCard/index.jsx';
 import { useMediaQuery } from '@mantine/hooks';
 import workoutService from '../../services/workoutService.js';
+import isEqual from "lodash.isequal"; // Додай цю бібліотеку (npm i lodash.isequal)
 
 function Workout({ closeModal, workout = null }) {
   const { t } = useTranslation();
@@ -42,6 +43,33 @@ function Workout({ closeModal, workout = null }) {
     },
   });
 
+  const initialExercises = useMemo(() => (
+    (workout?.exercises || []).map(e => ({
+      exerciseId: e.exerciseId,
+      sets: e.sets,
+      valuePerSet: e.valuePerSet,
+      caloriesPerSet: e.caloriesPerSet
+    }))
+  ), [workout]);
+
+  const currentExercises = useMemo(() => (
+    selectedExercises.map(e => ({
+      exerciseId: e.exerciseId,
+      sets: e.sets,
+      valuePerSet: e.valuePerSet,
+      caloriesPerSet: e.caloriesPerSet
+    }))
+  ), [selectedExercises]);
+
+  const isChanged = useMemo(() => {
+    if (!workout) return true; // Якщо створення - завжди дозволено
+    return (
+      form.values.name !== (workout.name || '') ||
+      form.values.description !== (workout.description || '') ||
+      form.values.color !== (workout.color || '#fffff') ||
+      !isEqual(currentExercises, initialExercises)
+    );
+  }, [form.values, workout, currentExercises, initialExercises]);
 
   const handleSelectExercise = (exerciseId) => {
     setSelectedExercises((prevSelected) => {
@@ -256,12 +284,18 @@ function Workout({ closeModal, workout = null }) {
           {active !== 0 && <Button variant="default" onClick={prevStep}>Back</Button>}
           {active === 0 && <Button type="button" onClick={handleSubmitFirstStep}>Next step</Button>}
           {active === 1 && <Button type="button" onClick={nextStep}>Next step</Button>}
-          {active === 2 && !!selectedExercises.length && <Button type="submit">
-            {
-              editLoading ?
-              "Loading.." :
-              workout ? "Update workout" : "Create workout"
-            } </Button>
+          {active === 2 && !!selectedExercises.length && 
+            <Button
+              type="submit"
+              disabled={!isChanged || editLoading}
+            >
+              {editLoading
+                ? "Loading.."
+                : !workout
+                  ? "Create workout"
+                  : isChanged ? "Update workout" : "Nothing changed"
+              }
+            </Button>
           }
         </Group>
       </form>
