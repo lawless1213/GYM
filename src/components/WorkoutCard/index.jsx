@@ -1,9 +1,11 @@
 import { useState, useRef, memo, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import  workoutService  from '../../services/workoutService';
+
 import {
   Card, Title, Text, Group, Stack,
   Badge, ActionIcon, Flex, Image,
-  Menu, NumberInput, Paper
+  Menu, NumberInput, Paper, Loader
 } from '@mantine/core';
 import { IconGripVertical, IconPlus, IconEdit, IconTrash, IconCheck } from '@tabler/icons-react';
 
@@ -92,6 +94,7 @@ const WorkoutExercise = memo(function WorkoutExercise({
   const currentSets = data.sets;
   const currentValuePerSet = data.valuePerSet;
 
+
   return (
     <Paper ref={setNodeRef} style={style}>
       <Group gap="xs" align="center" p="sm">
@@ -167,6 +170,16 @@ const WorkoutExercise = memo(function WorkoutExercise({
   );
 });
 
+// function calculateCalories(exercises, allExercises) {
+//   let value = 0;
+//   exercises.forEach(ex => {
+//     const original = allExercises.find(e => e.id === ex.exerciseId);
+//     if (original && typeof original.caloriesPerUnit === 'number') {
+//       value += ex.sets * ex.valuePerSet * original.caloriesPerUnit;
+//     }
+//   });
+//   return value;
+// }
 
 function WorkoutCard({ 
   id,
@@ -186,6 +199,7 @@ function WorkoutCard({
   const [exercises, setExercises] = useState(initialExercises);
   const [isEdit, setIsEdit] = useState(false);
   const [editableExercises, setEditableExercises] = useState(initialExercises);
+  const [cardLoading, setCardLoading] = useState(false);
 
   useEffect(() => {
     if (!areExercisesEqual(exercises, initialExercises)) {
@@ -278,27 +292,31 @@ function WorkoutCard({
   const handleEditSaveToggle = async () => {
     if (isEdit) {
       if (!areExercisesEqual(exercises, editableExercises)) {
-        console.log('Зміни виявлено. Зберігаємо дані:', editableExercises);
-        setExercises(editableExercises);
+        setCardLoading(true);
+        const updatedCalories = editableExercises.reduce(
+          (sum, ex) => sum + ex.sets * ex.valuePerSet * (ex.exercise?.caloriesPerUnit || 0),
+          0
+        );
 
+        // 2. Формування масиву для бекенду (без exercise)
         const cleanedExercises = editableExercises.map(ex => ({
           exerciseId: ex.exerciseId,
           sets: ex.sets,
-          valuePerSet: ex.valuePerSet
+          valuePerSet: ex.valuePerSet,
+          caloriesPerSet: ex.valuePerSet * (ex.exercise?.caloriesPerUnit || 0)
         }));
 
-        if (onExerciseOrderChange) {
-            onExerciseOrderChange(cleanedExercises);
-        }
-        if (onExerciseValuesChange) {
-            onExerciseValuesChange(cleanedExercises);
-        }
-        if (onExerciseRemove) {
-            onExerciseRemove(cleanedExercises); 
-        }
+        await workoutService.updateWorkout({
+          id,
+          name,
+          description,
+          color,
+          calories: updatedCalories,
+          exercises: cleanedExercises,
+        });
 
-      } else {
-        console.log('Змін не виявлено. Нічого не зберігаємо.');
+        setExercises(editableExercises);
+        setCardLoading(false);
       }
     } else {
       setEditableExercises([...exercises]);
@@ -306,11 +324,13 @@ function WorkoutCard({
     setIsEdit(!isEdit);
   };
 
+  const isChanged = !areExercisesEqual(exercises, editableExercises);
+
   return (
     <>
       {
         !create ? (
-          <Card shadow="sm" withBorder padding="md" radius="md"  style={{ borderColor: color }}>
+          <Card pos='relative' shadow="sm" withBorder padding="md" radius="md"  style={{ borderColor: color }}>
             <Stack gap="xs" h="100%">
               
               <Group wrap='nowrap' justify="space-between" width="100%">
@@ -325,6 +345,7 @@ function WorkoutCard({
                         variant="outline"
                         aria-label="Save"
                         onClick={handleEditSaveToggle}
+                        disabled={cardLoading || !isChanged}
                       >
                         <IconCheck size={14} />
                       </ActionIcon>
@@ -413,6 +434,11 @@ function WorkoutCard({
             <Text size="sm" c="dimmed" mt="md">
               {description || t('workout.noDescription')}
             </Text>
+            {cardLoading && (
+              <Flex pos="absolute" top='0' bottom='0' left='0' right='0' flex={1} justify='center' align='center'>
+                <Loader />
+              </Flex>
+            )}
           </Card>
         ) : (
           <Card shadow="sm" padding="0" radius="md">
