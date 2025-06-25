@@ -1,5 +1,5 @@
 import client from "../providers/apolloClient";
-import { CREATE_WORKOUT, DELETE_WORKOUT } from "../mutations/workouts";
+import { CREATE_WORKOUT, DELETE_WORKOUT, UPDATE_WORKOUT } from "../mutations/workouts";
 import { GET_USER_WORKOUTS } from "../queries/workouts";
 import { getAuth } from "firebase/auth";
 
@@ -51,7 +51,40 @@ const workoutService = {
 		const currentUser = getAuth().currentUser;
     if (!currentUser) return false;
 
-		console.log("Editing workout:", workout);
+		try {
+			const { data } = await client.mutate({
+				mutation: UPDATE_WORKOUT,
+				variables: { input: workout },
+				update(cache, { data: { updateWorkout } }) {
+					if (updateWorkout?.success) {
+						// Оновлюємо кеш для getUserWorkouts
+						try {
+							const existingData = cache.readQuery({
+								query: GET_USER_WORKOUTS,
+							});
+
+							if (existingData?.getUserWorkouts) {
+								cache.writeQuery({
+									query: GET_USER_WORKOUTS,
+									data: {
+										getUserWorkouts: existingData.getUserWorkouts.map(w =>
+											w.id === workout.id ? updateWorkout.workout : w
+										),
+									},
+								});
+							}
+						} catch (e) {
+							console.log('Error updating GET_USER_WORKOUTS cache:', e);
+						}
+					}
+				}
+			});
+
+			return data?.updateWorkout || null;
+		} catch (error) {
+			console.error("Error updating workout:", error);
+			return null;
+		}
 	},
 	// -----------
 

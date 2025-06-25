@@ -30,3 +30,25 @@ export const DELETE_WORKOUT = gql`
     }
   }
 `;
+
+export const UPDATE_WORKOUT = gql`
+  mutation UpdateWorkout($input: UpdateWorkoutInput!) {
+    updateWorkout(input: $input) {
+      success
+      message
+      workout {
+        id
+        name
+        color
+        calories
+        description
+        exercises {
+          exerciseId
+          sets
+          valuePerSet
+          caloriesPerSet
+        }
+      }
+    }
+  }
+`;

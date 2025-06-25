@@ -30,6 +30,7 @@ function Programs() {
               key={workout.id}
               id={workout.id}
               name={workout.name}
+              description={workout.description}
               color={workout.color}
               calories={workout.calories}
               exercises={workout.exercises}

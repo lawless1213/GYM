@@ -173,6 +173,7 @@ function WorkoutCard({
   name, 
   color, 
   calories, 
+  description,
   exercises: initialExercises,
   create = false, 
   onExerciseOrderChange,
@@ -233,6 +234,7 @@ function WorkoutCard({
         workout: {
           id,
           name, 
+          description,
           color, 
           calories, 
           exercises
@@ -408,6 +410,9 @@ function WorkoutCard({
                 </Paper>
               }
             </Stack>
+            <Text size="sm" c="dimmed" mt="md">
+              {description || t('workout.noDescription')}
+            </Text>
           </Card>
         ) : (
           <Card shadow="sm" padding="0" radius="md">

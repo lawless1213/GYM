@@ -42,6 +42,7 @@ function Workout({ closeModal, workout = null }) {
     },
   });
 
+
   const handleSelectExercise = (exerciseId) => {
     setSelectedExercises((prevSelected) => {
       const existingExercise = prevSelected.find(item => item.exerciseId === exerciseId);
@@ -141,18 +142,22 @@ function Workout({ closeModal, workout = null }) {
           caloriesPerSet = selected.valuePerSet * originalExercise.caloriesPerUnit;
         }
         return {
-          ...selected,
-          caloriesPerSet
+          exerciseId: selected.exerciseId,
+          sets: selected.sets,
+          valuePerSet: selected.valuePerSet,
+          caloriesPerSet: caloriesPerSet,
         };
       });
 
       const finalWorkoutData = {
+        id: workout ? workout.id : null,
         name: form.values.name,
         description: form.values.description,
         color: form.values.color,
         exercises: exercisesWithCalories,
         calories: calculateCalories()
       };
+
       console.log("Відправка тренування:", finalWorkoutData);
 
       const success = workout 
@@ -162,16 +167,8 @@ function Workout({ closeModal, workout = null }) {
       if (success) {
         closeModal();
       }
+
       setEditLoading(false);
-      
-      // Тут буде ваша реальна логіка створення/оновлення тренування.
-      // Приклад:
-      // setLoading(true);
-      // const success = await workoutService.createWorkout(finalWorkoutData);
-      // if (success) {
-      //   closeModal();
-      // }
-      // setLoading(false);
     }
   };
 
