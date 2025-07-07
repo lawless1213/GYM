@@ -27,42 +27,21 @@ import { modals } from '@mantine/modals';
 import { CSS } from '@dnd-kit/utilities';
 
 const areExercisesEqual = (arr1, arr2) => {
-  // Додаємо перевірку на undefined/null для обох масивів
-  if (!Array.isArray(arr1) && !Array.isArray(arr2)) {
-    // Якщо обидва не є масивами (наприклад, обидва undefined/null), вважаємо їх рівними
-    return arr1 === arr2;
-  }
+  if (!Array.isArray(arr1) && !Array.isArray(arr2)) return arr1 === arr2;
+  if (!Array.isArray(arr1) || !Array.isArray(arr2)) return false;
+  if (arr1.length !== arr2.length) return false;
 
-  if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
-    // Якщо один є масивом, а інший ні, вони не рівні
-    return false;
-  }
-
-  if (arr1.length !== arr2.length) {
-    return false;
-  }
-
-  const sortedArr1 = [...arr1].sort((a, b) => {
-    const idA = a.exerciseId || a.exercise?.id;
-    const idB = b.exerciseId || b.exercise?.id;
-    return String(idA).localeCompare(String(idB));
-  });
-  const sortedArr2 = [...arr2].sort((a, b) => {
-    const idA = a.exerciseId || a.exercise?.id;
-    const idB = b.exerciseId || b.exercise?.id;
-    return String(idA).localeCompare(String(idB));
-  });
-
-  for (let i = 0; i < sortedArr1.length; i++) {
-    const item1 = sortedArr1[i];
-    const item2 = sortedArr2[i];
-
+  for (let i = 0; i < arr1.length; i++) {
+    const item1 = arr1[i];
+    const item2 = arr2[i];
     const id1 = item1.exerciseId || item1.exercise?.id;
     const id2 = item2.exerciseId || item2.exercise?.id;
 
-    if (id1 !== id2 ||
-        item1.sets !== item2.sets ||
-        item1.valuePerSet !== item2.valuePerSet) {
+    if (
+      id1 !== id2 ||
+      item1.sets !== item2.sets ||
+      item1.valuePerSet !== item2.valuePerSet
+    ) {
       return false;
     }
   }
@@ -189,10 +168,7 @@ function WorkoutCard({
   description,
   exercises: initialExercises,
   create = false, 
-  onExerciseOrderChange,
-  onExerciseValuesChange,
   onDeleteWorkout,
-  onExerciseRemove,
   previewMode = false
 }) {
   const { t } = useTranslation();
@@ -324,8 +300,6 @@ function WorkoutCard({
     setIsEdit(!isEdit);
   };
 
-  const isChanged = !areExercisesEqual(exercises, editableExercises);
-
   return (
     <>
       {
@@ -345,7 +319,6 @@ function WorkoutCard({
                         variant="outline"
                         aria-label="Save"
                         onClick={handleEditSaveToggle}
-                        disabled={cardLoading || !isChanged}
                       >
                         <IconCheck size={14} />
                       </ActionIcon>
