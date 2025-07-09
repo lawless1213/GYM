@@ -8,7 +8,13 @@ export const GET_USER_SCHEDULE = gql`
 				completed
 				note
 				time
-				workoutId
+				workout {
+          id
+          name
+          description
+          color
+          calories
+        }
 			}
 		}
 	}

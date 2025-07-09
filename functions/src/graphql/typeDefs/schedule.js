@@ -6,6 +6,7 @@ export default gql`
 		note: String
 		time: String
 		workoutId: ID!
+		workout: Workout
 	}
 
 	type ScheduleDay {

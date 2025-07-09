@@ -7,7 +7,7 @@ import { addToBookmarks } from "../mutations/exercises/addToBookmarks.js";
 import { deleteExercise } from "../mutations/exercises/deleteExercise.js";
 import { createExercise } from "../mutations/exercises/createExercise.js";
 import { updateExercise } from "../mutations/exercises/updateExercise.js";
-import { getUserWorkouts } from "../services/workoutService.js";
+import { getUserWorkouts, getWorkoutById } from "../services/workoutService.js";
 import { createWorkout } from "../mutations/workouts/createWorkout.js";
 import { db } from "../firebase.js";
 import { deleteWorkout } from "../mutations/workouts/deleteWorkout.js";
@@ -109,6 +109,12 @@ export const resolvers = {
       console.log('Found exercise:', exerciseData);
       
       return exerciseData;
+    }
+  },
+  ScheduleWorkout: {
+    workout: async (parent, _, context) => {
+      if (!context.user) return null;
+      return await getWorkoutById(parent.workoutId, context.user.uid);
     }
   }
 };
