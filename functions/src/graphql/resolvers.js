@@ -12,6 +12,7 @@ import { createWorkout } from "../mutations/workouts/createWorkout.js";
 import { db } from "../firebase.js";
 import { deleteWorkout } from "../mutations/workouts/deleteWorkout.js";
 import { updateWorkout } from "../mutations/workouts/updateWorkout.js";
+import { getUserSchedule } from "../services/scheduleService.js";
 
 export const resolvers = {
   Query: {
@@ -28,6 +29,10 @@ export const resolvers = {
         throw new Error("Unauthorized");
       }
       return getPersonalExercises(_, args, context);
+    },
+    getUserSchedule: async (_, { startDate, endDate }, context) => {
+      if (!context.user) throw new Error("Unauthorized");
+      return getUserSchedule(context.user.uid, startDate, endDate);
     },
     getFilters,
     getUserWorkouts

@@ -3,7 +3,7 @@ import { Title, SimpleGrid, Loader, Text, Stack, Flex } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { GET_USER_WORKOUTS } from '../queries/workouts';
 import WorkoutCard from '../components/WorkoutCard';
-import WorkoutCalendar from '../components/workoutCalendar';
+import WorkoutSchedule from '../components/workoutSchedule';
 import workoutService from '../services/workoutService';
 
 function Programs() {
@@ -21,7 +21,7 @@ function Programs() {
   return (
     <Stack>
       <Title order={1}>{t('workouts.pageTitle')}</Title>
-			{/* <WorkoutCalendar /> */}
+			<WorkoutSchedule />
       
       <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
         {workouts.length !== 0 && 

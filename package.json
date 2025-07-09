@@ -25,6 +25,7 @@
     "@mantine/hooks": "^7.17.3",
     "@mantine/modals": "^7.17.3",
     "@tabler/icons-react": "^3.26.0",
+    "dayjs": "^1.11.13",
     "firebase": "^11.2.0",
     "graphql": "^16.10.0",
     "graphql-upload": "^17.0.0",
