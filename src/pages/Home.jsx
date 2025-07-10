@@ -1,5 +1,6 @@
 import { Group, Title } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
+import WorkoutSchedule from '../components/workoutSchedule';
 
 
 const Home = () => {
@@ -7,10 +8,7 @@ const Home = () => {
 
 	return (
 		<>
-			<Title order={1}>{t('home.pageTitle')}</Title>
-			
-			<Group>
-			</Group>
+			<WorkoutSchedule />
 		</>
 	)
 } 
