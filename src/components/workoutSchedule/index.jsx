@@ -3,8 +3,9 @@ import { useQuery } from '@apollo/client';
 import { GET_USER_SCHEDULE } from '../../queries/schedule';
 import dayjs from "dayjs";
 import isoWeek from 'dayjs/plugin/isoWeek';
-import { ActionIcon, Button, Group, Text, Indicator  } from '@mantine/core';
-import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { ActionIcon, Button, Group, Text, Indicator, Popover, List, ThemeIcon } from '@mantine/core';
+import { IconChevronLeft, IconChevronRight, IconCircleCheck, IconCircleDashed } from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
 
 dayjs.extend(isoWeek);
 
@@ -43,29 +44,61 @@ function WorkoutSchedule() {
 
       <Group spacing="xs" align="center" position="center" justify='center'>
 				{days.map((day) => {
+					const [opened, { close, open }] = useDisclosure(false);
 					const dayStr = day.format('YYYY-MM-DD');
 					const scheduleDay = schedule.find(d => d.date === dayStr);
 
 					if(scheduleDay) {
 						return (
-							<Indicator processing  color={scheduleDay.workouts[0].workout.color}>
-								<Button
-									key={dayStr}
-									variant={isSelected(day) ? 'outline' : 'default'}
-									radius="s"
-									size="md"
-									styles={{
-										label: { flexDirection: 'column' },
-									}}
-								>
-									{/* <Text size="xs" ta="center">{day.format('dd')}</Text> */}
-									<Text size="sm" ta="center" fw={500}>{day.format('DD.MM')}</Text>
-									{/* Відображаємо інфу про тренування, якщо є */}
-									<Text size="xs" c="green">
-										{scheduleDay.workouts.length} трен.
-									</Text>
-								</Button>
-							</Indicator>
+							<Popover width={300} position="bottom" withArrow shadow="md" opened={opened}>
+								<Popover.Target>
+										<Indicator  processing={isSelected(day)} label={scheduleDay.workouts.length} size={16}>
+											<Button
+												key={dayStr}
+												variant={isSelected(day) ? 'outline' : 'default'}
+												radius="s"
+												size="md"
+												onMouseEnter={open}
+												onMouseLeave={close}
+												styles={{
+													label: { flexDirection: 'column' },
+												}}
+											>
+												<Text size="xs" ta="center">{day.format('dd')}</Text>
+												<Text size="sm" ta="center" fw={500}>{day.format('DD.MM')}</Text>
+											</Button>
+										</Indicator>
+								</Popover.Target>
+								<Popover.Dropdown style={{ pointerEvents: 'none' }}>
+									<List
+										spacing="xs"
+										size="sm"
+										center
+										icon={
+											<ThemeIcon size={24} radius="xl">
+												<IconCircleDashed size={16} />
+											</ThemeIcon>
+										}
+									>
+										{scheduleDay.workouts.map((workout) => (
+											<List.Item 
+												key={workout.id || workout.note}
+												icon={
+													workout.completed &&
+													<ThemeIcon color="teal" size={24} radius="xl">
+														<IconCircleCheck size={16} />
+													</ThemeIcon>
+												}
+											>
+												<Group align="flex-start">
+													<Text>{workout.time}</Text>
+													<Text>{workout.note}</Text>
+												</Group>
+											</List.Item>
+										))}
+									</List>
+								</Popover.Dropdown>
+							</Popover>
 						)
 					}
 
